@@ -1,4 +1,4 @@
-name := """play-getting-started"""
+name := """blog-v2"""
 
 version := "1.0-SNAPSHOT"
 
