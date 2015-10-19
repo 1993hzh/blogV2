@@ -18,7 +18,7 @@ Then login in shell:
 $ cf login -a https://api.ng.bluemix.net
 $ cf ic login
 ```
-> Currently the ibm-containers have some bugs with cloudfoundry in linux64, see the issue for details: #639
+> Currently the ibm-containers have some bugs with cloudfoundry in linux64, see the issue for details: https://github.com/cloudfoundry/cli/issues/639
 > If you meet this bug, suggest you to install `ice`, docs: https://www.eu-gb.bluemix.net/docs/containers/container_cli_ice_ov.html#container_cli_ice_install
 
 
