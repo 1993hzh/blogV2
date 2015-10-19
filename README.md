@@ -5,6 +5,7 @@ Deploy scala env in bluemix using docker.
 
 ## Docs
 bluemix docs: https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html
+
 docker docs: https://docs.docker.com/installation/
 
 ## Setup bluemix env in local
