@@ -19,8 +19,11 @@ $ cf login -a https://api.ng.bluemix.net
 $ cf ic login
 ```
 > Currently the ibm-containers have some bugs with cloudfoundry in linux64, see the issue for details: https://github.com/cloudfoundry/cli/issues/639
-> If you meet this bug, suggest you to install `ice`, docs: https://www.eu-gb.bluemix.net/docs/containers/container_cli_ice_ov.html#container_cli_ice_install
 
+> If you meet this bug, I'd like to suggest you to install `ice`, look for installation docs: https://www.eu-gb.bluemix.net/docs/containers/container_cli_ice_ov.html#container_cli_ice_install
+
+### Build your custom images
+You can change the url with you own path, just make sure the path that you provided has `Dockerfile`.
 
 ```sh
 $ docker build https://github.com/1993hzh/blogV2.git
