@@ -1,5 +1,5 @@
 # IBM bluemix+docker+custom image
-Remember that ng stands for America Region and eu-gb stands for England Region, make sure this prefix is always the same.
+Remember that `ng` stands for America Region and `eu-gb` stands for England Region, make sure this prefix is always the same.
 
 Deploy scala env in bluemix using docker.
 
