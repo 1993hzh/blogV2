@@ -3,12 +3,16 @@ Remember that `ng` stands for America Region and `eu-gb` stands for England Regi
 
 Deploy scala env in bluemix using docker.
 
-## Docs
-bluemix docs: https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html
-
-docker docs: https://docs.docker.com/installation/
-
 ## Setup bluemix env in local
+
+First, install Docker CLI[2], CloudFoundry CLI[1], ibm-containers cf CLI[1]
+
+### Docs
+[1]bluemix docs: https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html
+
+[2]docker docs: https://docs.docker.com/installation/
+
+### 
 Make sure Docker CLI,CloudFoundry CLI, ibm-containers cf CLI have all been installed
 Then login in shell: 
 ```sh
