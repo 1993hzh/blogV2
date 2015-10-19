@@ -1,33 +1,23 @@
-# scala/play-getting-started
+# IBM bluemix+docker+custom image
+Remember that ng is stand for America Region and eu-gb is stand for England Region, make sure this prefix is always the same.
 
-A barebones Scala app (using the Play framework), which can easily be deployed to Heroku.  
+Deploy scala env in bluemix using docker.
 
-This application support the [Getting Started with Scala/Play on Heroku](https://devcenter.heroku.com/articles/getting-started-with-scala) article - check it out.
+## Docs
+bluemix docs: https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html
+docker docs: https://docs.docker.com/installation/
 
-## Running Locally
-
-Make sure you have Play and sbt installed.  Also, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
-
+## Setup bluemix env in local
+Make sure Docker CLI,CloudFoundry CLI, ibm-containers cf CLI have all been installed
+Then login in shell: 
 ```sh
-$ git clone https://github.com/heroku/scala-getting-started.git
-$ cd scala-getting-started
-$ sbt compile stage
-$ foreman start web
+$ cf login -a https://api.ng.bluemix.net
+$ cf ic login
 ```
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
-
-## Deploying to Heroku
 
 ```sh
-$ heroku create
-$ git push heroku master
-$ heroku open
+$ docker build https://github.com/1993hzh/blogV2.git
 ```
 
-## Documentation
-
-For more information about using Play and Scala on Heroku, see these Dev Center articles:
-
-- [Play and Scala on Heroku](https://devcenter.heroku.com/categories/language-support#scala-and-play)
-
+## TODO
