@@ -10,7 +10,7 @@ RUN rpm -ivh jdk-8*-linux-x64.rpm && rm jdk-8*-linux-x64.rpm
 ENV JAVA_HOME /usr/java/latest
 
 RUN yum update -y && yum install -y unzip
-RUN curl -O http://downloads.typesafe.com/typesafe-activator/1.3.6/typesafe-activator-1.3.6.zip
+RUN curl -O https://downloads.typesafe.com/typesafe-activator/1.3.6/typesafe-activator-1.3.6.zip
 RUN unzip typesafe-activator-1.3.6.zip -d / && rm typesafe-activator-1.3.6.zip && chmod a+x /activator-1.3.6/activator
 ENV PATH $PATH:/activator-1.3.6
 

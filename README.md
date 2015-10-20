@@ -1,33 +1,32 @@
-# scala/play-getting-started
+# IBM bluemix+docker+custom image
+Remember that `ng` stands for America Region and `eu-gb` stands for England Region, make sure this prefix is always the same.
 
-A barebones Scala app (using the Play framework), which can easily be deployed to Heroku.  
+Deploy scala env in bluemix using docker.
 
-This application support the [Getting Started with Scala/Play on Heroku](https://devcenter.heroku.com/articles/getting-started-with-scala) article - check it out.
+## Setup bluemix env in local
 
-## Running Locally
+First, install Docker CLI [2], CloudFoundry CLI [1], ibm-containers cf CLI [1]
 
-Make sure you have Play and sbt installed.  Also, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+### How to install
+[1] bluemix docs: https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html
+
+[2] docker docs: https://docs.docker.com/installation/
+
+### Log in the bluemix
+Then login in shell: 
+```sh
+$ cf login -a https://api.ng.bluemix.net
+$ cf ic login
+```
+> Currently the ibm-containers have some bugs with cloudfoundry in linux64, see the issue for details: https://github.com/cloudfoundry/cli/issues/639
+
+> If you meet this bug, I'd like to suggest you to install `ice`, look for installation docs: https://www.eu-gb.bluemix.net/docs/containers/container_cli_ice_ov.html#container_cli_ice_install
+
+### Build your custom images
+You can change the url with you own path, just make sure the path that you provided has `Dockerfile`.
 
 ```sh
-$ git clone https://github.com/heroku/scala-getting-started.git
-$ cd scala-getting-started
-$ sbt compile stage
-$ foreman start web
+$ docker build https://github.com/1993hzh/blogV2.git
 ```
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
-
-## Deploying to Heroku
-
-```sh
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-
-## Documentation
-
-For more information about using Play and Scala on Heroku, see these Dev Center articles:
-
-- [Play and Scala on Heroku](https://devcenter.heroku.com/categories/language-support#scala-and-play)
-
+## TODO
