@@ -7,13 +7,15 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <non-jta-data-source>PlayDS</non-jta-data-source>
         <class>models.AbstractModel</class>
+        <class>models.User</class>
+        <class>models.Role</class>
 
         <!-- for test -->
         <class>models.test.TestModel</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"></property>
+            <property name="hibernate.hbm2ddl.auto" value="create"></property>
             <property name="hibernate.show_sql" value="true"></property>
         </properties>
     </persistence-unit>

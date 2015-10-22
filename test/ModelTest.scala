@@ -10,17 +10,9 @@ import play.test.WithApplication
 /**
  * Created by leo on 15-10-20.
  */
-class ModelTest extends WithApplication {
-
-  val ENTITY_MANAGER = "blog"
-  var em: EntityManager = null
+class ModelTest extends AbstractTest {
 
   @Before
-  def init() = {
-    em = JPA.em(ENTITY_MANAGER)
-    insert
-  }
-
   def insert() = {
     val tm: TestModel = TestModel()
     tm.name = "test"
