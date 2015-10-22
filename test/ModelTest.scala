@@ -31,7 +31,7 @@ class ModelTest extends WithApplication {
 
   @Test
   def query() = {
-    val tm: TestModel = em.createQuery("from TestModel").getSingleResult.asInstanceOf[TestModel]
+    val tm: TestModel = em.createQuery("from TestModel").getResultList.get(0).asInstanceOf[TestModel]
     println(tm.name)
   }
 }
