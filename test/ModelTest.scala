@@ -2,7 +2,7 @@ import javax.persistence.{EntityManager}
 import javax.transaction.Transactional
 
 import models.test.TestModel
-import org.junit.{Test, Before}
+import org.junit.{Assert, Test, Before}
 import play.db.jpa.{JPA}
 import play.test.WithApplication
 
@@ -24,6 +24,6 @@ class ModelTest extends AbstractTest {
   @Test
   def query() = {
     val tm: TestModel = em.createQuery("from TestModel").getResultList.get(0).asInstanceOf[TestModel]
-    println(tm.name)
+    Assert.assertEquals("test", tm.name)
   }
 }

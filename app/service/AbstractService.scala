@@ -6,4 +6,6 @@ package service
  */
 class AbstractService {
 
+
+
 }
