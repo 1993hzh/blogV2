@@ -1,29 +1,34 @@
-import javax.persistence.{EntityManager}
-import javax.transaction.Transactional
-
-import models.test.TestModel
+import dao.TestModelDAO
+import models.{TestModel}
 import org.junit.{Assert, Test, Before}
-import play.db.jpa.{JPA}
-import play.test.WithApplication
-
+import play.Logger
+import scala.util.{Success, Failure}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by leo on 15-10-20.
  */
 class ModelTest extends AbstractTest {
+  lazy val dao = new TestModelDAO()
 
   @Before
-  def insert() = {
-    val tm: TestModel = TestModel()
-    tm.name = "test"
-    em.getTransaction.begin
-    em.persist(tm)
-    em.getTransaction.commit
+  def initSelf(): Unit = {
+    val test1 = TestModel(0, "test1")
+    dao.create(test1)
+
+    val test2 = TestModel(0, "test2")
+    dao.create(test2)
   }
+
 
   @Test
   def query() = {
-    val tm: TestModel = em.createQuery("from TestModel").getResultList.get(0).asInstanceOf[TestModel]
-    Assert.assertEquals("test", tm.name)
+    val tm = dao.query("test1")
+    tm onComplete {
+      case Success(result) => Assert.assertEquals("test1", result.name)
+      case Failure(f) => Logger.error(f.getMessage)
+    }
   }
+
 }
+
