@@ -9,7 +9,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * Created by leo on 15-10-20.
  */
 class ModelTest extends AbstractTest {
-  lazy val dao = new TestModelDAO()
+  // remember that lazy should be added to prevent the DAO eager fetch
+  // eager fetch will result in the unit case fail with `Play.current` empty, represented as `no application start`
+  lazy val dao = TestModelDAO()
 
   @Before
   def initSelf(): Unit = {

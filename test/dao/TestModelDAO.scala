@@ -1,6 +1,8 @@
 package dao
 
 
+import javax.inject.Singleton
+
 import models.TestModel
 import _root_.slick.lifted.TableQuery
 import tables.TestModelTable
@@ -10,6 +12,7 @@ import scala.concurrent.Future
 /**
  * Created by leo on 15-10-27.
  */
+@Singleton()
 class TestModelDAO extends AbstractDAO with TestModelTable {
 
   protected var modelQuery = TableQuery[TestModelTable]
@@ -44,4 +47,10 @@ class TestModelDAO extends AbstractDAO with TestModelTable {
 
   def upsert(): Future[Unit] = ???
 
+}
+
+object TestModelDAO {
+  def apply() = {
+    new TestModelDAO()
+  }
 }
