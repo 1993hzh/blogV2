@@ -15,6 +15,7 @@ libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _)
 
 //add junit support
 libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
+libraryDependencies += "junit" % "junit" % "4.12" % "test"
 
 //add slick support
 libraryDependencies ++= Seq(
