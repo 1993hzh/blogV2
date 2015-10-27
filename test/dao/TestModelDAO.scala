@@ -17,30 +17,29 @@ class TestModelDAO extends AbstractDAO with TestModelTable {
   import driver.api._
 
   def create(model: TestModel): Future[Unit] = {
-    try db.run(modelQuery += model).map(_ => ())
-    finally db.close
+    db.run(modelQuery += model).map(_ => ())
   }
 
   def query(name: String): Future[TestModel] = {
-    try db.run(modelQuery.filter(_.name === name).result.head)
-    finally db.close
+    db.run(modelQuery.filter(_.name === name).result.head)
   }
 
   def all(): Future[List[TestModel]] = {
-    try db.run(modelQuery.result).map(_.toList)
-    finally db.close
+    db.run(modelQuery.result).map(_.toList)
   }
 
   def update(model: TestModel): Future[Unit] = {
-    try db.run(modelQuery.filter(_.id === model.id).update(model)).map(_ => ())
-    finally db.close
+    db.run(modelQuery.filter(_.id === model.id).update(model)).map(_ => ())
   }
 
   def delete(model: TestModel): Future[Int] = delete(model.id)
 
   def delete(id: Int): Future[Int] = {
-    try db.run(modelQuery.filter(_.id === id).delete)
-    finally db.close
+    db.run(modelQuery.filter(_.id === id).delete)
+  }
+
+  def delete(name: String): Future[Int] = {
+    db.run(modelQuery.filter(_.name === name).delete)
   }
 
   def upsert(): Future[Unit] = ???
