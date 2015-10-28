@@ -1,6 +1,6 @@
 import dao.{UserDAO, RoleDAO}
-import models.{RoleType, Role, User}
-import org.junit.{Before, Assert, Test}
+import models.{WebSite, RoleType, Role, User}
+import org.junit.{After, Before, Assert, Test}
 import utils.Encryption
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
@@ -17,13 +17,14 @@ class UserTest extends AbstractTest {
     val adminRole = Role(0, RoleType.OWNER)
     RoleDAO.insert(adminRole) onComplete {
       case Failure(f) => Assert.fail(f.getLocalizedMessage)
-      case Success(result) =>
-    }
-
-    val admin = User(0, "admin", Encryption.encodeBySHA1("admin"), "admin@test.com", adminRole.id)
-    UserDAO.insert(admin) onComplete {
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-      case Success(result) =>
+      case Success(result) => {
+        val pwd = Encryption.encodeBySHA1("admin")
+        val admin = User(0, "admin", pwd, "admin@test.com", result)
+        UserDAO.insert(admin) onComplete {
+          case Failure(f) => Assert.fail(f.getLocalizedMessage)
+          case Success(result) =>
+        }
+      }
     }
   }
 
@@ -47,8 +48,21 @@ class UserTest extends AbstractTest {
     Assert.assertEquals(role.id, user.roleId)
   }
 
-  @Test
+  //  @Test
   def insertUserLikeBinding() = {
 
+  }
+
+  @After
+  def deleteUserAndRole() = {
+    UserDAO.deleteByUserName("admin") onComplete {
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+      case Success(result) =>
+    }
+
+    RoleDAO.deleteByRoleTypeAndWebsite(RoleType.OWNER, WebSite.MY) onComplete {
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+      case Success(result) =>
+    }
   }
 }
