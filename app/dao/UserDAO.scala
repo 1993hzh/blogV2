@@ -15,8 +15,8 @@ object UserDAO extends AbstractDAO[User] with UserTable {
 
   import driver.api._
 
-  override def insert(model: User): Future[Unit] = {
-    db.run(userModelQuery += model).map(_ => ())
+  override def insert(model: User): Future[Int] = {
+    db.run(userModelQuery returning userModelQuery.map(_.id) += model)
   }
 
   override def update(model: User): Future[Int] = {
@@ -35,5 +35,9 @@ object UserDAO extends AbstractDAO[User] with UserTable {
 
   def queryByUserName(userName: String): Future[User] = {
     db.run(userModelQuery.filter(_.userName === userName).result.head)
+  }
+
+  def deleteByUserName(userName: String): Future[Int] = {
+    db.run(userModelQuery.filter(_.userName === userName).delete)
   }
 }

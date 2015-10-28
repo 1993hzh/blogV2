@@ -15,7 +15,7 @@ trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] {
 
   override protected val dbConfig = DatabaseConfigProvider.get[JdbcProfile]("blog")(Play.current)
 
-  def insert(model: M): Future[Unit]
+  def insert(model: M): Future[Int]
 
   def update(model: M): Future[Int]
 

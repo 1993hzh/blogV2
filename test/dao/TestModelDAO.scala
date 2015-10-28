@@ -51,7 +51,7 @@ class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
     db.run(modelQuery.filter(_.name === name).delete)
   }
 
-  override def insert(model: TestModel): Future[Unit] = ???
+  override def insert(model: TestModel): Future[Int] = ???
 
   override def upsert(model: TestModel): Future[Int] = ???
 

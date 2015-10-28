@@ -15,8 +15,8 @@ object RoleDAO extends AbstractDAO[Role] with RoleTable {
 
   import driver.api._
 
-  override def insert(model: Role): Future[Unit] = {
-    db.run(roleModelQuery += model).map(_ => ())
+  override def insert(model: Role): Future[Int] = {
+    db.run(roleModelQuery returning roleModelQuery.map(_.id) += model)
   }
 
   override def update(model: Role): Future[Int] = {
@@ -37,5 +37,9 @@ object RoleDAO extends AbstractDAO[Role] with RoleTable {
 
   def queryByRoleType(roleType: String): Future[Role] = {
     db.run(roleModelQuery.filter(_.roleType === roleType).result.head)
+  }
+
+  def deleteByRoleTypeAndWebsite(roleType: String, website: String): Future[Int] = {
+    db.run(roleModelQuery.filter(r => (r.roleType === roleType && r.website === website)).delete)
   }
 }
