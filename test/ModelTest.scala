@@ -1,7 +1,6 @@
 import dao.TestModelDAO
 import models.{TestModel}
 import org.junit.{After, Assert, Test, Before}
-import play.Logger
 import scala.util.{Success, Failure}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -31,7 +30,7 @@ class ModelTest extends AbstractTest {
 
   @Test
   def query() = {
-    dao.query("test1") onComplete {
+    dao.queryName("test1") onComplete {
       case Success(result) => Assert.assertEquals("test1", result.name)
       case Failure(f) => Assert.fail(f.getLocalizedMessage)
     }

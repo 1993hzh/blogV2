@@ -13,9 +13,9 @@ import scala.concurrent.Future
  * Created by leo on 15-10-27.
  */
 @Singleton()
-class TestModelDAO extends AbstractDAO with TestModelTable {
+class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
 
-  protected var modelQuery = TableQuery[TestModelTable]
+  var modelQuery = TableQuery[TestModelTable]
 
   import driver.api._
 
@@ -23,9 +23,11 @@ class TestModelDAO extends AbstractDAO with TestModelTable {
     db.run(modelQuery += model).map(_ => ())
   }
 
-  def query(name: String): Future[TestModel] = {
+  def queryName(name: String): Future[TestModel] = {
     db.run(modelQuery.filter(_.name === name).result.head)
   }
+
+  def query(hql: String): Future[Seq[TestModel]] = ???
 
   def all(): Future[List[TestModel]] = {
     db.run(modelQuery.result).map(_.toList)
@@ -51,8 +53,9 @@ class TestModelDAO extends AbstractDAO with TestModelTable {
     db.run(modelQuery.filter(_.name === name).delete)
   }
 
-  def upsert(): Future[Unit] = ???
+  override def insert(model: TestModel): Future[Unit] = ???
 
+  override def upsert(model: TestModel): Future[Int] = ???
 }
 
 object TestModelDAO {
