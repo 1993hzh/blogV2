@@ -1,6 +1,6 @@
 import dao.TestModelDAO
 import models.{TestModel}
-import org.junit.{Assert, Test, Before}
+import org.junit.{After, Assert, Test, Before}
 import play.Logger
 import scala.util.{Success, Failure}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,34 +14,55 @@ class ModelTest extends AbstractTest {
   lazy val dao = TestModelDAO()
 
   @Before
-  def initSelf(): Unit = {
-    truncateTable
-
-    val test1 = TestModel(0, "test1")
+  def insert(): Unit = {
+    val test1 = TestModel(0, "test1", "test")
     dao.create(test1) onComplete {
-      case Failure(f) => Logger.error(f.getMessage); Assert.fail
-      case _ =>
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+      case Success(result) =>
     }
 
-    val test2 = TestModel(0, "test2")
+    val test2 = TestModel(0, "test2", "test")
     dao.create(test2) onComplete {
-      case Failure(f) => Logger.error(f.getMessage); Assert.fail
-      case _ =>
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+      case Success(result) =>
     }
 
-  }
-
-  def truncateTable() = {
-    dao.delete("test1")
-    dao.delete("test2")
   }
 
   @Test
   def query() = {
-    val tm = dao.query("test1")
-    tm onComplete {
+    dao.query("test1") onComplete {
       case Success(result) => Assert.assertEquals("test1", result.name)
-      case Failure(f) => Logger.error(f.getMessage); Assert.fail
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+    }
+  }
+
+  @Test
+  def queryAll = {
+    dao.all onComplete {
+      case Success(result) => Assert.assertEquals(2, result.size); result.foreach(println)
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+    }
+  }
+
+  @Test
+  def update() = {
+    dao.update("test2", "testUpdate") onComplete {
+      case Success(result) => Assert.assertEquals(1, result)
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+    }
+  }
+
+  @After
+  def delete(): Unit = {
+    dao.delete("test1") onComplete {
+      case Success(result) => Assert.assertEquals(1, result)
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+    }
+
+    dao.delete("test2") onComplete {
+      case Success(result) => Assert.assertEquals(1, result)
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
     }
   }
 

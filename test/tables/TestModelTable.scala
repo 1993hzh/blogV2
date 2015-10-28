@@ -19,7 +19,9 @@ trait TestModelTable {
 
     def nameIndex = index("NAME_IDX", name, unique = true)
 
-    override def * = (id, name) <>(TestModel.tupled, TestModel.unapply)
+    def description = column[String]("description")
+
+    override def * = (id, name, description) <>(TestModel.tupled, TestModel.unapply)
   }
 
 }

@@ -31,8 +31,14 @@ class TestModelDAO extends AbstractDAO with TestModelTable {
     db.run(modelQuery.result).map(_.toList)
   }
 
-  def update(model: TestModel): Future[Unit] = {
-    db.run(modelQuery.filter(_.id === model.id).update(model)).map(_ => ())
+  def update(model: TestModel): Future[Int] = {
+    val action = modelQuery.filter(_.id === model.id).update(model)
+    db.run(action)
+  }
+
+  def update(name: String, description: String): Future[Int] = {
+    val action = modelQuery.filter(_.name === name).map(_.description).update(description)
+    db.run(action)
   }
 
   def delete(model: TestModel): Future[Int] = delete(model.id)
