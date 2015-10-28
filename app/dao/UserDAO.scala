@@ -31,5 +31,9 @@ object UserDAO extends AbstractDAO[User] with UserTable {
     db.run(userModelQuery.insertOrUpdate(model))
   }
 
-  override def query(hql: String): Future[Seq[User]] = ???
+  override def query(id: Int): Future[User] = ???
+
+  def queryByUserName(userName: String): Future[User] = {
+    db.run(userModelQuery.filter(_.userName === userName).result.head)
+  }
 }

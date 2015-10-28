@@ -31,5 +31,11 @@ object RoleDAO extends AbstractDAO[Role] with RoleTable {
     db.run(roleModelQuery.insertOrUpdate(model))
   }
 
-  override def query(hql: String): Future[Seq[Role]] = ???
+  override def query(id: Int): Future[Role] = {
+    db.run(roleModelQuery.filter(_.id === id).result.head)
+  }
+
+  def queryByRoleType(roleType: String): Future[Role] = {
+    db.run(roleModelQuery.filter(_.roleType === roleType).result.head)
+  }
 }

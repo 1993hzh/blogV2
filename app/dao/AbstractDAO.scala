@@ -19,7 +19,7 @@ trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] {
 
   def update(model: M): Future[Int]
 
-  def query(hql: String): Future[Seq[M]]
+  def query(id: Int): Future[M]
 
   def delete(model: M): Future[Int]
 

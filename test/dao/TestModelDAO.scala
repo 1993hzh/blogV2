@@ -27,8 +27,6 @@ class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
     db.run(modelQuery.filter(_.name === name).result.head)
   }
 
-  def query(hql: String): Future[Seq[TestModel]] = ???
-
   def all(): Future[List[TestModel]] = {
     db.run(modelQuery.result).map(_.toList)
   }
@@ -56,6 +54,8 @@ class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
   override def insert(model: TestModel): Future[Unit] = ???
 
   override def upsert(model: TestModel): Future[Int] = ???
+
+  override def query(id: Int): Future[TestModel] = ???
 }
 
 object TestModelDAO {
