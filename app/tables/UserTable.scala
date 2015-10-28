@@ -15,19 +15,19 @@ trait UserTable {
 
   import driver.api._
 
-  class UserTable(tag: Tag) extends Table[User](tag, "T_USER") {
+  class UserTable(tag: Tag) extends Table[User](tag, "t_user") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def userName = column[String]("userName")
+    def userName = column[String]("username")
 
     def password = column[String]("password")
 
     def mail = column[String]("mail")
 
-    def lastLoginIp = column[Option[String]]("lastLoginIp")
+    def lastLoginIp = column[Option[String]]("lastloginip")
 
-    def lastLoginTime = column[Option[Timestamp]]("lastLoginTime")
+    def lastLoginTime = column[Option[Timestamp]]("lastlogintime")
 
     def roleId = column[Int]("role_id")
 

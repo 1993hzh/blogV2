@@ -1,6 +1,6 @@
 package tables
 
-import models.Role
+import models.{WebSite, Role}
 import slick.driver.JdbcProfile
 
 /**
@@ -12,13 +12,15 @@ trait RoleTable {
 
   import driver.api._
 
-  class RoleTable(tag: Tag) extends Table[Role](tag, "T_ROLE") {
+  class RoleTable(tag: Tag) extends Table[Role](tag, "t_role") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
-    def roleType = column[String]("roleType")
+    def roleType = column[String]("roletype")
 
-    def website = column[Option[String]]("website")
+    def website = column[String]("website", O.Default(WebSite.MY))
+
+    def roleType_website_Index = index("ROLETYPE_WEBSITE_IDX", (roleType, website), unique = true)
 
     override def * = (id, roleType, website) <>(Role.tupled, Role.unapply)
   }

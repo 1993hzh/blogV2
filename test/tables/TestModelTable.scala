@@ -11,7 +11,8 @@ trait TestModelTable {
 
   import driver.api._
 
-  class TestModelTable(tag: Tag) extends Table[TestModel](tag, "testmodel") {
+  class TestModelTable(tag: Tag) extends Table[TestModel](tag, "t_testmodel") {
+    //remember that the `t_testmodel` should be in lower case
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
