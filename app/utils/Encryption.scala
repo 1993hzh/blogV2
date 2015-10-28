@@ -16,7 +16,7 @@ object Encryption {
     }
     try {
       val md: MessageDigest = MessageDigest.getInstance("SHA-1")
-      Base64.encodeBase64String(md.digest(str.getBytes("utf-8"))).trim()
+      return Base64.encodeBase64String(md.digest(str.getBytes("utf-8"))).trim()
     } catch {
       case e: Exception =>
         Logger.error(e.getMessage + "=> cause " + str + " encryption failed.")
