@@ -13,15 +13,18 @@ import scala.util.{Failure, Success}
  */
 class UserTest extends AbstractTest {
 
+  lazy val roleDAO = RoleDAO()
+
+  lazy val userDAO = UserDAO()
 
   @Before
   def insertUserLikeRegister() = {
     val adminRole = Role(0, RoleType.OWNER)
-    RoleDAO.insert(adminRole) onComplete {
+    roleDAO.insert(adminRole) onComplete {
       case Failure(f) => Assert.fail(f.getLocalizedMessage)
       case Success(result) => {
         val admin = User(0, "admin", Encryption.encodeBySHA1("admin"), "admin@test.com", result)
-        UserDAO.insert(admin) onComplete {
+        userDAO.insert(admin) onComplete {
           case Failure(f) => Assert.fail(f.getLocalizedMessage)
           case Success(result) =>
         }
@@ -32,10 +35,10 @@ class UserTest extends AbstractTest {
   @Before
   def insertUserLikeBinding(): Unit = {
     val sinaRole = Role(0, RoleType.COMMON, WebSite.SINA)
-    val roleId = Await.result(RoleDAO.insert(sinaRole), Duration.Inf)
+    val roleId = Await.result(roleDAO.insert(sinaRole), Duration.Inf)
 
     val sinaUser = User(0, "sina", Encryption.encodeBySHA1("sina"), "sina@test.com", roleId)
-    Await.result(UserDAO.insert(sinaUser), Duration.Inf)
+    Await.result(userDAO.insert(sinaUser), Duration.Inf)
   }
 
   @Test
@@ -57,10 +60,10 @@ class UserTest extends AbstractTest {
   }
 
   def loginRegister(name: String, pwd: String) = {
-    UserDAO.login(name, pwd) match {
+    userDAO.login(name, pwd) match {
       case Some(user) => {
         println(user)
-        val adminRole = Await.result(RoleDAO.query(user.roleId), Duration.Inf)
+        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf)
         assertUser(user, adminRole)
       }
       case None => Assert.fail(name + " login fail")
@@ -69,10 +72,10 @@ class UserTest extends AbstractTest {
 
   //  @Test
   def loginUserLikeRegisterSuccess() = {
-    UserDAO.login("admin", "admin") match {
+    userDAO.login("admin", "admin") match {
       case Some(user) => {
         println(user)
-        val adminRole = Await.result(RoleDAO.query(user.roleId), Duration.Inf)
+        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf)
         assertUser(user, adminRole)
       }
       case None => Assert.fail("login fail")
@@ -93,10 +96,10 @@ class UserTest extends AbstractTest {
 
   @After
   def deleteUserAndRole(): Unit = {
-    Await.result(UserDAO.deleteByUserName("admin"), Duration.Inf)
-    Await.result(UserDAO.deleteByUserName("sina"), Duration.Inf)
+    Await.result(userDAO.deleteByUserName("admin"), Duration.Inf)
+    Await.result(userDAO.deleteByUserName("sina"), Duration.Inf)
 
-    Await.result(RoleDAO.deleteByRoleTypeAndWebsite(RoleType.OWNER, WebSite.MY), Duration.Inf)
-    Await.result(RoleDAO.deleteByRoleTypeAndWebsite(RoleType.COMMON, WebSite.SINA), Duration.Inf)
+    Await.result(roleDAO.deleteByRoleTypeAndWebsite(RoleType.OWNER, WebSite.MY), Duration.Inf)
+    Await.result(roleDAO.deleteByRoleTypeAndWebsite(RoleType.COMMON, WebSite.SINA), Duration.Inf)
   }
 }

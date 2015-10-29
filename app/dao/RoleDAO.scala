@@ -1,17 +1,19 @@
 package dao
 
+import javax.inject.Singleton
+
 import models.Role
 import slick.lifted.TableQuery
 import tables.RoleTable
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
  * Created by leo on 15-10-28.
  */
-object RoleDAO extends AbstractDAO[Role] with RoleTable {
+@Singleton()
+class RoleDAO extends AbstractDAO[Role] with RoleTable {
 
-  val roleModelQuery = TableQuery[RoleTable]
+  private val roleModelQuery = TableQuery[RoleTable]
 
   import driver.api._
 
@@ -41,5 +43,14 @@ object RoleDAO extends AbstractDAO[Role] with RoleTable {
 
   def deleteByRoleTypeAndWebsite(roleType: String, website: String): Future[Int] = {
     db.run(roleModelQuery.filter(r => (r.roleType === roleType && r.website === website)).delete)
+  }
+}
+
+object RoleDAO {
+
+  val roles = new RoleDAO().roleModelQuery
+
+  def apply() = {
+    new RoleDAO()
   }
 }

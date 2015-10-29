@@ -15,7 +15,7 @@ import scala.concurrent.Future
 @Singleton()
 class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
 
-  var modelQuery = TableQuery[TestModelTable]
+  val modelQuery = TableQuery[TestModelTable]
 
   import driver.api._
 

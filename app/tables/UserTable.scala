@@ -35,7 +35,7 @@ trait UserTable {
 
     def mailIndex = index("MAIL_IDX", mail, unique = true)
 
-    def roleFK = foreignKey("ROLE_FK", roleId, RoleDAO.roleModelQuery)(_.id)
+    def roleFK = foreignKey("ROLE_FK", roleId, RoleDAO.roles)(_.id)
 
 
     override def * = (id, userName, password, mail, roleId, lastLoginIp, lastLoginTime) <>(User.tupled, User.unapply)

@@ -1,6 +1,7 @@
 package dao
 
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 import models.{RoleType, User}
 import slick.lifted.TableQuery
@@ -14,9 +15,12 @@ import scala.util.{Failure, Success}
 /**
  * Created by leo on 15-10-28.
  */
-object UserDAO extends AbstractDAO[User] with UserTable {
+@Singleton()
+class UserDAO extends AbstractDAO[User] with UserTable {
 
   val userModelQuery = TableQuery[UserTable]
+
+  lazy val roleDAO = RoleDAO()
 
   import driver.api._
 
@@ -55,7 +59,7 @@ object UserDAO extends AbstractDAO[User] with UserTable {
         if (u.password.equals(pwd)) {
           //pwd must equals
           var returnUser: Option[User] = None
-          RoleDAO.query(u.roleId) onComplete {
+          roleDAO.query(u.roleId) onComplete {
             //role must be OWNER
             case Success(result) => {
               if (result.roleType.equals(RoleType.OWNER))
@@ -69,5 +73,14 @@ object UserDAO extends AbstractDAO[User] with UserTable {
       }
       case None => None
     }
+  }
+}
+
+object UserDAO {
+
+  lazy val userModelQuery = new UserDAO().userModelQuery
+
+  def apply() = {
+    new UserDAO()
   }
 }
