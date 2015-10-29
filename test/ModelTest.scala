@@ -1,6 +1,8 @@
 import dao.TestModelDAO
 import models.{TestModel}
 import org.junit.{After, Assert, Test, Before}
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 import scala.util.{Success, Failure}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -25,31 +27,24 @@ class ModelTest extends AbstractTest {
       case Failure(f) => Assert.fail(f.getLocalizedMessage)
       case Success(result) =>
     }
-
   }
 
   @Test
   def query() = {
-    dao.queryName("test1") onComplete {
-      case Success(result) => Assert.assertEquals("test1", result.name)
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-    }
+    val result = Await.result(dao.queryName("test1"), Duration.Inf)
+    Assert.assertEquals("test1", result.name)
   }
 
   @Test
   def queryAll = {
-    dao.all onComplete {
-      case Success(result) => Assert.assertEquals(2, result.size); result.foreach(println)
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-    }
+    val result = Await.result(dao.all, Duration.Inf)
+    Assert.assertEquals(2, result.size)
   }
 
   @Test
   def update() = {
-    dao.update("test2", "testUpdate") onComplete {
-      case Success(result) => Assert.assertEquals(1, result)
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-    }
+    val result = Await.result(dao.update("test2", "testUpdate"), Duration.Inf)
+    Assert.assertEquals(1, result)
   }
 
   @After
