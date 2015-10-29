@@ -14,4 +14,5 @@ object RoleType {
 
 object WebSite {
   val MY = "www.huzhonghua.cn"
+  val SINA = "weibo.com"
 }

@@ -2,7 +2,9 @@ import dao.{UserDAO, RoleDAO}
 import models.{WebSite, RoleType, Role, User}
 import org.junit.{After, Before, Assert, Test}
 import utils.Encryption
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 
 /**
@@ -18,8 +20,7 @@ class UserTest extends AbstractTest {
     RoleDAO.insert(adminRole) onComplete {
       case Failure(f) => Assert.fail(f.getLocalizedMessage)
       case Success(result) => {
-        val pwd = Encryption.encodeBySHA1("admin")
-        val admin = User(0, "admin", pwd, "admin@test.com", result)
+        val admin = User(0, "admin", Encryption.encodeBySHA1("admin"), "admin@test.com", result)
         UserDAO.insert(admin) onComplete {
           case Failure(f) => Assert.fail(f.getLocalizedMessage)
           case Success(result) =>
@@ -28,17 +29,22 @@ class UserTest extends AbstractTest {
     }
   }
 
+  @Before
+  def insertUserLikeBinding(): Unit = {
+    val sinaRole = Role(0, RoleType.COMMON, WebSite.SINA)
+    val roleId = Await.result(RoleDAO.insert(sinaRole), Duration.Inf)
+
+    val sinaUser = User(0, "sina", Encryption.encodeBySHA1("sina"), "sina@test.com", roleId)
+    Await.result(UserDAO.insert(sinaUser), Duration.Inf)
+  }
+
   @Test
   def queryUserLikeRegister() = {
-    UserDAO.queryByUserName("admin") onComplete {
-      case Success(result) =>
-        val admin = result
-        RoleDAO.query(result.roleId) onComplete {
-          case Success(result) => assertUser(admin, result)
-          case Failure(f) => Assert.fail(f.getLocalizedMessage)
-        }
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-    }
+    val admin = Await.result(UserDAO.queryByUserName("admin"), Duration.Inf)
+
+    val adminRole = Await.result(RoleDAO.query(admin.roleId), Duration.Inf)
+
+    assertUser(admin, adminRole)
   }
 
   def assertUser(user: User, role: Role) = {
@@ -48,21 +54,17 @@ class UserTest extends AbstractTest {
     Assert.assertEquals(role.id, user.roleId)
   }
 
-  //  @Test
-  def insertUserLikeBinding() = {
+  @Test
+  def queryUserLikeBinding() = {
 
   }
 
   @After
-  def deleteUserAndRole() = {
-    UserDAO.deleteByUserName("admin") onComplete {
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-      case Success(result) =>
-    }
+  def deleteUserAndRole(): Unit = {
+    Await.result(UserDAO.deleteByUserName("admin"), Duration.Inf)
+    Await.result(UserDAO.deleteByUserName("sina"), Duration.Inf)
 
-    RoleDAO.deleteByRoleTypeAndWebsite(RoleType.OWNER, WebSite.MY) onComplete {
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-      case Success(result) =>
-    }
+    Await.result(RoleDAO.deleteByRoleTypeAndWebsite(RoleType.OWNER, WebSite.MY), Duration.Inf)
+    Await.result(RoleDAO.deleteByRoleTypeAndWebsite(RoleType.COMMON, WebSite.SINA), Duration.Inf)
   }
 }
