@@ -39,12 +39,44 @@ class UserTest extends AbstractTest {
   }
 
   @Test
-  def queryUserLikeRegister() = {
-    val admin = Await.result(UserDAO.queryByUserName("admin"), Duration.Inf)
+  def loginUserLikeRegisterFailWithUserNameWrong() = {
+    //username or pwd wrong
+    loginRegister("asd", "admin123")
+  }
 
-    val adminRole = Await.result(RoleDAO.query(admin.roleId), Duration.Inf)
+  @Test
+  def loginUserLikeRegisterFailWithPasswordWrong() = {
+    //username or pwd wrong
+    loginRegister("admin", "admin123")
+  }
 
-    assertUser(admin, adminRole)
+  @Test
+  def loginUserLikeRegisterFailWith3rdParty() = {
+    //cannot login with userName && password, 3rd party user should login with binding
+    loginRegister("sina", "sina")
+  }
+
+  def loginRegister(name: String, pwd: String) = {
+    UserDAO.login(name, pwd) match {
+      case Some(user) => {
+        println(user)
+        val adminRole = Await.result(RoleDAO.query(user.roleId), Duration.Inf)
+        assertUser(user, adminRole)
+      }
+      case None => Assert.fail(name + " login fail")
+    }
+  }
+
+  //  @Test
+  def loginUserLikeRegisterSuccess() = {
+    UserDAO.login("admin", "admin") match {
+      case Some(user) => {
+        println(user)
+        val adminRole = Await.result(RoleDAO.query(user.roleId), Duration.Inf)
+        assertUser(user, adminRole)
+      }
+      case None => Assert.fail("login fail")
+    }
   }
 
   def assertUser(user: User, role: Role) = {
@@ -54,7 +86,7 @@ class UserTest extends AbstractTest {
     Assert.assertEquals(role.id, user.roleId)
   }
 
-  @Test
+  //  @Test
   def queryUserLikeBinding() = {
 
   }
