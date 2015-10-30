@@ -1,6 +1,7 @@
 import dao.{UserDAO, RoleDAO}
 import models.{WebSite, RoleType, Role, User}
 import org.junit.{After, Before, Assert, Test}
+import play.Logger
 import utils.Encryption
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,47 +43,32 @@ class UserTest extends AbstractTest {
   }
 
   @Test
-  def loginUserLikeRegisterFailWithUserNameWrong() = {
+  def loginUserLikeRegisterFail() = {
     //username or pwd wrong
-    loginRegister("asd", "admin123")
+    Assert.assertEquals(None, loginRegister("asd", "admin123"))
+    Assert.assertEquals(None, loginRegister("admin", "admin123"))
+    //3rd party users should not login like register user
+    Assert.assertEquals(None, loginRegister("sina", "sina"))
+  }
+
+  def loginRegister(name: String, pwd: String): Option[User] = {
+    userDAO.login(name, pwd)
   }
 
   @Test
-  def loginUserLikeRegisterFailWithPasswordWrong() = {
-    //username or pwd wrong
-    loginRegister("admin", "admin123")
-  }
-
-  @Test
-  def loginUserLikeRegisterFailWith3rdParty() = {
-    //cannot login with userName && password, 3rd party user should login with binding
-    loginRegister("sina", "sina")
-  }
-
-  def loginRegister(name: String, pwd: String) = {
-    userDAO.login(name, pwd) match {
-      case Some(user) => {
-        println(user)
-        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf)
-        assertUser(user, adminRole)
-      }
-      case None => Assert.fail(name + " login fail")
-    }
-  }
-
-  //  @Test
   def loginUserLikeRegisterSuccess() = {
     userDAO.login("admin", "admin") match {
       case Some(user) => {
-        println(user)
-        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf)
+        Logger.info("Login user: " + user)
+        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf).getOrElse(null)
         assertUser(user, adminRole)
       }
-      case None => Assert.fail("login fail")
+      case None => Assert.fail("admin login fail")
     }
   }
 
   def assertUser(user: User, role: Role) = {
+    Assert.assertNotNull(role)
     Assert.assertEquals("admin", user.userName)
     Assert.assertEquals(Encryption.encodeBySHA1("admin"), user.password)
     Assert.assertEquals("admin@test.com", user.mail)

@@ -55,7 +55,7 @@ class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
 
   override def upsert(model: TestModel): Future[Int] = ???
 
-  override def query(id: Int): Future[TestModel] = ???
+  override def query(id: Int): Future[Option[TestModel]] = ???
 }
 
 object TestModelDAO {
