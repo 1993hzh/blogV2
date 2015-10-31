@@ -8,6 +8,7 @@ CREATE TABLE T_USER (
   lastLoginIp   VARCHAR(255),
   lastLoginTime TIMESTAMP,
   role_id       INTEGER,
+  binding_id    VARCHAR(255) UNIQUE,
   FOREIGN KEY (role_id) REFERENCES T_Role (id)
 );
 

@@ -69,6 +69,24 @@ class UserDAO extends AbstractDAO[User] with UserTable {
       case _ => None
     }
   }
+
+  def loginFromOtherSite(bindingId: String, website: String): Option[User] = {
+    val waitTime = Duration(1, TimeUnit.SECONDS)
+
+    val user = Await.result(db.run(userModelQuery.filter(_.bindingId === bindingId).result.headOption), waitTime)
+    user match {
+      case Some(u) => {
+        var returnUser: Option[User] = None
+        Await.result(roleDAO.query(u.roleId), waitTime) match {
+          case Some(role) if (role.roleType.equals(RoleType.COMMON) && role.webSite.equals(website)) =>
+            returnUser = Some(u)
+          case _ =>
+        }
+        returnUser
+      }
+      case None => None
+    }
+  }
 }
 
 object UserDAO {

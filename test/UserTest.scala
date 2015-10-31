@@ -38,7 +38,7 @@ class UserTest extends AbstractTest {
     val sinaRole = Role(0, RoleType.COMMON, WebSite.SINA)
     val roleId = Await.result(roleDAO.insert(sinaRole), Duration.Inf)
 
-    val sinaUser = User(0, "sina", Encryption.encodeBySHA1("sina"), "sina@test.com", roleId)
+    val sinaUser = User(0, "sina", Encryption.encodeBySHA1("sina111"), "sina@test.com", roleId, bindingId = Some("sinaId"))
     Await.result(userDAO.insert(sinaUser), Duration.Inf)
   }
 
@@ -57,27 +57,49 @@ class UserTest extends AbstractTest {
 
   @Test
   def loginUserLikeRegisterSuccess() = {
-    userDAO.login("admin", "admin") match {
+    loginRegister("admin", "admin") match {
       case Some(user) => {
         Logger.info("Login user: " + user)
         val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf).getOrElse(null)
-        assertUser(user, adminRole)
+        assertUser("admin", user, adminRole)
       }
       case None => Assert.fail("admin login fail")
     }
   }
 
-  def assertUser(user: User, role: Role) = {
+  def assertUser(name: String, user: User, role: Role) = {
     Assert.assertNotNull(role)
-    Assert.assertEquals("admin", user.userName)
-    Assert.assertEquals(Encryption.encodeBySHA1("admin"), user.password)
-    Assert.assertEquals("admin@test.com", user.mail)
+    Assert.assertEquals(name, user.userName)
+    if (role.roleType.eq(RoleType.OWNER)) {
+      Assert.assertEquals(Encryption.encodeBySHA1(name), user.password)
+    }
+    Assert.assertEquals(name + "@test.com", user.mail)
     Assert.assertEquals(role.id, user.roleId)
   }
 
-  //  @Test
-  def queryUserLikeBinding() = {
+  @Test
+  def queryUserLikeBindingSuccess() = {
+    loginBinding("sinaId", WebSite.SINA) match {
+      case Some(user) => {
+        Logger.info("Login user: " + user)
+        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf).getOrElse(null)
+        assertUser("sina", user, adminRole)
+      }
+      case None => Assert.fail("sinaId login fail")
+    }
+  }
 
+  @Test
+  def queryUserLikeBindingFail() = {
+    //username or pwd wrong
+    Assert.assertEquals(None, loginBinding("errorId", "errorSite"))
+    Assert.assertEquals(None, loginBinding("admin", "admin"))
+    //3rd party users should not login like register user
+    Assert.assertEquals(None, loginBinding("sinaIdError", WebSite.SINA))
+  }
+
+  def loginBinding(bindingId: String, website: String): Option[User] = {
+    userDAO.loginFromOtherSite(bindingId, website)
   }
 
   @After
