@@ -1,0 +1,12 @@
+# --- !Ups
+
+CREATE TABLE T_PASSAGE_TAG (
+  passage_id INTEGER NOT NULL,
+  tag_id     INTEGER NOT NULL,
+  FOREIGN KEY (tag_id) REFERENCES T_TAG (id),
+  FOREIGN KEY (passage_id) REFERENCES T_PASSAGE (id)
+);
+
+# --- !Downs
+
+DROP TABLE T_PASSAGE_TAG CASCADE;
