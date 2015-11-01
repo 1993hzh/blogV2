@@ -4,20 +4,15 @@ import java.sql.Timestamp
 
 import dao.RoleDAO
 import models.User
-import slick.driver.JdbcProfile
 
 /**
  * Created by leo on 15-10-28.
  */
-trait UserTable {
-
-  protected val driver: JdbcProfile
+trait UserTable extends AbstractTable[User] {
 
   import driver.api._
 
-  class UserTable(tag: Tag) extends Table[User](tag, "t_user") {
-
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+  class UserTable(tag: Tag) extends AbstractTable(tag, "t_user") {
 
     def userName = column[String]("username")
 
@@ -40,7 +35,6 @@ trait UserTable {
     def bindingIdIndex = index("BINDING_ID_IDX", bindingId, unique = true)
 
     def roleFK = foreignKey("ROLE_FK", roleId, RoleDAO.roles)(_.id)
-
 
     override def * = (id, userName, password, mail, roleId, lastLoginIp, lastLoginTime, bindingId) <>(User.tupled, User.unapply)
   }

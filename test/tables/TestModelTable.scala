@@ -1,20 +1,17 @@
 package tables
 
 import models.TestModel
-import slick.driver.JdbcProfile
+import slick.lifted
 
 /**
  * Created by leo on 15-10-26.
  */
-trait TestModelTable {
-  protected val driver: JdbcProfile
+trait TestModelTable extends AbstractTable[TestModel] {
 
   import driver.api._
 
-  class TestModelTable(tag: Tag) extends Table[TestModel](tag, "t_testmodel") {
+  class TestModelTable(tag: lifted.Tag) extends AbstractTable(tag, "t_testmodel") {
     //remember that the `t_testmodel` should be in lower case
-
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
     def name = column[String]("name")
 

@@ -1,20 +1,15 @@
 package tables
 
 import models.{WebSite, Role}
-import slick.driver.JdbcProfile
 
 /**
  * Created by leo on 15-10-28.
  */
-trait RoleTable {
-
-  protected val driver: JdbcProfile
+trait RoleTable extends AbstractTable[Role] {
 
   import driver.api._
 
-  class RoleTable(tag: Tag) extends Table[Role](tag, "t_role") {
-
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+  class RoleTable(tag: Tag) extends AbstractTable(tag, "t_role") {
 
     def roleType = column[String]("roletype")
 

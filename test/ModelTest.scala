@@ -1,6 +1,7 @@
 import dao.TestModelDAO
 import models.{TestModel}
 import org.junit.{After, Assert, Test, Before}
+import play.Logger
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.{Success, Failure}
@@ -38,6 +39,7 @@ class ModelTest extends AbstractTest {
   @Test
   def queryAll = {
     val result = Await.result(dao.all, Duration.Inf)
+    result.foreach(e => Logger.info(e.toString))
     Assert.assertEquals(2, result.size)
   }
 

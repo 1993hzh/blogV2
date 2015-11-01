@@ -17,43 +17,43 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton()
 class UserDAO extends AbstractDAO[User] with UserTable {
 
-  val userModelQuery = TableQuery[UserTable]
+  val modelQuery = TableQuery[UserTable]
 
   lazy val roleDAO = RoleDAO()
 
   import driver.api._
 
   override def insert(model: User): Future[Int] = {
-    db.run(userModelQuery returning userModelQuery.map(_.id) += model)
+    db.run(modelQuery returning modelQuery.map(_.id) += model)
   }
 
   override def update(model: User): Future[Int] = {
-    db.run(userModelQuery.filter(_.id === model.id).update(model))
+    db.run(modelQuery.filter(_.id === model.id).update(model))
   }
 
   override def delete(model: User): Future[Int] = {
-    db.run(userModelQuery.filter(_.id === model.id).delete)
+    db.run(modelQuery.filter(_.id === model.id).delete)
   }
 
   override def upsert(model: User): Future[Int] = {
-    db.run(userModelQuery.insertOrUpdate(model))
+    db.run(modelQuery.insertOrUpdate(model))
   }
 
   override def query(id: Int): Future[Option[User]] = ???
 
   def queryByUserName(userName: String): Future[Option[User]] = {
-    db.run(userModelQuery.filter(_.userName === userName).result.headOption)
+    db.run(modelQuery.filter(_.userName === userName).result.headOption)
   }
 
   def deleteByUserName(userName: String): Future[Int] = {
-    db.run(userModelQuery.filter(_.userName === userName).delete)
+    db.run(modelQuery.filter(_.userName === userName).delete)
   }
 
   def login(userName: String, password: String): Option[User] = {
     // query time should never larger than 1'
     val waitTime = Duration(1, TimeUnit.SECONDS)
 
-    val user = Await.result(db.run(userModelQuery.filter(_.userName === userName).result.headOption), waitTime)
+    val user = Await.result(db.run(modelQuery.filter(_.userName === userName).result.headOption), waitTime)
     val pwd = Encryption.encodeBySHA1(password)
     user match {
       case Some(u) if (u.password.equals(pwd)) => {
@@ -73,7 +73,7 @@ class UserDAO extends AbstractDAO[User] with UserTable {
   def loginFromOtherSite(bindingId: String, website: String): Option[User] = {
     val waitTime = Duration(1, TimeUnit.SECONDS)
 
-    val user = Await.result(db.run(userModelQuery.filter(_.bindingId === bindingId).result.headOption), waitTime)
+    val user = Await.result(db.run(modelQuery.filter(_.bindingId === bindingId).result.headOption), waitTime)
     user match {
       case Some(u) => {
         var returnUser: Option[User] = None
@@ -91,7 +91,7 @@ class UserDAO extends AbstractDAO[User] with UserTable {
 
 object UserDAO {
 
-  lazy val userModelQuery = new UserDAO().userModelQuery
+  lazy val users = new UserDAO().modelQuery
 
   def apply() = {
     new UserDAO()
