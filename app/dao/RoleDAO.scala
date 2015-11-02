@@ -13,7 +13,9 @@ import scala.concurrent.Future
 @Singleton()
 class RoleDAO extends AbstractDAO[Role] with RoleTable {
 
-  private val modelQuery = TableQuery[RoleTable]
+  override protected val modelQuery = TableQuery[RoleTable]
+
+  override type T = RoleTable
 
   import driver.api._
 

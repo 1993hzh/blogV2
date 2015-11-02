@@ -17,7 +17,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton()
 class UserDAO extends AbstractDAO[User] with UserTable {
 
-  val modelQuery = TableQuery[UserTable]
+  override protected val modelQuery = TableQuery[UserTable]
+
+  override type T = UserTable
 
   lazy val roleDAO = RoleDAO()
 

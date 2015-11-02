@@ -4,6 +4,7 @@ import models.AbstractModel
 import play.api.Play
 import play.api.db.slick.{HasDatabaseConfig, DatabaseConfigProvider}
 import _root_.slick.driver.JdbcProfile
+import tables.AbstractTable
 
 import scala.concurrent.Future
 
@@ -11,18 +12,24 @@ import scala.concurrent.Future
  * Created by leo on 15-10-27.
  */
 
-trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] {
+trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] with AbstractTable[M] {
+
+  import driver.api._
 
   override protected val dbConfig = DatabaseConfigProvider.get[JdbcProfile]("blog")(Play.current)
 
-  def insert(model: M): Future[Int]
+  type T <: AbstractTable
 
-  def update(model: M): Future[Int]
+  protected val modelQuery: slick.lifted.TableQuery[T]
 
-  def query(id: Int): Future[Option[M]]
+  def insert(model: M): Future[Int] = db.run(modelQuery returning modelQuery.map(_.id) += model)
 
-  def delete(model: M): Future[Int]
+  def update(model: M): Future[Int] = db.run(modelQuery.filter(_.id === model.id).update(model))
 
-  def upsert(model: M): Future[Int]
+  def query(id: Int): Future[Option[M]] = db.run(modelQuery.filter(_.id === id).result.headOption)
+
+  def delete(model: M): Future[Int] = db.run(modelQuery.filter(_.id === model.id).delete)
+
+  def upsert(model: M): Future[Int] = db.run(modelQuery.insertOrUpdate(model))
 
 }

@@ -15,7 +15,9 @@ import scala.concurrent.Future
 @Singleton()
 class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
 
-  val modelQuery = TableQuery[TestModelTable]
+  override protected val modelQuery = TableQuery[TestModelTable]
+
+  override type T = TestModelTable
 
   import driver.api._
 
@@ -31,17 +33,10 @@ class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
     db.run(modelQuery.result).map(_.toList)
   }
 
-  def update(model: TestModel): Future[Int] = {
-    val action = modelQuery.filter(_.id === model.id).update(model)
-    db.run(action)
-  }
-
   def update(name: String, description: String): Future[Int] = {
     val action = modelQuery.filter(_.name === name).map(_.description).update(description)
     db.run(action)
   }
-
-  def delete(model: TestModel): Future[Int] = delete(model.id)
 
   def delete(id: Int): Future[Int] = {
     db.run(modelQuery.filter(_.id === id).delete)
@@ -51,11 +46,6 @@ class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
     db.run(modelQuery.filter(_.name === name).delete)
   }
 
-  override def insert(model: TestModel): Future[Int] = ???
-
-  override def upsert(model: TestModel): Future[Int] = ???
-
-  override def query(id: Int): Future[Option[TestModel]] = ???
 }
 
 object TestModelDAO {
