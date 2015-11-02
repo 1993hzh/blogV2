@@ -25,24 +25,6 @@ class UserDAO extends AbstractDAO[User] with UserTable {
 
   import driver.api._
 
-  override def insert(model: User): Future[Int] = {
-    db.run(modelQuery returning modelQuery.map(_.id) += model)
-  }
-
-  override def update(model: User): Future[Int] = {
-    db.run(modelQuery.filter(_.id === model.id).update(model))
-  }
-
-  override def delete(model: User): Future[Int] = {
-    db.run(modelQuery.filter(_.id === model.id).delete)
-  }
-
-  override def upsert(model: User): Future[Int] = {
-    db.run(modelQuery.insertOrUpdate(model))
-  }
-
-  override def query(id: Int): Future[Option[User]] = ???
-
   def queryByUserName(userName: String): Future[Option[User]] = {
     db.run(modelQuery.filter(_.userName === userName).result.headOption)
   }

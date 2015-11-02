@@ -19,26 +19,6 @@ class RoleDAO extends AbstractDAO[Role] with RoleTable {
 
   import driver.api._
 
-  override def insert(model: Role): Future[Int] = {
-    db.run(modelQuery returning modelQuery.map(_.id) += model)
-  }
-
-  override def update(model: Role): Future[Int] = {
-    db.run(modelQuery.filter(_.id === model.id).update(model))
-  }
-
-  override def delete(model: Role): Future[Int] = {
-    db.run(modelQuery.filter(_.id === model.id).delete)
-  }
-
-  override def upsert(model: Role): Future[Int] = {
-    db.run(modelQuery.insertOrUpdate(model))
-  }
-
-  override def query(id: Int): Future[Option[Role]] = {
-    db.run(modelQuery.filter(_.id === id).result.headOption)
-  }
-
   def queryByRoleType(roleType: String): Future[Option[Role]] = {
     db.run(modelQuery.filter(_.roleType === roleType).result.headOption)
   }
