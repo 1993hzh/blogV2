@@ -2,7 +2,7 @@
 
 CREATE TABLE T_TAG (
   id          SERIAL       NOT NULL PRIMARY KEY,
-  name        VARCHAR(255) NOT NULL,
+  name        VARCHAR(255) NOT NULL UNIQUE,
   description VARCHAR(255)
 );
 

@@ -39,6 +39,10 @@ class TagDAO extends AbstractDAO[MyTag] with TagTable {
     db.run(modelQuery.filter(_.id === id).result.headOption)
   }
 
+  def queryByName(name: String): Future[Option[MyTag]] = {
+    db.run(modelQuery.filter(_.name === name).result.headOption)
+  }
+
 }
 
 object TagDAO {

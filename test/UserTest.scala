@@ -19,18 +19,12 @@ class UserTest extends AbstractTest {
   lazy val userDAO = UserDAO()
 
   @Before
-  def insertUserLikeRegister() = {
+  def insertUserLikeRegister(): Unit = {
     val adminRole = Role(0, RoleType.OWNER)
-    roleDAO.insert(adminRole) onComplete {
-      case Failure(f) => Assert.fail(f.getLocalizedMessage)
-      case Success(result) => {
-        val admin = User(0, "admin", Encryption.encodeBySHA1("admin"), "admin@test.com", result)
-        userDAO.insert(admin) onComplete {
-          case Failure(f) => Assert.fail(f.getLocalizedMessage)
-          case Success(result) =>
-        }
-      }
-    }
+    val roleId = Await.result(roleDAO.insert(adminRole), Duration.Inf)
+
+    val admin = User(0, "admin", Encryption.encodeBySHA1("admin"), "admin@test.com", roleId)
+    Await.result(userDAO.insert(admin), Duration.Inf)
   }
 
   @Before
@@ -91,10 +85,8 @@ class UserTest extends AbstractTest {
 
   @Test
   def queryUserLikeBindingFail() = {
-    //username or pwd wrong
     Assert.assertEquals(None, loginBinding("errorId", "errorSite"))
     Assert.assertEquals(None, loginBinding("admin", "admin"))
-    //3rd party users should not login like register user
     Assert.assertEquals(None, loginBinding("sinaIdError", WebSite.SINA))
   }
 

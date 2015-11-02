@@ -16,6 +16,8 @@ trait TagTable extends AbstractTable[MyTag] {
 
     def description = column[String]("description")
 
+    def nameIndex = index("TAG_NAME_IDX", name, unique = true)
+
     override def * = (id, name, description) <>(MyTag.tupled, MyTag.unapply)
   }
 
