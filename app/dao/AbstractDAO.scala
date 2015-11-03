@@ -9,8 +9,8 @@ import tables.AbstractTable
 import scala.concurrent.Future
 
 /**
- * Created by leo on 15-10-27.
- */
+  * Created by leo on 15-10-27.
+  */
 
 trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] with AbstractTable[M] {
 
@@ -28,7 +28,9 @@ trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] wit
 
   def query(id: Int): Future[Option[M]] = db.run(modelQuery.filter(_.id === id).result.headOption)
 
-  def delete(model: M): Future[Int] = db.run(modelQuery.filter(_.id === model.id).delete)
+  def delete(model: M): Future[Int] = delete(model.id)
+
+  def delete(id: Int): Future[Int] = db.run(modelQuery.filter(_.id === id).delete)
 
   def upsert(model: M): Future[Int] = db.run(modelQuery.insertOrUpdate(model))
 

@@ -8,7 +8,7 @@ import java.sql.Timestamp
  */
 case class Comment(id: Int,
                    content: String,
+                   passageId: Int,
+                   createTime: Timestamp,
                    fromId: Int,
-                   toId: Int,
-                   time: Timestamp,
-                   passageId: Int) extends AbstractModel
+                   toId: Option[Int] = None) extends AbstractModel

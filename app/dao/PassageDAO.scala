@@ -42,7 +42,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
   def queryCommentsByPassageId(passageId: Int): Future[Seq[Comment]] = {
     db.run(modelQuery.filter(_.id === passageId).
-      join(CommentDAO.comments).on(_.id === _.passageId).sortBy(_._2.time.desc).map(_._2).result)
+      join(CommentDAO.comments).on(_.id === _.passageId).sortBy(_._2.createTime.desc).map(_._2).result)
   }
 
 }

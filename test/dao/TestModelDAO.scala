@@ -38,10 +38,6 @@ class TestModelDAO extends AbstractDAO[TestModel] with TestModelTable {
     db.run(action)
   }
 
-  def delete(id: Int): Future[Int] = {
-    db.run(modelQuery.filter(_.id === id).delete)
-  }
-
   def delete(name: String): Future[Int] = {
     db.run(modelQuery.filter(_.name === name).delete)
   }

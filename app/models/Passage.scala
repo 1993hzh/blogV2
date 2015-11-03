@@ -11,5 +11,5 @@ case class Passage(id: Int,
                    title: String,
                    content: String,
                    createTime: Timestamp,
-                   viewCount: Int
+                   viewCount: Int = 0
                     ) extends AbstractModel

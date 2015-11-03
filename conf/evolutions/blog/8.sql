@@ -1,10 +1,12 @@
 # --- !Ups
 
 CREATE TABLE T_PASSAGE_TAG (
+  id         SERIAL  NOT NULL PRIMARY KEY,
   passage_id INTEGER NOT NULL,
   tag_id     INTEGER NOT NULL,
-  FOREIGN KEY (tag_id) REFERENCES T_TAG (id),
-  FOREIGN KEY (passage_id) REFERENCES T_PASSAGE (id)
+  FOREIGN KEY (tag_id) REFERENCES T_TAG (id) ON DELETE CASCADE,
+  FOREIGN KEY (passage_id) REFERENCES T_PASSAGE (id) ON DELETE CASCADE,
+  UNIQUE (tag_id, passage_id)
 );
 
 # --- !Downs
