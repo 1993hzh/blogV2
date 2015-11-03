@@ -1,4 +1,3 @@
-import dao.TagDAO
 import models.Tag
 import org.junit.{Assert, After, Before, Test}
 import play.Logger
@@ -11,8 +10,6 @@ import scala.concurrent.duration.Duration
  * 2015/11/1 21:27
  */
 class TagTest extends AbstractTest {
-
-  lazy val tagDAO = TagDAO()
 
   private var tagId = 0
 

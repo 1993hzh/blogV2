@@ -1,4 +1,3 @@
-import dao.{UserDAO, RoleDAO}
 import models.{WebSite, RoleType, Role, User}
 import org.junit.{After, Before, Assert, Test}
 import play.Logger
@@ -11,10 +10,6 @@ import scala.concurrent.duration.Duration
  * 2015/10/22 22:55
  */
 class UserTest extends AbstractTest {
-
-  lazy val roleDAO = RoleDAO()
-
-  lazy val userDAO = UserDAO()
 
   @Before
   def insertUserLikeRegister(): Unit = {

@@ -1,6 +1,5 @@
 import java.sql.Timestamp
 
-import dao._
 import models._
 import org.junit.{Assert, After, Test, Before}
 import utils.Encryption
@@ -13,15 +12,6 @@ import scala.concurrent.duration.Duration
   * Created by leo on 15-11-2.
   */
 class PassageTest extends AbstractTest {
-
-
-  lazy val tagDAO = TagDAO()
-  lazy val roleDAO = RoleDAO()
-  lazy val userDAO = UserDAO()
-  lazy val passageDAO = PassageDAO()
-  lazy val keywordDAO = KeywordDAO()
-  lazy val commentDAO = CommentDAO()
-  lazy val passage2TagDAO = Passage2TagDAO()
 
   val PASSAGE_SIZE = 22
   var tagIds: List[Int] = null
