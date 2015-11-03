@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-# GET     /                           controllers.Application.index
+GET     /                           controllers.Index.index
 # GET     /db                         controllers.Application.db
 
 # Map static resources from the /public folder to the /assets URL path
