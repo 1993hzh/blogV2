@@ -8,9 +8,9 @@ import scala.concurrent.{Await, Future}
 import tables.PassageTable
 
 /**
- * Created by Leo.
- * 2015/11/1 20:50
- */
+  * Created by Leo.
+  * 2015/11/1 20:50
+  */
 @Singleton()
 class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
@@ -25,8 +25,8 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   }
 
   def queryByUserId(userId: Int, num: Int, pageSize: Int = 10): Future[Seq[Passage]] = {
-    db.run(modelQuery.filter(_.authorId === userId)
-      .drop((num - 1) * pageSize).take(pageSize).sortBy(_.createTime.desc).result)
+    db.run(modelQuery.filter(_.authorId === userId).sortBy(_.createTime.desc)
+      .drop((num - 1) * pageSize).take(pageSize).result)
   }
 
   def queryKeywordsByPassageId(passageId: Int): Future[Seq[Keyword]] = {
@@ -42,7 +42,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
   def queryCommentsByPassageId(passageId: Int): Future[Seq[Comment]] = {
     db.run(modelQuery.filter(_.id === passageId).
-      join(CommentDAO.comments).on(_.id === _.passageId).sortBy(_._2.createTime.desc).map(_._2).result)
+      join(CommentDAO.comments).on(_.id === _.passageId).sortBy(_._2.createTime.asc).map(_._2).result)
   }
 
 }
