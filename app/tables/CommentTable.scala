@@ -29,7 +29,7 @@ trait CommentTable extends AbstractTable[Comment] {
 
     def fromFK = foreignKey("from_fk", fromId, UserDAO.users)(_.id)
 
-    def toFK = foreignKey("to_fk", toId, UserDAO.users)(_.id)
+    def toFK = foreignKey("to_fk", toId, UserDAO.users)(_.id.?)
 
     def passageFK = foreignKey("passage_fk", passageId, PassageDAO.passages)(_.id, onDelete = ForeignKeyAction.Cascade)
 
