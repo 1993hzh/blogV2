@@ -4,9 +4,7 @@ import org.junit.{After, Before, Assert, Test}
 import play.Logger
 import utils.Encryption
 import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
-import scala.util.{Failure, Success}
 
 /**
  * Created by Leo.
