@@ -1,0 +1,47 @@
+@import play.api.Play.current
+@import play.api.cache._
+@import models.User
+@()(implicit session: play.api.mvc.Session)
+
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+<link href="/assets/css/common.css" rel="stylesheet">
+<link href="/assets/css/clean-blog.min.css" rel="stylesheet">
+<link href="/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href='/assets/css/googleapis.css' rel='stylesheet' type='text/css'>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/js/clean-blog.js"></script>
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        @Cache.getAs[User]((session.get("loginUser")).getOrElse("")) match {
+          case Some(u) => {<a class="navbar-brand" href="/logout">Welcome, @u.userName</a>}
+          case None => {<a class="navbar-brand" href="/login">Log in</a>}
+        }
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-left">
+        <li>
+          <a href="/index">Home</a>
+        </li>
+        <li>
+          <a href="#">About</a>
+        </li>
+        <li>
+          <a href="#">Contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>

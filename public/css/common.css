@@ -1,3 +1,40 @@
 body {
-    !background-color: #151515;
+    background-color: #252525 !important;
+}
+
+.container {
+    margin-top:100px;
+}
+
+.navbar-custom.is-fixed {
+    top: -100px !important;
+}
+
+.navbar {
+    min-height: 100px !important;
+}
+
+.navbar-header {
+    float:right !important;
+}
+
+.container-fluid {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.navbar-custom .nav li a {
+    font-size: 16px !important;
+}
+
+.navbar-brand {
+    font-size: 24px !important;
+}
+
+.navbar-custom .navbar-brand {
+    padding: 20px 30px 20px 20px !important;
+}
+
+.btn-right {
+    float: right;
 }
