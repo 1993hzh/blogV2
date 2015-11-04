@@ -23,4 +23,8 @@ object Encryption {
     }
     return null
   }
+
+  def main(args: Array[String]) {
+    println(encodeBySHA1("123"))
+  }
 }
