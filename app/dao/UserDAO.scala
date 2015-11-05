@@ -11,7 +11,6 @@ import tables.UserTable
 import utils.Encryption
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by leo on 15-10-28.
@@ -42,16 +41,15 @@ class UserDAO extends AbstractDAO[User] with UserTable {
     val user = Await.result(db.run(modelQuery.filter(_.userName === userName).result.headOption), waitTime)
     val pwd = Encryption.encodeBySHA1(password)
     user match {
-      case Some(u) if (u.password.equals(pwd)) => {
+      case Some(u) if u.password.equals(pwd) =>
         //pwd must equals
         var returnUser: Option[User] = None
         Await.result(roleDAO.query(u.roleId), waitTime) match {
-          case Some(role) if (role.roleType.equals(RoleType.OWNER)) =>
+          case Some(role) if role.roleType.equals(RoleType.OWNER) =>
             returnUser = Some(u)
           case _ =>
         }
         returnUser
-      }
       case _ => None
     }
   }
@@ -59,21 +57,20 @@ class UserDAO extends AbstractDAO[User] with UserTable {
   def loginFromOtherSite(bindingId: String, website: String): Option[User] = {
     val user = Await.result(db.run(modelQuery.filter(_.bindingId === bindingId).result.headOption), waitTime)
     user match {
-      case Some(u) => {
+      case Some(u) =>
         var returnUser: Option[User] = None
         Await.result(roleDAO.query(u.roleId), waitTime) match {
-          case Some(role) if (role.roleType.equals(RoleType.COMMON) && role.webSite.equals(website)) =>
+          case Some(role) if role.roleType.equals(RoleType.COMMON) && role.webSite.equals(website) =>
             returnUser = Some(u)
           case _ =>
         }
         returnUser
-      }
       case None => None
     }
   }
 
   def updateLoginInfo(userName: String, lastLoginIp: String, lastLoginTime: Timestamp, lastLogoutTime: Timestamp): Unit = {
-    val user = Await.result(queryByUserName(userName), waitTime) match {
+    Await.result(queryByUserName(userName), waitTime) match {
       case Some(u) => updateLogInfo(u.id, lastLoginIp, lastLoginTime, lastLogoutTime)
       case None => Logger.error("User: " + userName + " not found!")
     }
