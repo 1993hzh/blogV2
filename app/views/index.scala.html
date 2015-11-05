@@ -1,3 +1,5 @@
+@()(implicit session: play.api.mvc.Session)
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Clean Blog</title>
+    <title>@session.toString</title>
 
 </head>
 

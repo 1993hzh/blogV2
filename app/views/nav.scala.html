@@ -23,7 +23,7 @@
         <span class="icon-bar"></span>
       </button>
         @Cache.getAs[User]((session.get("loginUser")).getOrElse("")) match {
-          case Some(u) => {<a class="navbar-brand" href="/logout">Welcome, @u.userName</a>}
+          case Some(u) => {<a class="navbar-brand" href="/logout">@u.userName</a>}
           case None => {<a class="navbar-brand" href="/login">Log in</a>}
         }
     </div>

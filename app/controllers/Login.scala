@@ -1,6 +1,7 @@
 package controllers
 
-import java.time.LocalTime
+import java.time.{LocalDateTime}
+import javax.inject.Inject
 
 import dao.UserDAO
 import models.User
@@ -15,7 +16,7 @@ import play.api.Play.current
 /**
   * Created by leo on 15-11-4.
   */
-object Login extends Controller {
+class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) extends Controller {
 
   val userDAO = UserDAO()
 
@@ -32,10 +33,10 @@ object Login extends Controller {
       case Some(u) =>
         Logger.info("User: " + u.userName + " login from: " + u.lastLoginIp)
 
-        request.session.+("loginUser", u.userName)
+        val loginUser = request.session + ("loginUser" -> u.userName)
         Cache.set(u.userName, u, 30.minutes)
 
-        Ok("Success")
+        Ok("Success") withSession (loginUser)
       case None =>
         Ok("Wrong username or password!")
     }
@@ -48,7 +49,7 @@ object Login extends Controller {
 
     loginUser match {
       case Some(u) =>
-        Logger.info("User: " + userName + " logout at: " + LocalTime.now)
+        Logger.info("User: " + u.userName + " logout at: " + LocalDateTime.now)
 
         request.session.-("loginUser")
         userName match {
@@ -58,7 +59,7 @@ object Login extends Controller {
       case None =>
         Logger.error("Didn't find " + userName)
     }
-    Ok(views.html.index()).withNewSession
+    Redirect(routes.Index.index()).withNewSession
   }
 
 
