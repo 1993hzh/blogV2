@@ -7,6 +7,7 @@ CREATE TABLE T_USER (
   mail          VARCHAR(255) NOT NULL UNIQUE,
   lastLoginIp   VARCHAR(255),
   lastLoginTime TIMESTAMP,
+  lastLogoutTime TIMESTAMP,
   role_id       INTEGER,
   binding_id    VARCHAR(255) UNIQUE,
   FOREIGN KEY (role_id) REFERENCES T_Role (id)

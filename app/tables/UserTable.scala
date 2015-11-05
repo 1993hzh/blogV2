@@ -6,8 +6,8 @@ import dao.RoleDAO
 import models.User
 
 /**
- * Created by leo on 15-10-28.
- */
+  * Created by leo on 15-10-28.
+  */
 trait UserTable extends AbstractTable[User] {
 
   import driver.api._
@@ -24,6 +24,8 @@ trait UserTable extends AbstractTable[User] {
 
     def lastLoginTime = column[Option[Timestamp]]("lastlogintime")
 
+    def lastLogoutTime = column[Option[Timestamp]]("lastlogouttime")
+
     def bindingId = column[Option[String]]("binding_id")
 
     def roleId = column[Int]("role_id")
@@ -36,7 +38,7 @@ trait UserTable extends AbstractTable[User] {
 
     def roleFK = foreignKey("ROLE_FK", roleId, RoleDAO.roles)(_.id)
 
-    override def * = (id, userName, password, mail, roleId, lastLoginIp, lastLoginTime, bindingId) <>(User.tupled, User.unapply)
+    override def * = (id, userName, password, mail, roleId, lastLoginIp, lastLoginTime, lastLogoutTime, bindingId) <>(User.tupled, User.unapply)
   }
 
 }
