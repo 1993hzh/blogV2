@@ -1,5 +1,6 @@
 package controllers
 
+import java.sql.Timestamp
 import java.time.{LocalDateTime}
 import javax.inject.Inject
 
@@ -19,6 +20,8 @@ import play.api.Play.current
 class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) extends Controller {
 
   val userDAO = UserDAO()
+  var loginTime: Timestamp = null
+  var logoutTime: Timestamp = null
 
   def index = Action { implicit request =>
     Ok(views.html.login())
@@ -31,7 +34,8 @@ class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) exten
 
     loginUser match {
       case Some(u) =>
-        Logger.info("User: " + u.userName + " login from: " + u.lastLoginIp)
+        loginTime = new Timestamp(System.currentTimeMillis())
+        Logger.info("User: " + u.userName + " login from: " + request.remoteAddress + " at: " + loginTime)
 
         val loginUser = request.session + ("loginUser" -> u.userName)
         Cache.set(u.userName, u, 30.minutes)
@@ -49,9 +53,11 @@ class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) exten
 
     loginUser match {
       case Some(u) =>
-        Logger.info("User: " + u.userName + " logout at: " + LocalDateTime.now)
+        logoutTime = new Timestamp(System.currentTimeMillis())
+        userDAO.updateLoginInfo(u.userName, request.remoteAddress, loginTime, logoutTime)
+        Logger.info("User: " + u.userName + " logout at: " + logoutTime)
 
-        request.session.-("loginUser")
+        request.session - ("loginUser")
         userName match {
           case Some(un) => Cache.remove(un)
           case None => Logger.error("Session has no `loginUser` ")
