@@ -1,15 +1,13 @@
 package dao
 
 import java.sql.Timestamp
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 import models.{RoleType, User}
-import play.Logger
+import play.api.Logger
 import slick.lifted.TableQuery
 import tables.UserTable
 import utils.Encryption
-import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 /**
@@ -25,9 +23,6 @@ class UserDAO extends AbstractDAO[User] with UserTable {
   lazy val roleDAO = RoleDAO()
 
   import driver.api._
-
-  // query time should never larger than 1'
-  val waitTime = Duration(1, TimeUnit.SECONDS)
 
   def queryByUserName(userName: String): Future[Option[User]] = {
     db.run(modelQuery.filter(_.userName === userName).result.headOption)

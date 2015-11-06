@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 import dao.UserDAO
 import models.User
-import play.Logger
+import play.api.Logger
 import play.api.cache._
 import utils.Encryption
 import scala.concurrent.duration._

@@ -1,5 +1,7 @@
 package dao
 
+import java.util.concurrent.TimeUnit
+
 import models.AbstractModel
 import play.api.Play
 import play.api.db.slick.{HasDatabaseConfig, DatabaseConfigProvider}
@@ -7,6 +9,7 @@ import _root_.slick.driver.JdbcProfile
 import tables.AbstractTable
 
 import scala.concurrent.Future
+import scala.concurrent.duration.Duration
 
 /**
   * Created by leo on 15-10-27.
@@ -21,6 +24,9 @@ trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] wit
   type T <: AbstractTable
 
   protected val modelQuery: slick.lifted.TableQuery[T]
+
+  // query time should never larger than 1'
+  val waitTime = Duration(1, TimeUnit.SECONDS)
 
   def insert(model: M): Future[Int] = db.run(modelQuery returning modelQuery.map(_.id) += model)
 

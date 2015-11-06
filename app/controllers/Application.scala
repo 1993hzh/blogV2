@@ -12,11 +12,15 @@ import play.api.i18n.Messages.Implicits._
 
 object Application extends Controller {
 
-//  def index = Action {
-//    val message = Messages("index.message")
-//
-//    Ok(views.html.index(message))
-//  }
+  val KEY_PASSAGE_COUNT = "totalPassage"
+  val KEY_PAGE_COUNT = "totalPage"
+  val PAGE_SIZE = 5
+
+  //  def index = Action {
+  //    val message = Messages("index.message")
+  //
+  //    Ok(views.html.index(message))
+  //  }
 
 
 }

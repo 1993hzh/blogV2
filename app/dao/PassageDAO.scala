@@ -1,7 +1,7 @@
 package dao
 
 import javax.inject.Singleton
-
+import controllers.Application
 import models.{Tag => MyTag, Comment, Keyword, Passage}
 import slick.lifted.TableQuery
 import scala.concurrent.{Await, Future}
@@ -20,13 +20,18 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
   import driver.api._
 
-  def queryTotalCount(userId: Int): Future[Int] = {
-    db.run(modelQuery.filter(_.authorId === userId).length.result)
+  def queryTotalCount(): Future[Int] = {
+    db.run(modelQuery.length.result)
   }
 
-  def queryByUserId(userId: Int, num: Int, pageSize: Int = 10): Future[Seq[Passage]] = {
-    db.run(modelQuery.filter(_.authorId === userId).sortBy(_.createTime.desc)
-      .drop((num - 1) * pageSize).take(pageSize).result)
+  def queryByUserId(userId: Int, num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[Passage] = {
+    Await.result(db.run(modelQuery.filter(_.authorId === userId).sortBy(_.createTime.desc)
+      .drop((num - 1) * pageSize).take(pageSize).result), waitTime)
+  }
+
+  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[Passage] = {
+    Await.result(db.run(modelQuery.sortBy(_.createTime.desc)
+      .drop((num - 1) * pageSize).take(pageSize).result), waitTime)
   }
 
   def queryKeywordsByPassageId(passageId: Int): Future[Seq[Keyword]] = {
