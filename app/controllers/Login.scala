@@ -1,27 +1,26 @@
 package controllers
 
 import java.sql.Timestamp
-import java.time.{LocalDateTime}
 import javax.inject.Inject
 
 import dao.UserDAO
 import models.User
 import play.Logger
 import play.api.cache._
+import utils.Encryption
 import scala.concurrent.duration._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
-import play.api.Play.current
 
 /**
   * Created by leo on 15-11-4.
   */
-class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) extends Controller {
+class Login @Inject()(cache: CacheApi) extends Controller {
 
-  val userDAO = UserDAO()
-  var loginTime: Timestamp = null
-  var logoutTime: Timestamp = null
+  private val userDAO = UserDAO()
+  private var loginTime: Timestamp = null
+  private var logoutTime: Timestamp = null
 
   def index = Action { implicit request =>
     Ok(views.html.login())
@@ -34,11 +33,13 @@ class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) exten
 
     loginUser match {
       case Some(u) =>
-        loginTime = new Timestamp(System.currentTimeMillis())
+        val current = System.currentTimeMillis()
+        loginTime = new Timestamp(current)
         Logger.info("User: " + u.userName + " login from: " + request.remoteAddress + " at: " + loginTime)
 
-        val loginUser = request.session + ("loginUser" -> u.userName)
-        Cache.set(u.userName, u, 30.minutes)
+        val loginToken = Encryption.encodeBySHA1(u.userName + current)
+        val loginUser = request.session + ("loginUser" -> loginToken)
+        cache.set(loginToken, u, 30.minutes)
 
         Ok("Success") withSession (loginUser)
       case None =>
@@ -49,7 +50,7 @@ class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) exten
   def logout = Action { implicit request =>
     val userName = request.session.get("loginUser")
 
-    val loginUser = Cache.getAs[User](userName.getOrElse(""))
+    val loginUser = cache.get[User](userName.getOrElse(""))
 
     loginUser match {
       case Some(u) =>
@@ -59,7 +60,7 @@ class Login @Inject()(@NamedCache("session-cache") sessionCache: CacheApi) exten
 
         request.session - ("loginUser")
         userName match {
-          case Some(un) => Cache.remove(un)
+          case Some(un) => cache.remove(un)
           case None => Logger.error("Session has no `loginUser` ")
         }
       case None =>
