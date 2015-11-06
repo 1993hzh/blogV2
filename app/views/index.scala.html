@@ -1,5 +1,5 @@
 @import models.Passage
-@(passages:List[Passage])(implicit session: play.api.mvc.Session)
+@(passages:List[(Passage,String)], currentPage:Int, totalPage:Int)(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +21,7 @@
 <div class="container" style="width:80%;">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      @for(p <- passages) {
+      @for((p, u) <- passages) {
         <div class="post-preview">
           <a href="post.html">
             <h2 class="post-title">
@@ -29,19 +29,26 @@
             </h2>
 
             <h3 class="post-subtitle">
-              Many say exploration is part of our destiny, but it’s actually our duty to future generations.
+              @p.content
             </h3>
           </a>
 
-          <p class="post-meta">Posted by <a href="#">@p.authorId</a> on @p.createTime.format("yyy-MM-dd HH:mm:ss")</p>
+          <p class="post-meta">Posted by <a href="#">@u</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")</p>
         </div>
         <hr>
       }
       <!-- Pager -->
       <ul class="pager">
-        <li class="next">
-          <a href="#">Older Posts &rarr;</a>
-        </li>
+        @if(currentPage >= 2) {
+          <li class="prev">
+            <a href="/index?page=@(currentPage-1)">&larr; Newer Posts</a>
+          </li>
+        }
+        @if(currentPage < totalPage) {
+          <li class="next">
+            <a href="/index?page=@(currentPage+1)">Older Posts &rarr;</a>
+          </li>
+        }
       </ul>
     </div>
   </div>

@@ -29,9 +29,13 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
       .drop((num - 1) * pageSize).take(pageSize).result), waitTime)
   }
 
-  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[Passage] = {
-    Await.result(db.run(modelQuery.sortBy(_.createTime.desc)
-      .drop((num - 1) * pageSize).take(pageSize).result), waitTime)
+  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[(Passage, String)] = {
+    val action = modelQuery.join(UserDAO.users).on(_.authorId === _.id)
+      .sortBy(_._1.createTime.desc).map(f => (f._1, f._2.userName))
+      .drop((num - 1) * pageSize).take(pageSize)
+      .result
+
+    Await.result(db.run(action), waitTime)
   }
 
   def queryKeywordsByPassageId(passageId: Int): Future[Seq[Keyword]] = {
