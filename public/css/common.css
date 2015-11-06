@@ -38,3 +38,11 @@ body {
 .btn-right {
     float: right;
 }
+
+.pager .prev {
+    float:left;
+}
+
+.pager .next {
+    float:right;
+}

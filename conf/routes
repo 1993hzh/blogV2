@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Index.index
-GET     /index                      controllers.Index.index
+GET     /index                      controllers.Index.showPassages(page:Int?=1)
 GET     /login                      controllers.Login.index
 POST    /doLogin                    controllers.Login.login
 GET     /logout                     controllers.Login.logout

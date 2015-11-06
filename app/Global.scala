@@ -41,7 +41,7 @@ object Global extends WithFilters() with GlobalSettings {
 
   private def setTotalPage(passageCount: Int) = {
     val totalPage = passageCount / Application.PAGE_SIZE + (if (passageCount % Application.PAGE_SIZE != 0) 1 else 0)
-    Cache.set(Application.KEY_PASSAGE_COUNT, totalPage)
+    Cache.set(Application.KEY_PAGE_COUNT, totalPage)
     Logger.info("App get total page num: " + totalPage)
   }
 }
