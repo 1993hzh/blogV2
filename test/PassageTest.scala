@@ -7,6 +7,7 @@ import play.Logger
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import controllers.Application
 
 /**
   * Created by leo on 15-11-2.
@@ -14,6 +15,7 @@ import scala.concurrent.duration.Duration
 class PassageTest extends AbstractTest {
 
   val PASSAGE_SIZE = 22
+  val PAGE_SIZE = Application.PAGE_SIZE
   var tagIds: List[Int] = null
   var adminId = 0
   var userId = 0
@@ -35,9 +37,9 @@ class PassageTest extends AbstractTest {
 
   @Test
   def queryByUserId(): Unit = {
-    queryForPagination(1)
-    queryForPagination(2)
-    queryForPagination(3)
+    val queryTimes = PASSAGE_SIZE / PAGE_SIZE + (if (PASSAGE_SIZE % PAGE_SIZE == 0) 1 else 0)
+    for (i <- 1 to queryTimes)
+      queryForPagination(i)
   }
 
   @Test
@@ -80,18 +82,17 @@ class PassageTest extends AbstractTest {
   }
 
   def queryForPagination(num: Int) = {
-    val result = Await.result(passageDAO.queryByUserId(adminId, num), Duration.Inf)
+    val result = passageDAO.queryByUserId(adminId, num)
 
-    val expectCount = if (num <= PASSAGE_SIZE / 10) 10 else PASSAGE_SIZE % 10
+    val expectCount = if (num <= PASSAGE_SIZE / PAGE_SIZE) PAGE_SIZE else PASSAGE_SIZE % PAGE_SIZE
     Assert.assertEquals(expectCount, result.size)
 
-    var i = PASSAGE_SIZE - (num - 1) * 10
+    var i = PASSAGE_SIZE - (num - 1) * PAGE_SIZE
     result.foreach(e => {
+      Logger.info(e.toString)
       assertPassage(e, i)
       i -= 1
     })
-
-    result.foreach(r => Logger.info(r.toString))
   }
 
   def assertKeyword(kws: Seq[Keyword], p: Int) = {
