@@ -18,7 +18,7 @@
     <!--
         remember to set this level to `ERROR` in prod env
      -->
-    <logger name="slick.jdbc.JdbcBackend.statement" level="DEBUG"/>
+    <logger name="slick.jdbc.JdbcBackend.statement" level="ERROR"/>
     <logger name="slick.jdbc.JdbcBackend.benchmark" level="ERROR"/>
 
     <root level="ERROR">
