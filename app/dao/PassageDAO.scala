@@ -36,7 +36,8 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     //      .drop((num - 1) * pageSize).take(pageSize)
     //      .result
     val maxLength = 110
-    val contentPreview = " ... [Click to check details]"
+    val contentPreview = " ... [Click to see details]"
+    val offSet = (num - 1) * pageSize + 1
 
     val action = sql"""
       select p.id, p.author_id, p.title,
@@ -44,7 +45,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
       else p.content || $contentPreview
       end
       , p.createtime, p.viewcount, u.username
-      from t_passage p right join t_user u on p.author_id = u.id order by p.createtime desc limit $pageSize offset $num
+      from t_passage p right join t_user u on p.author_id = u.id order by p.createtime desc limit $pageSize offset $offSet
       """.as[(Passage, String)]
 
     Await.result(db.run(action), waitTime)
