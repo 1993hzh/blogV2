@@ -9,7 +9,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="Leo">
 
   <title>Index</title>
 
@@ -28,36 +29,20 @@
               @p.title
             </h2>
 
-            <h3 class="post-subtitle">
+            <h4 class="post-subtitle">
               @p.content
-            </h3>
+            </h4>
           </a>
 
           <p class="post-meta">Posted by <a href="#">@u</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")</p>
         </div>
         <hr>
       }
-      <!-- Pager -->
-      <ul class="pager">
-        @if(currentPage >= 2) {
-          <li class="prev">
-            <a href="/index?page=@(currentPage-1)">&larr; Newer Posts</a>
-          </li>
-        }
-        @if(currentPage < totalPage) {
-          <li class="next">
-            <a href="/index?page=@(currentPage+1)">Older Posts &rarr;</a>
-          </li>
-        }
-      </ul>
+      @pager(currentPage, totalPage)
     </div>
   </div>
 </div>
 <hr>
-
-<!-- Footer -->
 @footer()
-
 </body>
-
 </html>

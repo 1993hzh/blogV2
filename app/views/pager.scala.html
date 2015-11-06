@@ -1,0 +1,15 @@
+@(currentPage: Int, totalPage: Int)
+
+<!-- Pager -->
+<ul class="pager">
+  @if(currentPage >= 2) {
+    <li class="prev">
+      <a href="/index?page=@(currentPage-1)">&larr; Newer Posts</a>
+    </li>
+  }
+  @if(currentPage < totalPage) {
+    <li class="next">
+      <a href="/index?page=@(currentPage+1)">Older Posts &rarr;</a>
+    </li>
+  }
+</ul>
