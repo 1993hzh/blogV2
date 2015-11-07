@@ -17,15 +17,12 @@
 
 <body>
 @nav()
-<!-- Set your background image for this header on the line below. -->
 <header class="intro-header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <div class="post-heading override-no-padding my-font-color">
-                    <h1>@p.title</h1>
-                    <span class="meta">Posted by <a href="#">@p.authorName</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")</span>
-                </div>
+            <div class="post-heading override-no-padding my-font-color">
+                <h1>@p.title</h1>
+                <span class="meta">Posted by <a href="#">@p.authorName</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")</span>
             </div>
         </div>
     </div>
@@ -33,16 +30,16 @@
 
 <!-- Post Content -->
 <article>
-    <div class="container">
+    <div class="container override-no-margin-top">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 my-font-color">
+            <div class="my-font-color">
                 @p.content
             </div>
         </div>
     </div>
 </article>
-
-
+<hr>
+@comment(c)
 <hr>
 @footer()
 </body>

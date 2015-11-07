@@ -60,6 +60,10 @@ body {
     padding: 0px !important;
 }
 
+.override-no-margin-top {
+    margin-top: 0px !important;
+}
+
 .my-font-color {
     color: #adadad !important;
 }

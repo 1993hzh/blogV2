@@ -75,12 +75,12 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     Await.result(queryCommentsByPassageId(passageId), waitTime).toList
   }
 
-  def getDetail(id: Int): (Passage, List[Keyword], List[Comment]) = {
+  def getDetail(id: Int): Option[(Passage, List[Keyword], List[Comment])] = {
     Await.result(query(id), waitTime) match {
-      case Some(passage) => (passage, getKeywords(id), getComments(id))
+      case Some(passage) => Some(passage, getKeywords(id), getComments(id))
       case None =>
         Logger.info("Passage: " + id + " not found!")
-        null
+        None
     }
   }
 

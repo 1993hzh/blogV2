@@ -15,7 +15,11 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
 
   def passage(id: Int) = Action { implicit request =>
     val passageDetail = passageDAO.getDetail(id)
-    Ok(views.html.passage(passageDetail._1, passageDetail._2, passageDetail._3))
+    passageDetail match {
+      case Some(p) => Ok(views.html.passage(p._1, p._2, p._3))
+      case None => Redirect(routes.Index.index)
+    }
+
   }
 
 }
