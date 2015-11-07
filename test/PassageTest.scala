@@ -69,7 +69,7 @@ class PassageTest extends AbstractTest {
     })
   }
 
-//  @After
+  @After
   def destorySelf(): Unit = {
     tagIds.foreach(e => Await.result(tagDAO.delete(e), Duration.Inf))
     passageIds.foreach(p => Await.result(passageDAO.delete(p), Duration.Inf))
