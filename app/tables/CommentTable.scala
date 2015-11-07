@@ -7,9 +7,9 @@ import models.Comment
 import slick.lifted
 
 /**
-  * Created by Leo.
-  * 2015/11/1 20:44
-  */
+ * Created by Leo.
+ * 2015/11/1 20:44
+ */
 trait CommentTable extends AbstractTable[Comment] {
 
   import driver.api._
@@ -24,8 +24,12 @@ trait CommentTable extends AbstractTable[Comment] {
 
     def fromId = column[Int]("from_id")
 
+    def fromName = column[String]("from_name")
+
     //can be null if the commenter is replying to the passage
     def toId = column[Option[Int]]("to_id")
+
+    def toName = column[Option[String]]("to_name")
 
     def fromFK = foreignKey("from_fk", fromId, UserDAO.users)(_.id)
 
@@ -33,7 +37,7 @@ trait CommentTable extends AbstractTable[Comment] {
 
     def passageFK = foreignKey("passage_fk", passageId, PassageDAO.passages)(_.id, onDelete = ForeignKeyAction.Cascade)
 
-    override def * = (id, content, passageId, createTime, fromId, toId) <>(Comment.tupled, Comment.unapply)
+    override def * = (id, content, passageId, createTime, fromId, fromName, toId, toName) <>(Comment.tupled, Comment.unapply)
   }
 
 }

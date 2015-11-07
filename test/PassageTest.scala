@@ -177,10 +177,10 @@ class PassageTest extends AbstractTest {
   }
 
   def initComment(userId: Int, adminId: Int, passageId: Int) = {
-    val comment1 = Comment(0, "comment1", passageId, new Timestamp(System.currentTimeMillis()), userId)
+    val comment1 = Comment(0, "comment1", passageId, new Timestamp(System.currentTimeMillis()), userId, "sina")
     val id1 = Await.result(commentDAO.insert(comment1), Duration.Inf)
 
-    val comment2 = Comment(0, "reply2comment1", passageId, new Timestamp(System.currentTimeMillis()), adminId, Some(userId))
+    val comment2 = Comment(0, "reply2comment1", passageId, new Timestamp(System.currentTimeMillis()), adminId, "admin", Some(userId), Some("sina"))
     val id2 = Await.result(commentDAO.insert(comment2), Duration.Inf)
 
     List(id1, id2)

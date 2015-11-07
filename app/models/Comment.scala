@@ -11,4 +11,6 @@ case class Comment(id: Int,
                    passageId: Int,
                    createTime: Timestamp,
                    fromId: Int,
-                   toId: Option[Int] = None) extends AbstractModel
+                   fromName: String,
+                   toId: Option[Int] = None,
+                   toName: Option[String] = None) extends AbstractModel
