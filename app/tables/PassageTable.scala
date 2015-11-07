@@ -18,6 +18,8 @@ trait PassageTable extends AbstractTable[Passage] {
 
     def authorId = column[Int]("author_id")
 
+    def authorName = column[String]("author_name")
+
     def title = column[String]("title")
 
     def content = column[String]("content")
@@ -28,7 +30,8 @@ trait PassageTable extends AbstractTable[Passage] {
 
     def authorFK = foreignKey("author_fk", authorId, UserDAO.users)(_.id)
 
-    override def * : ProvenShape[Passage] = (id, authorId, title, content, createTime, viewCount) <>(Passage.tupled, Passage.unapply)
+    override def * : ProvenShape[Passage] = (id, authorId, authorName, title, content, createTime, viewCount) <>
+      (Passage.tupled, Passage.unapply)
   }
 
 }

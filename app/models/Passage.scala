@@ -8,6 +8,7 @@ import java.sql.Timestamp
  */
 case class Passage(id: Int,
                    authorId: Int,
+                   authorName: String,
                    title: String,
                    content: String,
                    createTime: Timestamp,

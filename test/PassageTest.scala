@@ -10,8 +10,8 @@ import scala.concurrent.duration.Duration
 import controllers.Application
 
 /**
-  * Created by leo on 15-11-2.
-  */
+ * Created by leo on 15-11-2.
+ */
 class PassageTest extends AbstractTest {
 
   val PASSAGE_SIZE = 22
@@ -69,7 +69,7 @@ class PassageTest extends AbstractTest {
     })
   }
 
-  @After
+//  @After
   def destorySelf(): Unit = {
     tagIds.foreach(e => Await.result(tagDAO.delete(e), Duration.Inf))
     passageIds.foreach(p => Await.result(passageDAO.delete(p), Duration.Inf))
@@ -155,7 +155,7 @@ class PassageTest extends AbstractTest {
   def initPassage(authorId: Int): Array[Int] = {
     val ids = ArrayBuffer[Int]()
     for (i <- 1 to PASSAGE_SIZE) {
-      val passage = Passage(0, authorId, "title" + i, "content" + i, new Timestamp(System.currentTimeMillis()))
+      val passage = Passage(0, authorId, "admin", "title" + i, "content" + i, new Timestamp(System.currentTimeMillis()))
       ids += Await.result(passageDAO.insert(passage), Duration.Inf)
     }
     ids.toArray
