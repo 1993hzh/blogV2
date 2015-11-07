@@ -3,6 +3,7 @@ package dao
 import javax.inject.Singleton
 import controllers.Application
 import models.{Tag => MyTag, Comment, Keyword, Passage}
+import play.api.Logger
 import slick.jdbc.GetResult
 import slick.lifted.TableQuery
 import scala.concurrent.{Await, Future}
@@ -30,23 +31,22 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
       .drop((num - 1) * pageSize).take(pageSize).result), waitTime)
   }
 
-  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[(Passage, String)] = {
+  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[Passage] = {
     //    val action = modelQuery.join(UserDAO.users).on(_.authorId === _.id)
     //      .sortBy(_._1.createTime.desc).map(f => (f._1, f._2.userName))
     //      .drop((num - 1) * pageSize).take(pageSize)
     //      .result
     val maxLength = 110
     val contentPreview = " ... [Click to see details]"
-    val offSet = (num - 1) * pageSize + 1
+    val offSet = (num - 1) * pageSize
 
     val action = sql"""
-      select p.id, p.author_id, p.title,
+      select p.id, p.author_id, p.author_name, p.title,
       case when length(p.content) > $maxLength then substring(p.content for $maxLength) || $contentPreview
-      else p.content || $contentPreview
-      end
-      , p.createtime, p.viewcount, u.username
-      from t_passage p right join t_user u on p.author_id = u.id order by p.createtime desc limit $pageSize offset $offSet
-      """.as[(Passage, String)]
+      else p.content || $contentPreview end
+      , p.createtime, p.viewcount
+      from t_passage p order by p.createtime desc limit $pageSize offset $offSet
+      """.as[Passage]
 
     Await.result(db.run(action), waitTime)
   }
@@ -67,9 +67,26 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
       join(CommentDAO.comments).on(_.id === _.passageId).sortBy(_._2.createTime.asc).map(_._2).result)
   }
 
-  implicit val listPassagesResult = GetResult(
-    r => (Passage(r.nextInt, r.nextInt, r.nextString, r.nextString, r.nextTimestamp, r.nextInt), r.nextString))
+  def getKeywords(passageId: Int): List[Keyword] = {
+    Await.result(queryKeywordsByPassageId(passageId), waitTime).toList
+  }
 
+  def getComments(passageId: Int): List[Comment] = {
+    Await.result(queryCommentsByPassageId(passageId), waitTime).toList
+  }
+
+  def getDetail(id: Int): (Passage, List[Keyword], List[Comment]) = {
+    Await.result(query(id), waitTime) match {
+      case Some(passage) => (passage, getKeywords(id), getComments(id))
+      case None =>
+        Logger.info("Passage: " + id + " not found!")
+        null
+    }
+  }
+
+  implicit val listPassagesResult = GetResult(
+    r => (Passage(r.nextInt, r.nextInt, r.nextString, r.nextString, r.nextString, r.nextTimestamp, r.nextInt))
+  )
 }
 
 object PassageDAO {

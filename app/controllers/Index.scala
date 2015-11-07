@@ -25,7 +25,11 @@ class Index @Inject()(cache: CacheApi) extends Controller {
     Ok(views.html.index(passages._1, passages._2, totalPage))
   }
 
-  def listPassages(num: Any, totalPage: Int): (List[(Passage, String)], Int) = {
+  def about() = Action { implicit request =>
+    Ok(views.html.about())
+  }
+
+  def listPassages(num: Any, totalPage: Int): (List[Passage], Int) = {
     val pageNo: Int = num match {
       case n: Int if (n <= 1) => 1
       case n: Int if (n >= totalPage) => totalPage

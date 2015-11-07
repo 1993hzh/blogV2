@@ -1,0 +1,49 @@
+@(p: models.Passage, kws: List[Keyword], c: List[Comment])(implicit session: play.api.mvc.Session)
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content="@kws.map(_.name).mkString(", ")">
+    <meta name="author" content="Leo">
+
+    <title>@p.title</title>
+
+</head>
+
+<body>
+@nav()
+<!-- Set your background image for this header on the line below. -->
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading override-no-padding my-font-color">
+                    <h1>@p.title</h1>
+                    <span class="meta">Posted by <a href="#">@p.authorName</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 my-font-color">
+                @p.content
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<hr>
+@footer()
+</body>
+</html>

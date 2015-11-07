@@ -3,7 +3,7 @@ body {
 }
 
 .container {
-    margin-top:100px;
+    margin-top: 100px;
 }
 
 .navbar-custom.is-fixed {
@@ -15,7 +15,7 @@ body {
 }
 
 .navbar-header {
-    float:right !important;
+    float: right !important;
 }
 
 .container-fluid {
@@ -40,11 +40,11 @@ body {
 }
 
 .pager .prev {
-    float:left;
+    float: left;
 }
 
 .pager .next {
-    float:right;
+    float: right;
 }
 
 .loginPage {
@@ -53,26 +53,35 @@ body {
 }
 
 .my-footer {
-    margin-top:0px;
+    margin-top: 0px;
 }
 
+.override-no-padding {
+    padding: 0px !important;
+}
+
+.my-font-color {
+    color: #adadad !important;
+}
 
 @font-face {
     font-family: "iconfont-zhihu";
     src: url('../fonts/iconfont-zhihu.eot'); /* IE9*/
     src: url('../fonts/iconfont-zhihu.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../fonts/iconfont-zhihu.woff') format('woff'), /* chrome、firefox */
-    url('../fonts/iconfont-zhihu.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-    url('../fonts/iconfont-zhihu.svg#iconfont') format('svg'); /* iOS 4.1- */
+         url('../fonts/iconfont-zhihu.woff') format('woff'), /* chrome、firefox */
+         url('../fonts/iconfont-zhihu.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+         url('../fonts/iconfont-zhihu.svg#iconfont') format('svg'); /* iOS 4.1- */
 }
 
 .iconfont-zhihu {
-    font-family:"iconfont-zhihu" !important;
-    font-style:normal;
+    font-family: "iconfont-zhihu" !important;
+    font-style: normal;
     -webkit-font-smoothing: antialiased;
     -webkit-text-stroke-width: 0.2px;
     -moz-osx-font-smoothing: grayscale;
 }
 
-.iconfont-zhihu:before { content: "\e6bd"; }
+.iconfont-zhihu:before {
+    content: "\e6bd";
+}
 
