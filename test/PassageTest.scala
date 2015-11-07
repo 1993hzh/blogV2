@@ -38,7 +38,7 @@ class PassageTest extends AbstractTest {
   @Test
   def queryByUserId(): Unit = {
     val queryTimes = PASSAGE_SIZE / PAGE_SIZE + (if (PASSAGE_SIZE % PAGE_SIZE == 0) 1 else 0)
-    for (i <- 1 to queryTimes)
+    for (i <- 1 until queryTimes)
       queryForPagination(i)
   }
 
@@ -154,7 +154,7 @@ class PassageTest extends AbstractTest {
 
   def initPassage(authorId: Int): Array[Int] = {
     val ids = ArrayBuffer[Int]()
-    for (i <- 1 to PASSAGE_SIZE) {
+    for (i <- 1 until PASSAGE_SIZE) {
       val passage = Passage(0, authorId, "admin", "title" + i, "content" + i, new Timestamp(System.currentTimeMillis()))
       ids += Await.result(passageDAO.insert(passage), Duration.Inf)
     }
