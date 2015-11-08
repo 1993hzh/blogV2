@@ -64,8 +64,23 @@ body {
     margin-top: 0px !important;
 }
 
+.tag-margin {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
 .my-font-color {
     color: #adadad !important;
+}
+
+.pointer-cursor {
+    cursor: pointer;
+    cursor: hand;
+    text-decoration: none !important;
+}
+
+#doComment:target {
+    padding-top: 50%;
 }
 
 @font-face {

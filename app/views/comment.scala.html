@@ -1,15 +1,20 @@
-@(comments: List[Comment])(implicit session: play.api.mvc.Session)
+@(comments: List[Comment], passageId: Int)(implicit session: play.api.mvc.Session)
 
 
 <div class="container override-no-margin-top my-font-color">
-        <!-- Comments Form -->
+    <!-- Comments Form -->
     <div class="row">
+        <a id="doComment" name="doComment"></a>
         <h4>Leave a Comment:</h4>
         <form role="form">
             <div class="form-group">
-                <textarea class="form-control" rows="3"></textarea>
+                <textarea id="comment" class="form-control" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <input id="toId" value="" class="hidden"/>
+            <input id="toName" value="" class="hidden"/>
+            <input id="passageId" value="@passageId" class="hidden"/>
+            <div id="error"></div>
+            <button type="button" class="btn btn-primary" onclick="doComment()">Submit</button>
         </form>
     </div>
 
@@ -19,11 +24,14 @@
             <img class="media-object" src="http://placehold.it/64x64" alt="">
             </a>*@
             <div class="media-body">
-                <h4 class="media-heading">@c.fromName
+                <h4 class="media-heading">
+                    <a class="fa fa-share fa-inverse pointer-cursor" title="reply"
+                        onclick="reply('@c.fromId', '@c.fromName')" href="#doComment" data-offset="60"></a>
+                    @c.fromName
                     <small>@c.createTime.format("yyy-MM-dd HH:mm:ss")</small>
                 </h4>
                 @c.toName match {
-                    case Some(n) => {Re @n: @c.content}
+                    case Some(n) => {Re @@@n: @c.content}
                     case None => {
                         @c.content
                     }

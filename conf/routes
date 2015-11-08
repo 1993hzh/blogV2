@@ -6,10 +6,11 @@
 GET     /                           controllers.Index.index
 GET     /index                      controllers.Index.showPassages(page:Int?=1)
 GET     /passage                    controllers.PassageController.passage(id:Int?=1)
+POST    /comment                    controllers.PassageController.createComment
 GET     /about                      controllers.Index.about
 GET     /login                      controllers.Login.index
-POST    /doLogin                    controllers.Login.login
 GET     /logout                     controllers.Login.logout
+POST    /doLogin                    controllers.Login.login
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
