@@ -35,7 +35,7 @@ class Login @Inject()(cache: CacheApi) extends Controller {
       case Some((u, r)) =>
         val current = System.currentTimeMillis()
         loginTime = new Timestamp(current)
-        Logger.info("User: " + u.userName + " behalf as: " + r.roleType + ", login from: " + request.remoteAddress + " at: " + loginTime)
+        Logger.info("User: " + u.userName + " on behalf as: " + r.roleType + ", login from: " + request.remoteAddress + " at: " + loginTime)
 
         val loginToken = Encryption.encodeBySHA1(u.userName + current)
         val loginUser = request.session + ("loginUser" -> loginToken)
