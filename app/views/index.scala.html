@@ -1,5 +1,5 @@
 @import models.Passage
-@(passages:List[Passage], currentPage:Int, totalPage:Int)(implicit session: play.api.mvc.Session)
+@(passagesWithTags: List[(Passage, List[Tag])], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,18 +22,21 @@
 <div class="container" style="width:80%;">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      @for(p <- passages) {
+      @for((p,ts) <- passagesWithTags) {
         <div class="post-preview">
           <a href="/passage?id=@p.id">
             <h2 class="post-title">
               @p.title
             </h2>
-
             <h4 class="post-subtitle">
               @p.content
             </h4>
           </a>
-
+          <p class="tag-margin">
+            @for(t <- ts) {
+              <span class="label label-default">@t.name</span>
+            }
+          </p>
           <p class="post-meta">Posted by <a href="#">@p.authorName</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")</p>
         </div>
         <hr>

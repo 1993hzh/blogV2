@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import dao.PassageDAO
-import models.Passage
+import models.{Tag, Passage}
 import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.mvc.{Action, Controller}
@@ -29,7 +29,7 @@ class Index @Inject()(cache: CacheApi) extends Controller {
     Ok(views.html.about())
   }
 
-  def listPassages(num: Any, totalPage: Int): (List[Passage], Int) = {
+  def listPassages(num: Any, totalPage: Int): (List[(Passage, List[Tag])], Int) = {
     val pageNo: Int = num match {
       case n: Int if (n <= 1) => 1
       case n: Int if (n >= totalPage) => totalPage
@@ -37,8 +37,8 @@ class Index @Inject()(cache: CacheApi) extends Controller {
       case s: String if s.isEmpty => 1
       case _ => Logger.info("Error page num fetched: " + num); 1
     }
-    (passageDAO.queryPassages(pageNo).toList, pageNo)
+    val passageWithTags = passageDAO.queryPassages(pageNo).map(p => (p, passageDAO.getTags(p.id)))
+    (passageWithTags.toList, pageNo)
   }
-
 
 }

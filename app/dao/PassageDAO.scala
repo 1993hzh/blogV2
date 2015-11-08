@@ -84,6 +84,10 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     }
   }
 
+  def getTags(passageId: Int): List[MyTag] = {
+    Await.result(queryTagsByPassageId(passageId), waitTime).toList
+  }
+
   implicit val listPassagesResult = GetResult(
     r => (Passage(r.nextInt, r.nextInt, r.nextString, r.nextString, r.nextString, r.nextTimestamp, r.nextInt))
   )
