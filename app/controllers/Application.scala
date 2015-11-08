@@ -15,6 +15,7 @@ object Application extends Controller {
   val KEY_PASSAGE_COUNT = "totalPassage"
   val KEY_PAGE_COUNT = "totalPage"
   val PAGE_SIZE = 5
+  val LOGIN_FIRST = "Please <a href=\"/login\">login</a> first."
 
   //  def index = Action {
   //    val message = Messages("index.message")

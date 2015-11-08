@@ -27,8 +27,6 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   }
 
   def createComment = Action(parse.form(commentForm)) { implicit request =>
-    val loginFirst = "Please <a href=\"/login\">login</a> first."
-
     request.session.get("loginUser") match {
       case Some(lu) =>
         cache.get[User](lu) match {
@@ -40,9 +38,9 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
               new Timestamp(System.currentTimeMillis), fromId, fromName, data.toId, data.toName)
             commentDAO.insert(comment)
             Ok("Success")
-          case None => Ok(loginFirst)
+          case None => Ok(Application.LOGIN_FIRST)
         }
-      case None => Ok(loginFirst)
+      case None => Ok(Application.LOGIN_FIRST)
     }
   }
 
