@@ -4,7 +4,7 @@ import java.sql.Timestamp
 import javax.inject.Inject
 
 import dao.UserDAO
-import models.User
+import models.{Role, User}
 import play.api.Logger
 import play.api.cache._
 import utils.Encryption
@@ -14,8 +14,8 @@ import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
 
 /**
-  * Created by leo on 15-11-4.
-  */
+ * Created by leo on 15-11-4.
+ */
 class Login @Inject()(cache: CacheApi) extends Controller {
 
   private val userDAO = UserDAO()
@@ -32,28 +32,28 @@ class Login @Inject()(cache: CacheApi) extends Controller {
     val loginUser = userDAO.login(data.name, data.password)
 
     loginUser match {
-      case Some(u) =>
+      case Some((u, r)) =>
         val current = System.currentTimeMillis()
         loginTime = new Timestamp(current)
-        Logger.info("User: " + u.userName + " login from: " + request.remoteAddress + " at: " + loginTime)
+        Logger.info("User: " + u.userName + " behalf as: " + r.roleType + ", login from: " + request.remoteAddress + " at: " + loginTime)
 
         val loginToken = Encryption.encodeBySHA1(u.userName + current)
         val loginUser = request.session + ("loginUser" -> loginToken)
-        cache.set(loginToken, u, 30.minutes)
+        cache.set(loginToken, (u, r), 30.minutes)
 
         Ok("Success") withSession (loginUser)
       case None =>
-        Ok("Wrong username or password!")
+        Ok(Application.ERROR_NAME_OR_PWD)
     }
   }
 
   def logout = Action { implicit request =>
     val userName = request.session.get("loginUser")
 
-    val loginUser = cache.get[User](userName.getOrElse(""))
+    val loginUser = cache.get[(User, Role)](userName.getOrElse(""))
 
     loginUser match {
-      case Some(u) =>
+      case Some((u, r)) =>
         logoutTime = new Timestamp(System.currentTimeMillis())
         userDAO.updateLoginInfo(u.userName, request.remoteAddress, loginTime, logoutTime)
         Logger.info("User: " + u.userName + " logout at: " + logoutTime)
@@ -61,10 +61,10 @@ class Login @Inject()(cache: CacheApi) extends Controller {
         request.session - ("loginUser")
         userName match {
           case Some(un) => cache.remove(un)
-          case None => Logger.error("Session has no `loginUser` ")
+          case None => Logger.info("Session has no `loginUser` ")
         }
       case None =>
-        Logger.error("Didn't find " + userName)
+        Logger.info("Didn't find " + userName)
     }
     Redirect(routes.Index.index()).withNewSession
   }

@@ -38,17 +38,16 @@ class UserTest extends AbstractTest {
     Assert.assertEquals(None, loginRegister("sina", "sina"))
   }
 
-  def loginRegister(name: String, pwd: String): Option[User] = {
+  def loginRegister(name: String, pwd: String): Option[(User, Role)] = {
     userDAO.login(name, pwd)
   }
 
   @Test
   def loginUserLikeRegisterSuccess() = {
     loginRegister("admin", "admin") match {
-      case Some(user) => {
+      case Some((user, role)) => {
         Logger.info("Login user: " + user)
-        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf).getOrElse(null)
-        assertUser("admin", user, adminRole)
+        assertUser("admin", user, role)
       }
       case None => Assert.fail("admin login fail")
     }
@@ -67,10 +66,9 @@ class UserTest extends AbstractTest {
   @Test
   def queryUserLikeBindingSuccess() = {
     loginBinding("sinaId", WebSite.SINA) match {
-      case Some(user) => {
+      case Some((user, role)) => {
         Logger.info("Login user: " + user)
-        val adminRole = Await.result(roleDAO.query(user.roleId), Duration.Inf).getOrElse(null)
-        assertUser("sina", user, adminRole)
+        assertUser("sina", user, role)
       }
       case None => Assert.fail("sinaId login fail")
     }
@@ -83,7 +81,7 @@ class UserTest extends AbstractTest {
     Assert.assertEquals(None, loginBinding("sinaIdError", WebSite.SINA))
   }
 
-  def loginBinding(bindingId: String, website: String): Option[User] = {
+  def loginBinding(bindingId: String, website: String): Option[(User, Role)] = {
     userDAO.loginFromOtherSite(bindingId, website)
   }
 

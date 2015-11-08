@@ -3,7 +3,7 @@ package dao
 import java.sql.Timestamp
 import javax.inject.Singleton
 
-import models.{RoleType, User}
+import models.{Role, RoleType, User}
 import play.api.Logger
 import slick.lifted.TableQuery
 import tables.UserTable
@@ -11,8 +11,8 @@ import utils.Encryption
 import scala.concurrent.{Await, Future}
 
 /**
-  * Created by leo on 15-10-28.
-  */
+ * Created by leo on 15-10-28.
+ */
 @Singleton()
 class UserDAO extends AbstractDAO[User] with UserTable {
 
@@ -32,16 +32,16 @@ class UserDAO extends AbstractDAO[User] with UserTable {
     db.run(modelQuery.filter(_.userName === userName).delete)
   }
 
-  def login(userName: String, password: String): Option[User] = {
+  def login(userName: String, password: String): Option[(User, Role)] = {
     val user = Await.result(db.run(modelQuery.filter(_.userName === userName).result.headOption), waitTime)
     val pwd = Encryption.encodeBySHA1(password)
     user match {
       case Some(u) if u.password.equals(pwd) =>
         //pwd must equals
-        var returnUser: Option[User] = None
+        var returnUser: Option[(User, Role)] = None
         Await.result(roleDAO.query(u.roleId), waitTime) match {
           case Some(role) if role.roleType.equals(RoleType.OWNER) =>
-            returnUser = Some(u)
+            returnUser = Some((u, role))
           case _ =>
         }
         returnUser
@@ -49,14 +49,14 @@ class UserDAO extends AbstractDAO[User] with UserTable {
     }
   }
 
-  def loginFromOtherSite(bindingId: String, website: String): Option[User] = {
+  def loginFromOtherSite(bindingId: String, website: String): Option[(User, Role)] = {
     val user = Await.result(db.run(modelQuery.filter(_.bindingId === bindingId).result.headOption), waitTime)
     user match {
       case Some(u) =>
-        var returnUser: Option[User] = None
+        var returnUser: Option[(User, Role)] = None
         Await.result(roleDAO.query(u.roleId), waitTime) match {
           case Some(role) if role.roleType.equals(RoleType.COMMON) && role.webSite.equals(website) =>
-            returnUser = Some(u)
+            returnUser = Some((u, role))
           case _ =>
         }
         returnUser

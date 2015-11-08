@@ -1,6 +1,8 @@
 @import play.api.Play.current
 @import play.api.cache._
 @import models.User
+@import models.Role
+@import models.RoleType
 @()(implicit session: play.api.mvc.Session)
 
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -23,9 +25,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-        @Cache.getAs[User]((session.get("loginUser")).getOrElse("")) match {
-          case Some(u) => {<a class="navbar-brand" href="/logout">@u.userName</a>}
-          case None => {<a class="navbar-brand" href="/login">Log in</a>}
+        @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
+          case Some((u, r)) => {
+            <a class="navbar-brand" title="logout" href="/logout">@u.userName <i class="fa fa-power-off"></i></a>
+          }
+          case None => {
+            <a class="navbar-brand" href="/login">Log in</a>
+          }
         }
     </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -34,12 +40,24 @@
         <li>
           <a href="/index">Home</a>
         </li>
+
+        @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
+          case Some((u, r)) => {
+              <li>
+                  <a href="/message">Message</a>
+              </li>
+              @if(r.roleType.equals(RoleType.OWNER)) {
+                  <li>
+                      <a href="/managePassage">Manage</a>
+                  </li>
+              }
+          }
+          case None => {}
+        }
+
         <li>
           <a href="/about">About</a>
         </li>
-        @*<li>
-          <a href="#">Contact</a>
-        </li>*@
       </ul>
     </div>
     <!-- /.navbar-collapse -->
