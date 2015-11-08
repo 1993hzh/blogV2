@@ -6,6 +6,7 @@
 GET     /                           controllers.Index.index
 GET     /index                      controllers.Index.showPassages(page:Int?=1)
 GET     /passage                    controllers.PassageController.passage(id:Int?=1)
+GET     /message                    controllers.PassageController.getComments
 POST    /comment                    controllers.PassageController.createComment
 GET     /about                      controllers.Index.about
 GET     /login                      controllers.Login.index

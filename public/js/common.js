@@ -1,5 +1,6 @@
 function reply(toId, toName) {
     $("#comment").attr("placeholder", "Re @" + toName + ": ");
+    $("#comment").empty();
     $("#toId").attr("value", toId);
     $("#toName").attr("value", toName);
 }

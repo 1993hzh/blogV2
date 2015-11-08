@@ -1,7 +1,7 @@
 @(comments: List[Comment], passageId: Int)(implicit session: play.api.mvc.Session)
 
 
-<div class="container override-no-margin-top my-font-color">
+<div class="override-no-margin-top my-font-color">
     <!-- Comments Form -->
     <div class="row">
         <a id="doComment" name="doComment"></a>
@@ -26,7 +26,7 @@
             <div class="media-body">
                 <h4 class="media-heading">
                     <a class="fa fa-share fa-inverse pointer-cursor" title="reply"
-                        onclick="reply('@c.fromId', '@c.fromName')" href="#doComment" data-offset="60"></a>
+                        onclick="reply('@c.fromId', '@c.fromName')" href="#doComment"></a>
                     @c.fromName
                     <small>@c.createTime.format("yyy-MM-dd HH:mm:ss")</small>
                 </h4>

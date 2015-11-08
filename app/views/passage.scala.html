@@ -17,29 +17,30 @@
 
 <body>
 @nav()
-<header class="intro-header">
-    <div class="container">
-        <div class="row">
-            <div class="post-heading override-no-padding my-font-color">
-                <h1>@p.title</h1>
-                <span class="meta">Posted by <a href="#">@p.authorName</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")</span>
+<div class="container">
+    <div class="col-lg-10 col-md-10 col-md-offset-1">
+        <header class="intro-header">
+            <div class="row">
+                <div class="post-heading override-no-padding my-font-color">
+                    <h1>@p.title</h1>
+                    <span class="meta">Posted by <a href="#">@p.authorName</a>
+                        at @p.createTime.format("yyy-MM-dd HH:mm:ss")</span>
+                </div>
             </div>
-        </div>
-    </div>
-</header>
-
-<!-- Post Content -->
-<article>
-    <div class="container override-no-margin-top">
-        <div class="row">
-            <div class="my-font-color">
-                @p.content
+        </header>
+        <article>
+            <div class="override-no-margin-top">
+                <div class="row">
+                    <div class="my-font-color">
+                    @p.content
+                    </div>
+                </div>
             </div>
-        </div>
+        </article>
+        <hr class="row">
+        @comment(c, p.id)
     </div>
-</article>
-<hr>
-@comment(c, p.id)
+</div>
 <hr>
 @footer()
 </body>

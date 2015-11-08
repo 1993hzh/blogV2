@@ -3,7 +3,7 @@ package controllers
 import java.sql.Timestamp
 import javax.inject.Inject
 import dao.{CommentDAO, PassageDAO}
-import models.{User, Comment}
+import models.{Role, User, Comment}
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
@@ -26,11 +26,25 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
     }
   }
 
+  def getComments = Action { implicit request =>
+    request.session.get("loginUser") match {
+      case Some(lu) =>
+        cache.get[(User,Role)](lu) match {
+          case Some((u, r)) =>
+            //TODO getComments based on loginUser
+
+            Ok(views.html.message())
+          case None => Redirect(routes.Login.index)
+        }
+      case None => Redirect(routes.Login.index)
+    }
+  }
+
   def createComment = Action(parse.form(commentForm)) { implicit request =>
     request.session.get("loginUser") match {
       case Some(lu) =>
-        cache.get[User](lu) match {
-          case Some(u) =>
+        cache.get[(User,Role)](lu) match {
+          case Some((u, r)) =>
             val fromId = u.id
             val fromName = u.userName
             val data = request.body
