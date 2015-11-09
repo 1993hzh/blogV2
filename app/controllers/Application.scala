@@ -15,7 +15,11 @@ object Application extends Controller {
   val KEY_PASSAGE_COUNT = "totalPassage"
   val KEY_PAGE_COUNT = "totalPage"
   val PAGE_SIZE = 5
-  val LOGIN_FIRST = "Please <a href=\"/login\">login</a> first."
+  val LOGIN_CALL_BACK: String = "callback"
+
+  def LOGIN_FIRST(passageId: Int) = "Please <a href=\"/loginWithCallback?callback=/passage?id=" +
+    passageId + "&append=doComment\">login</a> first."
+
   val ERROR_NAME_OR_PWD = "Wrong username or password!"
 
   //  def index = Action {

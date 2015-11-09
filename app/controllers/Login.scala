@@ -2,7 +2,6 @@ package controllers
 
 import java.sql.Timestamp
 import javax.inject.Inject
-
 import dao.UserDAO
 import models.{Role, User}
 import play.api.Logger
@@ -41,9 +40,13 @@ class Login @Inject()(cache: CacheApi) extends Controller {
         val loginUser = request.session + ("loginUser" -> loginToken)
         cache.set(loginToken, (u, r), 30.minutes)
 
-        Ok("Success") withSession (loginUser)
+        data.callback match {
+          case Some(str) => Redirect(str) withSession (loginUser) //callback exists
+          case None => Redirect(routes.Index.index) withSession (loginUser)
+        }
+
       case None =>
-        Ok(Application.ERROR_NAME_OR_PWD)
+        Ok(views.html.login(Some(Application.ERROR_NAME_OR_PWD), data.callback))
     }
   }
 
@@ -69,13 +72,17 @@ class Login @Inject()(cache: CacheApi) extends Controller {
     Redirect(routes.Index.index()).withNewSession
   }
 
+  def loginWithCallback(callback: String, append: String) = Action { implicit request =>
+    Ok(views.html.login(None, Some(callback + "#" + append)))
+  }
 
   val loginForm = Form(
     mapping(
+      "callback" -> optional(text),
       "name" -> nonEmptyText,
       "password" -> nonEmptyText
     )(LoginForm.apply)(LoginForm.unapply)
   )
 }
 
-case class LoginForm(name: String, password: String)
+case class LoginForm(callback: Option[String], name: String, password: String)

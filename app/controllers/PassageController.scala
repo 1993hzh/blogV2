@@ -41,20 +41,20 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   }
 
   def createComment = Action(parse.form(commentForm)) { implicit request =>
+    val data = request.body
     request.session.get("loginUser") match {
       case Some(lu) =>
         cache.get[(User,Role)](lu) match {
           case Some((u, r)) =>
             val fromId = u.id
             val fromName = u.userName
-            val data = request.body
             val comment = Comment(0, data.content, data.passageId,
               new Timestamp(System.currentTimeMillis), fromId, fromName, data.toId, data.toName)
             commentDAO.insert(comment)
             Ok("Success")
-          case None => Ok(Application.LOGIN_FIRST)
+          case None => Ok(Application.LOGIN_FIRST(data.passageId))
         }
-      case None => Ok(Application.LOGIN_FIRST)
+      case None => Ok(Application.LOGIN_FIRST(data.passageId))
     }
   }
 
