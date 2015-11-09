@@ -56,28 +56,6 @@ function doLogin() {
     if (!isRequired(password, "password")) {
         return false;
     }
-    $.ajax({
-        url: "/doLogin",
-        type: "POST",
-        data: {
-            name: name,
-            password: password
-        },
-        cache: false,
-        success: function (result) {
-            if (result == "Success") {
-                window.location.href = "/index";
-                return;
-            }
-            showError(result);
-            //clear all fields
-            $('#loginForm').trigger("reset");
-        },
-        error: function (msg) {
-            showError(msg);
-            $('#loginForm').trigger("reset");
-        },
-    })
 }
 
 function hideError() {
@@ -86,7 +64,7 @@ function hideError() {
 
 function showError(msg) {
     $('#error').html("<div class='alert alert-danger'>");
-    $('#error > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;").append("</button>");
+    $('#error > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>");
     $('#error > .alert-danger').append("<strong>" + msg + "</strong>");
     $('#error > .alert-danger').append('</div>');
 }
