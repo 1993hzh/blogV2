@@ -1,4 +1,4 @@
-@(comments: List[Comment], passageId: Int)(implicit session: play.api.mvc.Session)
+@(comments: List[Comment], passageId: Int, error: Option[String] = None)(implicit session: play.api.mvc.Session)
 
 
 <div class="override-no-margin-top my-font-color">
@@ -13,7 +13,19 @@
             <input id="toId" value="" class="hidden"/>
             <input id="toName" value="" class="hidden"/>
             <input id="passageId" value="@passageId" class="hidden"/>
-            <div id="error"></div>
+            @error match {
+                case Some(e) => {
+                    <div id="error">
+                        <div class='alert alert-danger'>
+                            <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+                            <strong>@e</strong>
+                        </div>
+                    </div>
+                }
+                case None => {
+                    <div id="error"></div>
+                }
+            }
             <button type="button" class="btn btn-primary" onclick="doComment()">Submit</button>
         </form>
     </div>

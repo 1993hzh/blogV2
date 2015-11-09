@@ -25,29 +25,35 @@ class Login @Inject()(cache: CacheApi) extends Controller {
     Ok(views.html.login())
   }
 
-  def login = Action(parse.form(loginForm)) { implicit request =>
-    val data = request.body
+  def login = Action { implicit request =>
+    loginForm.bindFromRequest.fold(
+      formWithErrors => {
+        Ok(views.html.login(Some(formWithErrors.errors.map(_.message).mkString(", ")), formWithErrors("callback").value))
+      },
+      data => {
+        val loginUser = userDAO.login(data.name, data.password)
 
-    val loginUser = userDAO.login(data.name, data.password)
+        loginUser match {
+          case Some((u, r)) =>
+            val current = System.currentTimeMillis()
+            loginTime = new Timestamp(current)
+            Logger.info("User: " + u.userName + " on behalf as: " + r.roleType +
+              ", login from: " + request.remoteAddress + " at: " + loginTime)
 
-    loginUser match {
-      case Some((u, r)) =>
-        val current = System.currentTimeMillis()
-        loginTime = new Timestamp(current)
-        Logger.info("User: " + u.userName + " on behalf as: " + r.roleType + ", login from: " + request.remoteAddress + " at: " + loginTime)
+            val loginToken = Encryption.encodeBySHA1(u.userName + current)
+            val loginUser = request.session + ("loginUser" -> loginToken)
+            cache.set(loginToken, (u, r), 30.minutes)
 
-        val loginToken = Encryption.encodeBySHA1(u.userName + current)
-        val loginUser = request.session + ("loginUser" -> loginToken)
-        cache.set(loginToken, (u, r), 30.minutes)
+            data.callback match {
+              case Some(str) => Redirect(str) withSession (loginUser) //callback exists
+              case None => Redirect(routes.Index.index) withSession (loginUser)
+            }
 
-        data.callback match {
-          case Some(str) => Redirect(str) withSession (loginUser) //callback exists
-          case None => Redirect(routes.Index.index) withSession (loginUser)
+          case None =>
+            Ok(views.html.login(Some(Application.ERROR_NAME_OR_PWD), data.callback))
         }
-
-      case None =>
-        Ok(views.html.login(Some(Application.ERROR_NAME_OR_PWD), data.callback))
-    }
+      }
+    )
   }
 
   def logout = Action { implicit request =>
@@ -72,6 +78,7 @@ class Login @Inject()(cache: CacheApi) extends Controller {
     Redirect(routes.Index.index()).withNewSession
   }
 
+  //Need to filter the callback url
   def loginWithCallback(callback: String, append: String) = Action { implicit request =>
     Ok(views.html.login(None, Some(callback + "#" + append)))
   }
@@ -82,6 +89,9 @@ class Login @Inject()(cache: CacheApi) extends Controller {
       "name" -> nonEmptyText,
       "password" -> nonEmptyText
     )(LoginForm.apply)(LoginForm.unapply)
+      verifying(Application.tooLong("callback", 100), fields => fields.callback.getOrElse("").length < 100)
+      verifying(Application.tooLong("name", 64), fields => fields.name.length < 64)
+      verifying(Application.tooLong("password", 255), fields => fields.password.length < 255)
   )
 }
 

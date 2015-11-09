@@ -20,6 +20,8 @@ object Application extends Controller {
   def LOGIN_FIRST(passageId: Int) = "Please <a href=\"/loginWithCallback?callback=/passage?id=" +
     passageId + "&append=doComment\">login</a> first."
 
+  def tooLong(name: String, length: Int) = name + "'s length too long, should less than " + length
+
   val ERROR_NAME_OR_PWD = "Wrong username or password!"
 
   //  def index = Action {
