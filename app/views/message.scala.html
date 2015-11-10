@@ -1,4 +1,4 @@
-@()(implicit session: play.api.mvc.Session)
+@(inMessage: List[(Comment, String)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
 <html>
@@ -12,7 +12,18 @@
 <body>
 @nav()
     <div class="container">
-
+        <div class="col-lg-10 col-md-10 col-md-offset-1">
+            @for((c, s) <- inMessage) {
+                @c.fromName: @c.content
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                      @s
+                    </div>
+                </div>
+            }
+            <hr class="row">
+            @pager("/message", currentPage, totalPage)
+        </div>
     </div>
 @footer()
 </body>
