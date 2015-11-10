@@ -30,5 +30,16 @@ object Application extends Controller {
   //    Ok(views.html.index(message))
   //  }
 
+  def getPageNum(num: Any, totalPage: Int) = {
+    num match {
+      case n: Int if (n <= 1) => 1
+      case n: Int if (n >= totalPage) => totalPage
+      case n: Int if (n > 1 && n < totalPage) => n
+      case s: String if s.isEmpty => 1
+      case _ => Logger.info("Error page num fetched: " + num); 1
+    }
+  }
+
+  def getTotalPage(count: Int, pageSize: Int = PAGE_SIZE): Int = count / pageSize + (if (count % pageSize != 0) 1 else 0)
 
 }

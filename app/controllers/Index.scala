@@ -30,13 +30,7 @@ class Index @Inject()(cache: CacheApi) extends Controller {
   }
 
   def listPassages(num: Any, totalPage: Int): (List[(Passage, List[Tag])], Int) = {
-    val pageNo: Int = num match {
-      case n: Int if (n <= 1) => 1
-      case n: Int if (n >= totalPage) => totalPage
-      case n: Int if (n > 1 && n < totalPage) => n
-      case s: String if s.isEmpty => 1
-      case _ => Logger.info("Error page num fetched: " + num); 1
-    }
+    val pageNo: Int = Application.getPageNum(num, totalPage)
     val passageWithTags = passageDAO.queryPassages(pageNo).map(p => (p, passageDAO.getTags(p.id)))
     (passageWithTags.toList, pageNo)
   }
