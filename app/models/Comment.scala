@@ -12,5 +12,12 @@ case class Comment(id: Int,
                    createTime: Timestamp,
                    fromId: Int,
                    fromName: String,
+                   status: String = CommentStatus.unread,
                    toId: Option[Int] = None,
                    toName: Option[String] = None) extends AbstractModel
+
+object CommentStatus {
+  val unread = "UNREAD"
+  val read = "READ"
+  val deleted = "DELETED"
+}

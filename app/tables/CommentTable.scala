@@ -26,6 +26,8 @@ trait CommentTable extends AbstractTable[Comment] {
 
     def fromName = column[String]("from_name")
 
+    def status = column[String]("status")
+
     //can be null if the commenter is replying to the passage
     def toId = column[Option[Int]]("to_id")
 
@@ -37,7 +39,7 @@ trait CommentTable extends AbstractTable[Comment] {
 
     def passageFK = foreignKey("passage_fk", passageId, PassageDAO.passages)(_.id, onDelete = ForeignKeyAction.Cascade)
 
-    override def * = (id, content, passageId, createTime, fromId, fromName, toId, toName) <>(Comment.tupled, Comment.unapply)
+    override def * = (id, content, passageId, createTime, fromId, fromName, status, toId, toName) <>(Comment.tupled, Comment.unapply)
   }
 
 }
