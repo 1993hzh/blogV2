@@ -2,6 +2,17 @@ body {
     background-color: #252525 !important;
 }
 
+.pager > li > a {
+    color: white !important;
+    //when bootstrap.min.css is 'dark', remember to set this to black
+    //when bootstrap.min.css is 'slate', remember to set this to white
+}
+
+.navbar-nav > li > a {
+    border-left: 0px !important;
+    border-right: 0px !important;
+}
+
 .container {
     margin-top: 100px;
     width: 80%;
@@ -84,12 +95,35 @@ body {
     padding-top: 50%;
 }
 
+.message-meta {
+    color: gray;
+    font-size: 18px;
+    font-style: italic;
+    margin-top: 0;
+}
+
+.message-passage {
+    font-style: italic;
+    color: #ddd;
+}
+
+.my-blockquote {
+    font-style: italic;
+    border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    border: 0px solid #000000;
+    font-size: 17.5px;
+    margin: 20px;
+    padding: 10px 20px;
+}
+
 @font-face {
     font-family: "iconfont-zhihu";
     src: url('../fonts/iconfont-zhihu.eot'); /* IE9*/
     src: url('../fonts/iconfont-zhihu.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-         url('../fonts/iconfont-zhihu.woff') format('woff'), /* chrome¡¢firefox */
-         url('../fonts/iconfont-zhihu.ttf') format('truetype'), /* chrome¡¢firefox¡¢opera¡¢Safari, Android, iOS 4.2+*/
+         url('../fonts/iconfont-zhihu.woff') format('woff'), /* chromeï¿½ï¿½firefox */
+         url('../fonts/iconfont-zhihu.ttf') format('truetype'), /* chromeï¿½ï¿½firefoxï¿½ï¿½operaï¿½ï¿½Safari, Android, iOS 4.2+*/
          url('../fonts/iconfont-zhihu.svg#iconfont') format('svg'); /* iOS 4.1- */
 }
 

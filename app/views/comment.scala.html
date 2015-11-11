@@ -31,7 +31,7 @@
     </div>
 
     @for(c <- comments) {
-        <div class="media row">
+        <div class="media row" id="@c.id" name="@c.id">
             @*<a class="pull-left" href="#">
             <img class="media-object" src="http://placehold.it/64x64" alt="">
             </a>*@

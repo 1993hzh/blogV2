@@ -11,20 +11,25 @@
 </head>
 <body>
 @nav()
-    <div class="container">
-        <div class="col-lg-10 col-md-10 col-md-offset-1">
-            @for((c, s) <- inMessage) {
-                @c.fromName: @c.content
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                      @s
-                    </div>
-                </div>
-            }
-            <hr class="row">
-            @pager("/message", currentPage, totalPage)
+<div class="container">
+  <div class="col-lg-10 col-md-10 col-md-offset-1">
+    @for((c, s) <- inMessage) {
+    <div class="panel panel-default my-font-color">
+      <div class="panel-body">
+        <h4 class="message-meta">@@@c.fromName replied to: <a class="message-passage pointer-cursor" href="/passage?id=@c.passageId">@s</a></h4>
+        <div class="my-blockquote">
+          <h2><a class="my-font-color" href="/passage?id=@c.passageId#@c.id">@c.content</a></h2>
         </div>
+      </div>
+      <div class="panel-footer">
+        <div class="message-meta">Sent at @c.createTime.format("yyy-MM-dd HH:mm:ss")</div>
+      </div>
     </div>
+    <hr class="row">
+    }
+    @pager("/message", currentPage, totalPage)
+  </div>
+</div>
 @footer()
 </body>
 </html>
