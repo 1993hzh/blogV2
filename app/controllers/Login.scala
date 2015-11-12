@@ -3,6 +3,7 @@ package controllers
 import java.sql.Timestamp
 import javax.inject.Inject
 import dao.UserDAO
+import dao.CommentDAO
 import models.{Role, User}
 import play.api.Logger
 import play.api.cache._
@@ -13,11 +14,12 @@ import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
 
 /**
- * Created by leo on 15-11-4.
- */
+  * Created by leo on 15-11-4.
+  */
 class Login @Inject()(cache: CacheApi) extends Controller {
 
   private val userDAO = UserDAO()
+  private val commentDAO = CommentDAO()
   private var loginTime: Timestamp = null
   private var logoutTime: Timestamp = null
 
@@ -41,12 +43,14 @@ class Login @Inject()(cache: CacheApi) extends Controller {
               ", login from: " + request.remoteAddress + " at: " + loginTime)
 
             val loginToken = Encryption.encodeBySHA1(u.userName + current)
-            val loginUser = request.session + ("loginUser" -> loginToken)
+            var loginUserSession = request.session + ("loginUser" -> loginToken) // add loginToken into session
+            loginUserSession += ("unreadMessage" -> getUnreadInMessage(u.id))
+
             cache.set(loginToken, (u, r), 30.minutes)
 
             data.callback match {
-              case Some(str) => Redirect(str) withSession (loginUser) //callback exists
-              case None => Redirect(routes.Index.index) withSession (loginUser)
+              case Some(str) => Redirect(str) withSession (loginUserSession) //callback exists
+              case None => Redirect(routes.Index.index) withSession (loginUserSession)
             }
 
           case None =>
@@ -54,6 +58,11 @@ class Login @Inject()(cache: CacheApi) extends Controller {
         }
       }
     )
+  }
+
+  private def getUnreadInMessage(userId: Int): String = {
+    val count = commentDAO.getUnreadInMessagesCountSync(userId)
+    count.toString
   }
 
   def logout = Action { implicit request =>

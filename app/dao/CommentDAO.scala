@@ -3,7 +3,7 @@ package dao
 import javax.inject.Singleton
 
 import controllers.Application
-import models.Comment
+import models.{CommentStatus, Comment}
 import slick.lifted.TableQuery
 import tables.CommentTable
 
@@ -21,6 +21,15 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
   import driver.api._
 
+  private def getInMessageQuery(userId: Int) = {
+    val replies = modelQuery.filter(_.toId === userId).join(PassageDAO.passages).on(_.passageId === _.id)
+    val commentsToPassage = modelQuery.join(PassageDAO.passages).on(_.passageId === _.id)
+      .filter(r => {
+        r._2.authorId === userId && r._1.toId.isEmpty && r._1.toName.isEmpty
+      })
+    replies ++ commentsToPassage
+  }
+
   /**
     *
     * @param num
@@ -30,7 +39,7 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
     */
   private def getInMessagesByLoginUser(num: Int, pageSize: Int = Application.PAGE_SIZE, userId: Int): Future[Seq[(Comment, String)]] = {
     val query = getInMessageQuery(userId)
-    val action = (query).map(f => (f._1, f._2.title)).sortBy(_._1.createTime.desc)
+    val action = query.map(f => (f._1, f._2.title)).sortBy(_._1.createTime.desc)
       .drop((num - 1) * pageSize).take(pageSize).result
 
     db.run(action)
@@ -41,19 +50,15 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
     Await.result(result, waitTime).toList
   }
 
-  private def getInMessageQuery(userId: Int) = {
-    val replies = modelQuery.filter(_.toId === userId).join(PassageDAO.passages).on(_.passageId === _.id)
-    val commentsToPassage = modelQuery.join(PassageDAO.passages).on(_.passageId === _.id)
-      .filter(r => {
-        r._2.authorId === userId && r._1.toId.isEmpty && r._1.toName.isEmpty
-      })
-    replies ++ commentsToPassage
-  }
-
   private def getInMessagesCount(userId: Int): Future[Int] = db.run(getInMessageQuery(userId).length.result)
 
   def getInMessagesCountSync(userId: Int): Int = Await.result(getInMessagesCount(userId), waitTime)
 
+  private def getUnreadInMessagesCount(userId: Int): Future[Int] = {
+    db.run(getInMessageQuery(userId).map(_._1).filter(f => f.status === CommentStatus.unread).length.result)
+  }
+
+  def getUnreadInMessagesCountSync(userId: Int): Int = Await.result(getUnreadInMessagesCount(userId), waitTime)
 }
 
 object CommentDAO {

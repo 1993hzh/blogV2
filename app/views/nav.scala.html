@@ -44,7 +44,7 @@
         @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
           case Some((u, r)) => {
               <li>
-                  <a href="/message">Message</a>
+                  <a href="/message">Message <span class="badge">@session.get("unreadMessage").getOrElse("0")</span></a>
               </li>
               @if(r.roleType.equals(RoleType.OWNER)) {
                   <li>
