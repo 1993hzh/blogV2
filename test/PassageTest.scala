@@ -10,8 +10,8 @@ import scala.concurrent.duration.Duration
 import controllers.Application
 
 /**
- * Created by leo on 15-11-2.
- */
+  * Created by leo on 15-11-2.
+  */
 class PassageTest extends AbstractTest {
 
   val PASSAGE_SIZE = 22
@@ -180,7 +180,7 @@ class PassageTest extends AbstractTest {
     val comment1 = Comment(0, "comment1", passageId, new Timestamp(System.currentTimeMillis()), userId, "sina")
     val id1 = Await.result(commentDAO.insert(comment1), Duration.Inf)
 
-    val comment2 = Comment(0, "reply2comment1", passageId, new Timestamp(System.currentTimeMillis()), adminId, "admin", Some(userId), Some("sina"))
+    val comment2 = Comment(0, "reply2comment1", passageId, new Timestamp(System.currentTimeMillis()), adminId, "admin", toId = Some(userId), toName = Some("sina"))
     val id2 = Await.result(commentDAO.insert(comment2), Duration.Inf)
 
     List(id1, id2)
