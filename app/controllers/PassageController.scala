@@ -1,12 +1,8 @@
 package controllers
 
-import java.sql.Timestamp
 import javax.inject.Inject
 import dao.{CommentDAO, PassageDAO}
-import models.{Role, User, Comment}
 import play.api.cache.CacheApi
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
 
 /**
