@@ -68,3 +68,48 @@ function showError(msg) {
     $('#error > .alert-danger').append("<strong>" + msg + "</strong>");
     $('#error > .alert-danger').append('</div>');
 }
+
+function markAs(type, commentId) {
+    $.ajax({
+        url: "markAs",
+        type: "GET",
+        data: {
+            markType: type,
+            commentId: commentId
+        },
+        cache: false,
+        success: function (result) {
+            if (result == "Success") {
+                window.location.href = window.location.href
+                return;
+            }
+            // error message
+            showError(result)
+        },
+        error: function (msg) {
+            showError(msg)
+        },
+    });
+}
+function marksAs(type, commentIds) {
+    $.ajax({
+        url: "marksAs",
+        type: "GET",
+        data: {
+            markType: type,
+            commentId: commentIds
+        },
+        cache: false,
+        success: function (result) {
+            if (result == "Success") {
+                window.location.href = window.location.href
+                return;
+            }
+            // error message
+            showError(result)
+        },
+        error: function (msg) {
+            showError(msg)
+        },
+    });
+}

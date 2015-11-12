@@ -20,4 +20,13 @@ object CommentStatus {
   val unread = "UNREAD"
   val read = "READ"
   val deleted = "DELETED"
+
+  def getStatus(status: String) = {
+    status match {
+      case CommentStatus.unread => unread
+      case CommentStatus.read => read
+      case CommentStatus.deleted => deleted
+      case _ => unread
+    }
+  }
 }

@@ -8,6 +8,8 @@ GET         /index                    controllers.Index.showPassages(page:Int?=1
 GET         /passage                  controllers.PassageController.passage(id:Int?=1)
 GET         /message                  controllers.CommentController.getComments(page:Int?=1)
 POST        /comment                  controllers.CommentController.createComment
+GET         /markAs                   controllers.CommentController.markInMessageAs(markType:String, commentId:Int)
+GET         /marksAs                  controllers.CommentController.markInMessagesAs(markType:String, commentIds)
 GET         /about                    controllers.Index.about
 GET         /login                    controllers.Login.index
 GET         /loginWithCallback        controllers.Login.loginWithCallback(callback:String, append:String)

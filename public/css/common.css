@@ -68,6 +68,59 @@ body {
     margin-top: 0px;
 }
 
+.override-font-weight-normal {
+    font-weight: normal;
+}
+
+.my-href {
+    color: #ddd;
+    font-size: 24px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    cursor: pointer;
+    cursor: hand;
+    text-decoration: none !important;
+}
+
+.mark-button {
+    color: #ddd;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.message-unread {
+    background-color: #3e444c !important;
+}
+
+.message-read {
+    background-color: #272c30 !important;
+}
+
+.my-panel-footer {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    padding: 10px 15px;
+}
+
+.my-href:hover {
+    color: #0085a1;
+}
+
+.my-href:focus {
+    color: #0085a1;
+}
+
+.mark-button:hover {
+    color: #0085a1;
+}
+
+.mark-button:focus {
+    color: #0085a1;
+}
+
+.override-font-weight-bold {
+    font-weight: bold;
+}
+
 .override-no-padding {
     padding: 0px !important;
 }
@@ -103,8 +156,7 @@ body {
 }
 
 .message-passage {
-    font-style: italic;
-    color: #ddd;
+    font-size: 18px;
 }
 
 .my-blockquote {
@@ -114,8 +166,8 @@ body {
     -webkit-border-radius: 10px 10px 10px 10px;
     border: 0px solid #000000;
     font-size: 17.5px;
-    margin: 20px;
-    padding: 10px 20px;
+    margin: 20px 0 -5px 20px;
+    padding: 0px 10px;
 }
 
 @font-face {

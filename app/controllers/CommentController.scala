@@ -4,7 +4,8 @@ import java.sql.Timestamp
 import javax.inject.Inject
 
 import dao.CommentDAO
-import models.{Comment, Role, User}
+import models.{CommentStatus, Comment, Role, User}
+import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
@@ -60,6 +61,28 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
         }
       }
     )
+  }
+
+  def markInMessageAs(markType: String, commentId: Int) = Action {
+    Ok(commentDAO.markAsSync(commentId, CommentStatus.getStatus(markType.toUpperCase)))
+  }
+
+  def markInMessagesAs(markType: String, commentIds: Any) = Action {
+    commentIds match {
+      case cs: String =>
+        val cList = cs.split(",").collect {
+          case c: String =>
+            try {
+              c.trim.toInt
+            } catch {
+              case ne: NumberFormatException => Logger.info("Try to format " + c + " to Int failed: " + ne.getLocalizedMessage)
+            }
+        }
+        Ok(commentDAO.marksAsSync(cList.map(c => c.toString.toInt).toSet, CommentStatus.getStatus(markType.toUpperCase)))
+      case _ =>
+        Logger.info("markAsRead with commentIdList error with: " + commentIds)
+        Ok("markAsRead with commentIdList error with: " + commentIds)
+    }
   }
 
   val commentForm = Form(

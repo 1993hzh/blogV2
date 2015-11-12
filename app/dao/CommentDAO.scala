@@ -4,14 +4,16 @@ import javax.inject.Singleton
 
 import controllers.Application
 import models.{CommentStatus, Comment}
+import play.api.Logger
 import slick.lifted.TableQuery
 import tables.CommentTable
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success}
 
 /**
-  * Created by leo on 15-11-2.
-  */
+ * Created by leo on 15-11-2.
+ */
 @Singleton()
 class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
@@ -31,12 +33,12 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
   }
 
   /**
-    *
-    * @param num
-    * @param pageSize
-    * @param userId
-    * @return
-    */
+   *
+   * @param num
+   * @param pageSize
+   * @param userId
+   * @return
+   */
   private def getInMessagesByLoginUser(num: Int, pageSize: Int = Application.PAGE_SIZE, userId: Int): Future[Seq[(Comment, String)]] = {
     val query = getInMessageQuery(userId)
     val action = query.map(f => (f._1, f._2.title)).sortBy(_._1.createTime.desc)
@@ -59,6 +61,34 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
   }
 
   def getUnreadInMessagesCountSync(userId: Int): Int = Await.result(getUnreadInMessagesCount(userId), waitTime)
+
+  private def markAs(commentId: Int, status: String = CommentStatus.read): Future[Int] = {
+    val action = modelQuery.filter(c => c.id === commentId).map(_.status).update(status)
+    db.run(action)
+  }
+
+  private def marksAs(commentId: Set[Int], status: String = CommentStatus.read): Future[Int] = {
+    val action = modelQuery.filter(c => c.id inSet commentId).map(_.status).update(status)
+    db.run(action)
+  }
+
+  def markAsSync(commentId: Int, status: String = CommentStatus.read): String = {
+    Await.result(markAs(commentId, status), waitTime) match {
+      case r: Int if r == 1 => "Success"
+      case _ =>
+        Logger.info("Comment: " + commentId + " mark as " + status + " failed")
+        "Sorry that markAs" + status + " failed, this issue has been logged, will be fixed later"
+    }
+  }
+
+  def marksAsSync(commentIds: Set[Int], status: String = CommentStatus.read): String = {
+    Await.result(marksAs(commentIds, status), waitTime) match {
+      case r: Int if r == 1 => "Success"
+      case _ =>
+        Logger.info("Comment: " + commentIds + " mark as " + status + " failed")
+        "Sorry that markAs" + status + " failed, this issue has been logged, will be fixed later"
+    }
+  }
 }
 
 object CommentDAO {

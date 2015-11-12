@@ -1,3 +1,4 @@
+@import models.CommentStatus
 @(inMessage: List[(Comment, String)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
@@ -13,15 +14,33 @@
 @nav()
 <div class="container">
   <div class="col-lg-10 col-md-10 col-md-offset-1">
+    <i class="pull-right">
+        <a>Mark All as Read</a>
+        <a>Mark All as Unread</a>
+    </i>
     @for((c, s) <- inMessage) {
-    <div class="panel panel-default my-font-color">
+    <div class="panel panel-default my-font-color
+        @if(c.status.equals(CommentStatus.unread)) {
+            override-font-weight-bold message-unread
+        } else {
+            override-font-weight-normal message-read
+        }
+    ">
       <div class="panel-body">
-        <h4 class="message-meta">@@@c.fromName replied to: <a class="message-passage pointer-cursor" href="/passage?id=@c.passageId">@s</a></h4>
+        <div class="message-meta">
+            @if(c.status.equals(CommentStatus.unread)) {
+                <i class="fa fa-eye-slash pull-right mark-button" title="mark as read" onclick="markAs('read', '@c.id')"></i>
+            } else {
+                <i class="fa fa-eye pull-right mark-button" title="mark as unread" onclick="markAs('unread', '@c.id')"></i>
+            }
+          @@@c.fromName @if(c.toId.isEmpty) { replied to} else { commented on}:
+          <a class="my-href message-passage" href="/passage?id=@c.passageId">@s</a>
+        </div>
         <div class="my-blockquote">
-          <h2><a class="my-font-color" href="/passage?id=@c.passageId#@c.id">@c.content</a></h2>
+          <a class="my-href" href="/passage?id=@c.passageId#@c.id">@c.content</a>
         </div>
       </div>
-      <div class="panel-footer">
+      <div class="my-panel-footer">
         <div class="message-meta">Sent at @c.createTime.format("yyy-MM-dd HH:mm:ss")</div>
       </div>
     </div>
