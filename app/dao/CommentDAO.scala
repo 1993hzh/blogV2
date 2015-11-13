@@ -9,11 +9,10 @@ import slick.lifted.TableQuery
 import tables.CommentTable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success}
 
 /**
-  * Created by leo on 15-11-2.
-  */
+ * Created by leo on 15-11-2.
+ */
 @Singleton()
 class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
@@ -33,12 +32,12 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
   }
 
   /**
-    *
-    * @param num
-    * @param pageSize
-    * @param userId
-    * @return
-    */
+   *
+   * @param num
+   * @param pageSize
+   * @param userId
+   * @return
+   */
   private def getInMessagesByLoginUser(num: Int, pageSize: Int = Application.PAGE_SIZE, userId: Int): Future[Seq[(Comment, String)]] = {
     val query = getInMessageQuery(userId)
     val action = query.map(f => (f._1, f._2.title)).sortBy(_._1.createTime.desc)
@@ -86,10 +85,23 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
     }
   }
 
-  def getPassageIdByCommentId(commentId: Int): Option[Int] = {
-    val action = modelQuery.filter(_.id === commentId).map(_.passageId).result.headOption
-    val asyncResult = db.run(action)
-    Await.result(asyncResult, waitTime)
+  private def markAllAsRead(userId: Int): Future[Int] = {
+    //I think it's a bug
+    //    val action = getInMessageQuery(userId).map(_._1).filter(_.status === CommentStatus.unread)
+    //      .map(_.status).update(CommentStatus.read)
+    val action =
+      sql"""
+       update t_comment set status = 'UNREAD' where id in
+       (select c1.id from t_comment c1 where c1.to_id = $userId and c1.status = 'UNREAD'
+       union
+       select c2.id from t_comment c2 join t_passage p on c2.passage_id = p.id
+       where c2.to_id is null and c2.to_name is null and c2.status = 'UNREAD' and p.author_id = $userId);
+      """.asUpdate
+    db.run(action)
+  }
+
+  def markAllAsReadSync(userId: Int): Int = {
+    Await.result(markAllAsRead(userId), waitTime)
   }
 
 }

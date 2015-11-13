@@ -13,9 +13,9 @@ import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
-  * Created by Leo.
-  * 2015/11/10 22:24
-  */
+ * Created by Leo.
+ * 2015/11/10 22:24
+ */
 class CommentController @Inject()(cache: CacheApi) extends Controller {
   lazy val commentDAO = CommentDAO()
   lazy val passageDAO = PassageDAO()
@@ -105,7 +105,7 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
     }
   }
 
-  @deprecated("i don't think this demand is highly considered")
+  @deprecated("i don't think this demand is seldom considered(actually only me)", "since 2015/11/13(no version num)")
   def markInMessagesAs(markType: String, commentIds: Any) = Action { implicit request =>
     val status = CommentStatus.getStatus(markType.toUpperCase)
     val userName = Application.getLoginUserName(request.session)
@@ -135,6 +135,16 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
         Logger.info("markAsRead with commentIdList error with: " + commentIds)
         Ok("markAsRead with commentIdList error with: " + commentIds)
     }
+  }
+
+  def markInMessagesAsRead = Action { implicit request =>
+    val userId = Application.getLoginUserId(request.session)
+    val userName = Application.getLoginUserName(request.session)
+
+    val result = commentDAO.markAllAsReadSync(userId)
+    resetUnreadCountInCache(userName, -result)
+
+    Ok("Success")
   }
 
   def viewComment(passageId: Int, commentId: Int) = Action { implicit request =>

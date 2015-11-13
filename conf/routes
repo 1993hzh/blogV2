@@ -10,6 +10,7 @@ GET         /message                  controllers.CommentController.getComments(
 POST        /comment                  controllers.CommentController.createComment
 GET         /viewComment              controllers.CommentController.viewComment(passageId:Int, commentId:Int)
 GET         /markAs                   controllers.CommentController.markInMessageAs(markType:String, commentId:Int)
+POST        /markAll                  controllers.CommentController.markInMessagesAsRead
 GET         /about                    controllers.Index.about
 GET         /login                    controllers.Login.index
 GET         /loginWithCallback        controllers.Login.loginWithCallback(callback:String, append:String)

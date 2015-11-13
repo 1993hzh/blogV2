@@ -9,11 +9,11 @@
 <link href="/assets/css/common.css" rel="stylesheet">
 <link href="/assets/css/clean-blog.min.css" rel="stylesheet">
 <link href="/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<link href='/assets/css/googleapis.css' rel='stylesheet' type='text/css'>
 <script src="/assets/js/jquery.min.js"></script>
-<script src="/assets/js/bootstrap.min.js"></script>
-<script src="/assets/js/clean-blog.js"></script>
 <script src="/assets/js/common.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/js/jquery.bootstrap.min.js"></script>
+<script src="/assets/js/clean-blog.js"></script>
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
   <div class="container-fluid">
@@ -45,7 +45,9 @@
           case Some((u, r)) => {
               <li>
                   <a href="/message">Notification&nbsp;
-                    <span id="unreadDrag" class="badge" draggable="true">@Cache.getOrElse(u.userName+"-unreadMessage")("0")</span>
+                    <span id="unreadDrag" class="badge" draggable="true">
+                      @Cache.getOrElse(u.userName+"-unreadMessage")("0")
+                    </span>
                   </a>
               </li>
               @if(r.roleType.equals(RoleType.OWNER)) {

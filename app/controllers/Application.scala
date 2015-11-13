@@ -48,4 +48,12 @@ object Application extends Controller {
       case None => ""
     }
   }
+
+  def getLoginUserId(session: Session): Int = {
+    val loginToken = session.get("loginUser").getOrElse("")
+    Cache.getAs[(User, Role)](loginToken) match {
+      case Some((u, r)) => u.id
+      case None => -1
+    }
+  }
 }

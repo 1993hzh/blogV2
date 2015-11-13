@@ -94,6 +94,7 @@ function markAs(type, commentId) {
         },
     });
 }
+
 function marksAs(type, commentIds) {
     $.ajax({
         url: "marksAs",
@@ -116,3 +117,60 @@ function marksAs(type, commentIds) {
         },
     });
 }
+
+$(function () {
+    var isClear = true;
+
+    function markAllAsRead() {
+        $.ajax({
+            url: '/markAll',
+            dataType: "text",
+            type: "post",
+            success: function (result) {
+                if (result != "Success") {
+                    $.messager.popup(result);
+                    return;
+                } else {
+                    $('#unreadDrag').text(0);
+                }
+            },
+            error: function (msg) {
+                $.messager.popup("Internal Error");
+            }
+        });
+    }
+
+    $('#unreadDrag').on({
+        dragstart: function (e) {
+            e.originalEvent.dataTransfer.effectAllowed = "copyMove"
+            e.originalEvent.dataTransfer.dropEffect = "none"
+            //e.originalEvent.dataTransfer.setData('text/plain', 'Any');
+        },
+        dragend: function (e) {
+            e.preventDefault();
+            if (isClear) {
+                $.messager.confirm("Empty notifications", "You are going to mark all notifications as read, sure?", function () {
+                    markAllAsRead();
+                })
+            }
+        }
+    });
+
+    $('#unreadDrag').parent().parent().attr("draggable", "true");
+    $('#unreadDrag').parent().parent().on({
+        dragover: function (e) {
+            e.preventDefault();
+        },
+        drop: function (e) {
+            e.preventDefault();
+            isClear = false
+        }
+    });
+
+    //prevent the links draggable, especially in firefox, it sucks
+    //$(".navbar-nav > li > a").on("dragstart", function (e) {
+    //    e.preventDefault();
+    //    e.stopPropagation();
+    //    return false;
+    //});
+})
