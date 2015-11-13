@@ -1,13 +1,12 @@
 package controllers
 
 
+import models.{Role, User}
 import play.api._
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import play.api.mvc._
 import play.api.cache.Cache
 import play.api.Play.current
-
-import play.api.db._
 import play.api.i18n.Messages.Implicits._
 
 object Application extends Controller {
@@ -42,4 +41,11 @@ object Application extends Controller {
 
   def getTotalPage(count: Int, pageSize: Int = PAGE_SIZE): Int = count / pageSize + (if (count % pageSize != 0) 1 else 0)
 
+  def getLoginUserName(session: Session): String = {
+    val loginToken = session.get("loginUser").getOrElse("")
+    Cache.getAs[(User, Role)](loginToken) match {
+      case Some((u, r)) => u.userName
+      case None => ""
+    }
+  }
 }

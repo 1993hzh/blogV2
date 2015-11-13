@@ -10,9 +10,9 @@ import scala.concurrent.{Await, Future}
 import tables.PassageTable
 
 /**
- * Created by Leo.
- * 2015/11/1 20:50
- */
+  * Created by Leo.
+  * 2015/11/1 20:50
+  */
 @Singleton()
 class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
@@ -65,6 +65,15 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   def queryCommentsByPassageId(passageId: Int): Future[Seq[Comment]] = {
     db.run(modelQuery.filter(_.id === passageId).
       join(CommentDAO.comments).on(_.id === _.passageId).sortBy(_._2.createTime.asc).map(_._2).result)
+  }
+
+  private def getAuthorNameWithPassageId(passageId: Int): Future[Option[String]] = {
+    db.run(modelQuery.filter(_.id === passageId)
+      .join(UserDAO.users).on(_.authorId === _.id).map(_._2.userName).result.headOption)
+  }
+
+  def getAuthorNameWithPassageIdSync(passageId: Int): String = {
+    Await.result(getAuthorNameWithPassageId(passageId), waitTime).getOrElse("")
   }
 
   def getKeywords(passageId: Int): List[Keyword] = {

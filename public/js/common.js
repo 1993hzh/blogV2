@@ -1,8 +1,9 @@
-function reply(toId, toName) {
+function reply(toId, toName, toCommentId) {
     $("#comment").attr("placeholder", "Re @" + toName + ": ");
     $("#comment").empty();
     $("#toId").attr("value", toId);
     $("#toName").attr("value", toName);
+    $("#toCommentId").attr("value", toCommentId);
 }
 
 function doComment() {
@@ -14,6 +15,7 @@ function doComment() {
     var passageId = $("input#passageId").val();
     var toId = $("input#toId").val();
     var toName = $("input#toName").val();
+    var toCommentId = $("input#toCommentId").val();
     $.ajax({
         url: "/comment",
         type: "POST",
@@ -21,6 +23,7 @@ function doComment() {
             content: content,
             toId: toId,
             toName: toName,
+            toCommentId: toCommentId,
             passageId: passageId
         },
         cache: false,

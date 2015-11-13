@@ -170,6 +170,10 @@ body {
     padding: 0px 10px;
 }
 
+.comments:target {
+    background-color: #3e444c;
+}
+
 @font-face {
     font-family: "iconfont-zhihu";
     src: url('../fonts/iconfont-zhihu.eot'); /* IE9*/

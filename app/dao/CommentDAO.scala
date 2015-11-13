@@ -12,8 +12,8 @@ import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success}
 
 /**
- * Created by leo on 15-11-2.
- */
+  * Created by leo on 15-11-2.
+  */
 @Singleton()
 class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
@@ -33,12 +33,12 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
   }
 
   /**
-   *
-   * @param num
-   * @param pageSize
-   * @param userId
-   * @return
-   */
+    *
+    * @param num
+    * @param pageSize
+    * @param userId
+    * @return
+    */
   private def getInMessagesByLoginUser(num: Int, pageSize: Int = Application.PAGE_SIZE, userId: Int): Future[Seq[(Comment, String)]] = {
     val query = getInMessageQuery(userId)
     val action = query.map(f => (f._1, f._2.title)).sortBy(_._1.createTime.desc)
@@ -72,23 +72,26 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
     db.run(action)
   }
 
-  def markAsSync(commentId: Int, status: String = CommentStatus.read): String = {
+  def markAsSync(commentId: Int, status: String = CommentStatus.read): Boolean = {
     Await.result(markAs(commentId, status), waitTime) match {
-      case r: Int if r == 1 => "Success"
-      case _ =>
-        Logger.info("Comment: " + commentId + " mark as " + status + " failed")
-        "Sorry that markAs" + status + " failed, this issue has been logged, will be fixed later"
+      case r: Int if r == 1 => true
+      case _ => Logger.info("Comment: " + commentId + " mark as " + status + " failed"); false
     }
   }
 
-  def marksAsSync(commentIds: Set[Int], status: String = CommentStatus.read): String = {
+  def marksAsSync(commentIds: Set[Int], status: String = CommentStatus.read): Boolean = {
     Await.result(marksAs(commentIds, status), waitTime) match {
-      case r: Int if r == 1 => "Success"
-      case _ =>
-        Logger.info("Comment: " + commentIds + " mark as " + status + " failed")
-        "Sorry that markAs" + status + " failed, this issue has been logged, will be fixed later"
+      case r: Int if r == 1 => true
+      case _ => Logger.info("Comment: " + commentIds + " mark as " + status + " failed"); false
     }
   }
+
+  def getPassageIdByCommentId(commentId: Int): Option[Int] = {
+    val action = modelQuery.filter(_.id === commentId).map(_.passageId).result.headOption
+    val asyncResult = db.run(action)
+    Await.result(asyncResult, waitTime)
+  }
+
 }
 
 object CommentDAO {

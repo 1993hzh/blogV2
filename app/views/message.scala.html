@@ -14,10 +14,6 @@
 @nav()
 <div class="container">
   <div class="col-lg-10 col-md-10 col-md-offset-1">
-    <i class="pull-right">
-        <a>Mark All as Read</a>
-        <a>Mark All as Unread</a>
-    </i>
     @for((c, s) <- inMessage) {
     <div class="panel panel-default my-font-color
         @if(c.status.equals(CommentStatus.unread)) {
@@ -28,16 +24,16 @@
     ">
       <div class="panel-body">
         <div class="message-meta">
-            @if(c.status.equals(CommentStatus.unread)) {
-                <i class="fa fa-eye-slash pull-right mark-button" title="mark as read" onclick="markAs('read', '@c.id')"></i>
-            } else {
-                <i class="fa fa-eye pull-right mark-button" title="mark as unread" onclick="markAs('unread', '@c.id')"></i>
-            }
-          @@@c.fromName @if(c.toId.isEmpty) { replied to} else { commented on}:
-          <a class="my-href message-passage" href="/passage?id=@c.passageId">@s</a>
+          @if(c.status.equals(CommentStatus.unread)) {
+          <i class="fa fa-eye-slash pull-right mark-button" title="mark as read" onclick="markAs('read', '@c.id')"></i>
+          } else {
+          <i class="fa fa-eye pull-right mark-button" title="mark as unread" onclick="markAs('unread', '@c.id')"></i>
+          }
+          @@@c.fromName @if(!c.toId.isEmpty) { replied to} else { commented on}:
+          <a class="my-href message-passage" href="/viewComment?passageId=@c.passageId&commentId=@c.id">@s</a>
         </div>
         <div class="my-blockquote">
-          <a class="my-href" href="/passage?id=@c.passageId#@c.id">@c.content</a>
+          <a class="my-href" href="/viewComment?passageId=@c.passageId&commentId=@c.id">@c.content</a>
         </div>
       </div>
       <div class="my-panel-footer">

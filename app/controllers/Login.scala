@@ -43,10 +43,10 @@ class Login @Inject()(cache: CacheApi) extends Controller {
               ", login from: " + request.remoteAddress + " at: " + loginTime)
 
             val loginToken = Encryption.encodeBySHA1(u.userName + current)
-            var loginUserSession = request.session + ("loginUser" -> loginToken) // add loginToken into session
-            loginUserSession += ("unreadMessage" -> getUnreadInMessage(u.id))
+            val loginUserSession = request.session + ("loginUser" -> loginToken) // add loginToken into session
 
-            cache.set(loginToken, (u, r), 30.minutes)
+            cache.set(loginToken, (u, r)) // add loginToken into public cache
+            cache.set(u.userName + "-unreadMessage", getUnreadInMessage(u.id)) //add unreadMessage into public cache
 
             data.callback match {
               case Some(str) => Redirect(str) withSession (loginUserSession) //callback exists
@@ -66,9 +66,9 @@ class Login @Inject()(cache: CacheApi) extends Controller {
   }
 
   def logout = Action { implicit request =>
-    val userName = request.session.get("loginUser")
+    val loginToken = request.session.get("loginUser")
 
-    val loginUser = cache.get[(User, Role)](userName.getOrElse(""))
+    val loginUser = cache.get[(User, Role)](loginToken.getOrElse(""))
 
     loginUser match {
       case Some((u, r)) =>
@@ -76,13 +76,14 @@ class Login @Inject()(cache: CacheApi) extends Controller {
         userDAO.updateLoginInfo(u.userName, request.remoteAddress, loginTime, logoutTime)
         Logger.info("User: " + u.userName + " logout at: " + logoutTime)
 
-        request.session - ("loginUser")
-        userName match {
-          case Some(un) => cache.remove(un)
+        loginToken match {
+          case Some(lt) =>
+            cache.remove(lt) // remove loginToken from public cache
+            cache.remove(u.userName + "-unreadMessage") // remove unreadMessage from public cache
           case None => Logger.info("Session has no `loginUser` ")
         }
       case None =>
-        Logger.info("Didn't find " + userName)
+        Logger.info("Didn't find " + loginToken)
     }
     Redirect(routes.Index.index()).withNewSession
   }

@@ -13,6 +13,7 @@
             <input id="toId" value="" class="hidden"/>
             <input id="toName" value="" class="hidden"/>
             <input id="passageId" value="@passageId" class="hidden"/>
+            <input id="toCommentId" value="" class="hidden"/>
             @error match {
                 case Some(e) => {
                     <div id="error">
@@ -31,14 +32,14 @@
     </div>
 
     @for(c <- comments) {
-        <div class="media row" id="@c.id" name="@c.id">
+        <div class="media row comments" id="@c.id" name="@c.id">
             @*<a class="pull-left" href="#">
             <img class="media-object" src="http://placehold.it/64x64" alt="">
             </a>*@
             <div class="media-body">
                 <h4 class="media-heading">
                     <a class="fa fa-share fa-inverse pointer-cursor" title="reply"
-                        onclick="reply('@c.fromId', '@c.fromName')" href="#doComment"></a>
+                        onclick="reply('@c.fromId', '@c.fromName', '@c.id')" href="#doComment"></a>
                     @c.fromName
                     <small>@c.createTime.format("yyy-MM-dd HH:mm:ss")</small>
                 </h4>
