@@ -105,6 +105,7 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
     }
   }
 
+  @deprecated("i don't think this demand is highly considered")
   def markInMessagesAs(markType: String, commentIds: Any) = Action { implicit request =>
     val status = CommentStatus.getStatus(markType.toUpperCase)
     val userName = Application.getLoginUserName(request.session)
