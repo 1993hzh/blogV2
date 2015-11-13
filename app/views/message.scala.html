@@ -1,11 +1,11 @@
 @import models.CommentStatus
-@(inMessage: List[(Comment, String)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+@(inMessage: List[(Comment, String)], currentPage: Int, totalPage: Int, error:String = "")(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <title></title>
+  <title>Notification</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
   <meta name="author" content="Leo">
@@ -14,6 +14,7 @@
 @nav()
 <div class="container">
   <div class="col-lg-10 col-md-10 col-md-offset-1">
+    <div id="error"></div>
     @for((c, s) <- inMessage) {
     <div class="panel panel-default my-font-color
         @if(c.status.equals(CommentStatus.unread)) {
