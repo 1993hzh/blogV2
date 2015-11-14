@@ -1,6 +1,7 @@
 import java.time.LocalDateTime
 import controllers.Application
 import dao.PassageDAO
+import filters.ManageFilter
 import play.api._
 import play.api.cache.Cache
 import play.api.mvc._
@@ -9,7 +10,9 @@ import scala.util.{Failure, Success}
 import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Global extends WithFilters() with GlobalSettings {
+object Global extends WithFilters(ManageFilter) with GlobalSettings {
+
+  lazy val passageDAO = PassageDAO()
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)
@@ -28,7 +31,7 @@ object Global extends WithFilters() with GlobalSettings {
   private def now = LocalDateTime.now
 
   def setPassageCount = {
-    PassageDAO().queryTotalCount onComplete {
+    passageDAO.queryTotalCount() onComplete {
       case Success(result) =>
         Cache.set(Application.KEY_PASSAGE_COUNT, result)
         setTotalPage(result)
