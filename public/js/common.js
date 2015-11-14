@@ -142,6 +142,7 @@ $(function () {
 
     $('#unreadDrag').on({
         dragstart: function (e) {
+            isClear = true;
             e.originalEvent.dataTransfer.effectAllowed = "copyMove"
             e.originalEvent.dataTransfer.dropEffect = "none"
             //e.originalEvent.dataTransfer.setData('text/plain', 'Any');

@@ -91,7 +91,7 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
     //      .map(_.status).update(CommentStatus.read)
     val action =
       sql"""
-       update t_comment set status = 'UNREAD' where id in
+       update t_comment set status = 'READ' where id in
        (select c1.id from t_comment c1 where c1.to_id = $userId and c1.status = 'UNREAD'
        union
        select c2.id from t_comment c2 join t_passage p on c2.passage_id = p.id
