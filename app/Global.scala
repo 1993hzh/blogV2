@@ -1,25 +1,18 @@
 import java.time.LocalDateTime
 import controllers.Application
-import dao.PassageDAO
 import filters.ManageFilter
 import play.api._
-import play.api.cache.Cache
 import play.api.mvc._
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
-import play.api.Play.current
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object Global extends WithFilters(ManageFilter) with GlobalSettings {
-
-  lazy val passageDAO = PassageDAO()
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)
 
-    Logger.info("App starts on: " + now)
+    Logger.info("App starts on: " + Application.now)
 
-    setPassageCount
+    Application.setPassageCount
   }
 
   override def onError(request: RequestHeader, ex: Throwable): Future[Result] = super.onError(request, ex)
@@ -27,24 +20,6 @@ object Global extends WithFilters(ManageFilter) with GlobalSettings {
   override def onBadRequest(request: RequestHeader, error: String): Future[Result] = super.onBadRequest(request, error)
 
   override def onHandlerNotFound(request: RequestHeader): Future[Result] = super.onHandlerNotFound(request)
-
-  private def now = LocalDateTime.now
-
-  def setPassageCount = {
-    passageDAO.queryTotalCount() onComplete {
-      case Success(result) =>
-        Cache.set(Application.KEY_PASSAGE_COUNT, result)
-        setTotalPage(result)
-      case Failure(f) =>
-        Logger.error("App get passage count failed due to: " + f.getLocalizedMessage)
-    }
-  }
-
-  private def setTotalPage(passageCount: Int) = {
-    val totalPage = Application.getTotalPage(passageCount)
-    Cache.set(Application.KEY_PAGE_COUNT, totalPage)
-    Logger.info("App get total page num: " + totalPage)
-  }
 
 }
 

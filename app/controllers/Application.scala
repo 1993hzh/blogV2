@@ -3,16 +3,23 @@ package controllers
 
 import java.time.LocalDateTime
 
+import dao.PassageDAO
 import models.{Role, User}
 import play.api._
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import play.api.mvc._
 import play.api.cache.Cache
 import play.api.Play.current
+import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.i18n.Messages.Implicits._
+
+import scala.util.{Failure, Success}
 
 object Application extends Controller {
 
+  private lazy val passageDAO = PassageDAO()
+
+  val ERROR_NAME_OR_PWD = "Wrong username or password!"
   val KEY_PASSAGE_COUNT = "totalPassage"
   val KEY_PAGE_COUNT = "totalPage"
   val PAGE_SIZE = 5
@@ -22,14 +29,6 @@ object Application extends Controller {
     passageId + "&append=doComment\">login</a> first."
 
   def tooLong(name: String, length: Int) = name + "'s length too long, should less than " + length
-
-  val ERROR_NAME_OR_PWD = "Wrong username or password!"
-
-  //  def index = Action {
-  //    val message = Messages("index.message")
-  //
-  //    Ok(views.html.index(message))
-  //  }
 
   def getPageNum(num: Any, totalPage: Int) = {
     num match {
@@ -57,6 +56,22 @@ object Application extends Controller {
       case Some((u, r)) => u.id
       case None => -1
     }
+  }
+
+  def setPassageCount = {
+    passageDAO.queryTotalCount() onComplete {
+      case Success(result) =>
+        Cache.set(Application.KEY_PASSAGE_COUNT, result)
+        setTotalPage(result)
+      case Failure(f) =>
+        Logger.error("App get passage count failed due to: " + f.getLocalizedMessage)
+    }
+  }
+
+  private def setTotalPage(passageCount: Int) = {
+    val totalPage = Application.getTotalPage(passageCount)
+    Cache.set(Application.KEY_PAGE_COUNT, totalPage)
+    Logger.info("App get total page num: " + totalPage)
   }
 
   def now = LocalDateTime.now()
