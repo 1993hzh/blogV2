@@ -60,6 +60,11 @@ object Application extends Controller {
     }
   }
 
+  def getLoginUser(session: Session): Option[(User, Role)] = {
+    val loginToken = session.get("loginUser").getOrElse("")
+    Cache.getAs[(User, Role)](loginToken)
+  }
+
   def setPassageCount = {
     passageDAO.queryTotalCount() onComplete {
       case Success(result) =>
