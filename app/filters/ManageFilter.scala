@@ -17,7 +17,7 @@ import scala.concurrent.Future
 object ManageFilter extends Filter {
 
   lazy val roleDAO = RoleDAO()
-  val log = Logger
+  private lazy val log = Logger
 
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     if (rh.path.toLowerCase.contains("manage")) {

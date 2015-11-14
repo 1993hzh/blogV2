@@ -203,6 +203,11 @@ body {
     color: #fff !important;
 }
 
+.table > tbody > tr > td > a:hover,
+.table > tbody > tr > td > a:focus {
+    color: #0085a1 !important;
+}
+
 .table > tbody > tr > td,
 .table > thead > tr > th {
     text-align: center !important;
