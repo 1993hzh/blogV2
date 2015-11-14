@@ -1,6 +1,8 @@
 package controllers
 
 
+import java.time.LocalDateTime
+
 import models.{Role, User}
 import play.api._
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
@@ -56,4 +58,6 @@ object Application extends Controller {
       case None => -1
     }
   }
+
+  def now = LocalDateTime.now()
 }
