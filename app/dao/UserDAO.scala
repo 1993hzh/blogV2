@@ -76,8 +76,6 @@ class UserDAO extends AbstractDAO[User] with UserTable {
       .map(u => (u.lastLoginIp, u.lastLoginTime, u.lastLogoutTime))
       .update((Some(lastLoginIp), Some(lastLoginTime), Some(lastLogoutTime)))
 
-    Logger.info(action.statements.toString)
-
     db.run(action)
   }
 }
