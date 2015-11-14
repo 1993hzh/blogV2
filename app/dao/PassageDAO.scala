@@ -10,9 +10,9 @@ import scala.concurrent.{Await, Future}
 import tables.PassageTable
 
 /**
-  * Created by Leo.
-  * 2015/11/1 20:50
-  */
+ * Created by Leo.
+ * 2015/11/1 20:50
+ */
 @Singleton()
 class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
@@ -22,31 +22,41 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
   import driver.api._
 
-  def queryTotalCount(): Future[Int] = {
-    db.run(modelQuery.length.result)
+  def queryTotalCount(userId: Option[Int] = None): Future[Int] = {
+    userId match {
+      case Some(u) => db.run(modelQuery.filter(_.authorId === u).length.result)
+      case None => db.run(modelQuery.length.result)
+    }
   }
+
+  def queryTotalCountSync(userId: Option[Int] = None): Int = Await.result(queryTotalCount(userId), waitTime)
 
   def queryByUserId(userId: Int, num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[Passage] = {
     Await.result(db.run(modelQuery.filter(_.authorId === userId).sortBy(_.createTime.desc)
       .drop((num - 1) * pageSize).take(pageSize).result), waitTime)
   }
 
-  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[Passage] = {
-    //    val action = modelQuery.join(UserDAO.users).on(_.authorId === _.id)
-    //      .sortBy(_._1.createTime.desc).map(f => (f._1, f._2.userName))
-    //      .drop((num - 1) * pageSize).take(pageSize)
-    //      .result
-    val maxLength = 110
+  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE,
+                    contentMaxLength: Int = 110, userId: Option[Int] = None): Seq[Passage] = {
     val contentPreview = " ... [Click to see details]"
     val offSet = (num - 1) * pageSize
 
-    val action = sql"""
-      select p.id, p.author_id, p.author_name, p.title,
-      case when length(p.content) > $maxLength then substring(p.content for $maxLength) || $contentPreview
-      else p.content || $contentPreview end
-      , p.createtime, p.viewcount
-      from t_passage p order by p.createtime desc limit $pageSize offset $offSet
-      """.as[Passage]
+    val action = userId match {
+      case Some(u) => sql"""
+          select p.id, p.author_id, p.author_name, p.title,
+          case when length(p.content) > $contentMaxLength then substring(p.content for $contentMaxLength) || $contentPreview
+          else p.content || $contentPreview end
+          , p.createtime, p.viewcount
+          from t_passage p where p.author_id = $userId order by p.createtime desc limit $pageSize offset $offSet
+        """.as[Passage]
+      case None => sql"""
+          select p.id, p.author_id, p.author_name, p.title,
+          case when length(p.content) > $contentMaxLength then substring(p.content for $contentMaxLength) || $contentPreview
+          else p.content || $contentPreview end
+          , p.createtime, p.viewcount
+          from t_passage p order by p.createtime desc limit $pageSize offset $offSet
+        """.as[Passage]
+    }
 
     Await.result(db.run(action), waitTime)
   }
@@ -76,13 +86,9 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     Await.result(getAuthorNameWithPassageId(passageId), waitTime).getOrElse("")
   }
 
-  def getKeywords(passageId: Int): List[Keyword] = {
-    Await.result(queryKeywordsByPassageId(passageId), waitTime).toList
-  }
+  def getKeywords(passageId: Int): List[Keyword] = Await.result(queryKeywordsByPassageId(passageId), waitTime).toList
 
-  def getComments(passageId: Int): List[Comment] = {
-    Await.result(queryCommentsByPassageId(passageId), waitTime).toList
-  }
+  def getComments(passageId: Int): List[Comment] = Await.result(queryCommentsByPassageId(passageId), waitTime).toList
 
   def getDetail(id: Int): Option[(Passage, List[Keyword], List[Comment])] = {
     Await.result(query(id), waitTime) match {
@@ -93,8 +99,30 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     }
   }
 
-  def getTags(passageId: Int): List[MyTag] = {
-    Await.result(queryTagsByPassageId(passageId), waitTime).toList
+  def getTags(passageId: Int): List[MyTag] = Await.result(queryTagsByPassageId(passageId), waitTime).toList
+
+  def getPassage(passageId: Int): Option[Passage] = Await.result(query(passageId), waitTime)
+
+  /**
+   * make sure the delete request is legal
+   * @param id
+   * @return
+   */
+  def delete(userId: Int, id: Int): Int = {
+    if (isAuthorized(userId, id))
+      Await.result(super.delete(id), waitTime)
+    else {
+      Logger.warn("user: " + userId + " try to delete passage: " + id)
+      0
+    }
+  }
+
+  def isAuthorized(userId: Int, id: Int): Boolean = {
+    getPassage(id) match {
+      case Some(p) =>
+        p.authorId.equals(userId)
+      case None => false
+    }
   }
 
   implicit val listPassagesResult = GetResult(

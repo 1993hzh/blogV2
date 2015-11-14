@@ -1,0 +1,49 @@
+@(passages:Seq[Passage], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+@nav()
+<div class="container">
+    <div class="col-lg-10 col-md-10 col-md-offset-1">
+        <button type="button" class="btn btn-primary">NEW</button>
+        <hr>
+        <div id="error"></div>
+        <table class="table table-hover my-font-color">
+            <thead>
+                <tr>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                    <th>id</th>
+                    <th>author</th>
+                    <th>title</th>
+                    <th>content</th>
+                    <th>createTime</th>
+                    <th>view</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(p <- passages) {
+                <tr id="@p.id">
+                    <td><a href="/passageManage-update?id=@p.id"><i class="fa fa-pencil-square-o"></i></a></td>
+                    <td><a href="javascript:remove('@p.id','/passageManage-delete')"><i class="fa fa-trash-o"></i></a></td>
+                    <td>@p.id</td>
+                    <td>@p.authorName</td>
+                    <td>@p.title</td>
+                    <td>@p.content</td>
+                    <td>@p.createTime.format("yyy-MM-dd HH:mm:ss")</td>
+                    <td>@p.viewCount</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        @pager("/passageManage", currentPage, totalPage)
+    </div>
+</div>
+@footer()
+</body>
+</html>

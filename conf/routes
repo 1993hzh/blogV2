@@ -3,19 +3,31 @@
 # ~~~~
 
 # Home page
-GET         /                         controllers.Index.index
-GET         /index                    controllers.Index.showPassages(page:Int?=1)
-GET         /passage                  controllers.PassageController.passage(id:Int?=1)
-GET         /message                  controllers.CommentController.getComments(page:Int?=1)
-POST        /comment                  controllers.CommentController.createComment
-GET         /viewComment              controllers.CommentController.viewComment(passageId:Int, commentId:Int)
-GET         /markAs                   controllers.CommentController.markInMessageAs(markType:String, commentId:Int)
-POST        /markAll                  controllers.CommentController.markInMessagesAsRead
-GET         /about                    controllers.Index.about
-GET         /login                    controllers.Login.index
-GET         /loginWithCallback        controllers.Login.loginWithCallback(callback:String, append:String)
-GET         /logout                   controllers.Login.logout
-POST        /doLogin                  controllers.Login.login
+GET         /                                      controllers.Index.index
+GET         /index                                 controllers.Index.showPassages(page:Int?=1)
+GET         /passage                               controllers.PassageController.passage(id:Int?=1)
+GET         /message                               controllers.CommentController.getComments(page:Int?=1)
+POST        /comment                               controllers.CommentController.createComment
+GET         /viewComment                           controllers.CommentController.viewComment(passageId:Int, commentId:Int)
+GET         /markAs                                controllers.CommentController.markInMessageAs(markType:String, commentId:Int)
+POST        /markAll                               controllers.CommentController.markInMessagesAsRead
+GET         /about                                 controllers.Index.about
+GET         /login                                 controllers.Login.index
+GET         /loginWithCallback                     controllers.Login.loginWithCallback(callback:String, append:String)
+GET         /logout                                controllers.Login.logout
+POST        /doLogin                               controllers.Login.login
+
+#below is management, need permission, do not change the url unless you updated the filter as well
+GET         /passageManage                         controllers.PassageController.manage(page:Int?=1)
+GET         /passageManage-create                  controllers.PassageController.create
+POST        /passageManage-doCreateOrUpdate        controllers.PassageController.doCreateOrUpdate
+GET         /passageManage-update                  controllers.PassageController.update(id:Int)
+GET         /passageManage-delete                  controllers.PassageController.delete(id:Int)
+GET         /tagManage                             controllers.TagController.manage(page:Int?=1)
+GET         /tagManage-create                      controllers.TagController.create
+GET         /tagManage-update                      controllers.TagController.update(id:Int)
+GET         /tagManage-delete                      controllers.TagController.delete(id:Int)
+#GET         /userManage               controllers.PassageController.manage
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file             controllers.Assets.at(path="/public", file)
+GET         /assets/*file                          controllers.Assets.at(path="/public", file)

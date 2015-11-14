@@ -118,6 +118,35 @@ function marksAs(type, commentIds) {
     });
 }
 
+function remove(id, url) {
+    $.messager.confirm("Delete Passage", "You are going to delete passage, sure?", function () {
+        doRemove(id, url);
+    })
+}
+
+function doRemove(id, url) {
+    $.ajax({
+        url: url,
+        type: "GET",
+        data: {
+            id: id
+        },
+        cache: false,
+        success: function (result) {
+            if (result == "Success") {
+                $("#" + id).remove();
+                return;
+            }
+            // error message
+            showError(result)
+        },
+        error: function (msg) {
+            showError(msg)
+        },
+    });
+}
+
+//here is the drag
 $(function () {
     var isClear = true;
 
@@ -143,8 +172,9 @@ $(function () {
     $('#unreadDrag').on({
         dragstart: function (e) {
             isClear = true;
-            e.originalEvent.dataTransfer.effectAllowed = "copyMove"
+            e.originalEvent.dataTransfer.effectAllowed = "move"
             e.originalEvent.dataTransfer.dropEffect = "none"
+            //prevent chrome from open a new tab, firefox need this, but it sucks
             //e.originalEvent.dataTransfer.setData('text/plain', 'Any');
         },
         dragend: function (e) {
@@ -157,7 +187,7 @@ $(function () {
         }
     });
 
-    $('#unreadDrag').parent().parent().attr("draggable", "true");
+    //$('#unreadDrag').parent().attr("draggable", "false");
     $('#unreadDrag').parent().parent().on({
         dragover: function (e) {
             e.preventDefault();
@@ -167,11 +197,4 @@ $(function () {
             isClear = false
         }
     });
-
-    //prevent the links draggable, especially in firefox, it sucks
-    //$(".navbar-nav > li > a").on("dragstart", function (e) {
-    //    e.preventDefault();
-    //    e.stopPropagation();
-    //    return false;
-    //});
 })

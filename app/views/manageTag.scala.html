@@ -1,0 +1,42 @@
+@(tags:Seq[Tag], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+  </head>
+  <body>
+    @nav()
+  <div class="container">
+    <div class="col-lg-10 col-md-10 col-md-offset-1">
+      <button type="button" class="btn btn-primary">NEW</button>
+      <hr>
+      <table class="table table-hover my-font-color">
+        <thead>
+          <tr>
+            <th>Edit</th>
+            <th>Delete</th>
+            <th>name</th>
+            <th>description</th>
+            <th>passages</th>
+          </tr>
+        </thead>
+        <tbody>
+        @for(t <- tags) {
+          <tr>
+            <td><i class="fa fa-pencil-square-o"></i></td>
+            <td><i class="fa fa-trash-o"></i></td>
+            <td>@t.name</td>
+            <td>@t.description</td>
+            <td>0</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+      @pager("/tagManage", currentPage, totalPage)
+    </div>
+  </div>
+    @footer()
+  </body>
+</html>
