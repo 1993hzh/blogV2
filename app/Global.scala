@@ -1,18 +1,26 @@
-import java.time.LocalDateTime
+import actors.ViewCountActor
+import akka.actor.Props
 import controllers.Application
 import filters.ManageFilter
 import play.api._
+import play.api.libs.concurrent.Akka
 import play.api.mvc._
 import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object Global extends WithFilters(ManageFilter) with GlobalSettings {
+
+  private val log = Logger
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)
 
-    Logger.info("App starts on: " + Application.now)
+    log.info("App starts on: " + Application.now)
 
     Application.setPassageCount
+
+    syncUpWithPassageViewCount(app)
   }
 
   override def onError(request: RequestHeader, ex: Throwable): Future[Result] = super.onError(request, ex)
@@ -20,6 +28,11 @@ object Global extends WithFilters(ManageFilter) with GlobalSettings {
   override def onBadRequest(request: RequestHeader, error: String): Future[Result] = super.onBadRequest(request, error)
 
   override def onHandlerNotFound(request: RequestHeader): Future[Result] = super.onHandlerNotFound(request)
+
+  private def syncUpWithPassageViewCount(app: Application) = {
+    val viewCountActor = Akka.system(app).actorOf(Props(new ViewCountActor()))
+    Akka.system(app).scheduler.schedule(60 minutes, 60 minutes, viewCountActor, true)
+  }
 
 }
 

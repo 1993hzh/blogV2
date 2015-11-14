@@ -21,9 +21,11 @@ object Application extends Controller {
 
   val ERROR_NAME_OR_PWD = "Wrong username or password!"
   val KEY_PASSAGE_COUNT = "totalPassage"
-  val KEY_PAGE_COUNT = "totalPage"
+  val KEY_PAGE_COUNT = "totalPageOfPassage"
   val PAGE_SIZE = 5
   val LOGIN_CALL_BACK: String = "callback"
+  val PASSAGE_VIEW_COUNT_PREFIX = "passage-id-"
+  val PASSAGE_BEEN_READ_LIST = "passage_has_been_read"
 
   def LOGIN_FIRST(passageId: Int) = "Please <a href=\"/loginWithCallback?callback=/passage?id=" +
     passageId + "&append=doComment\">login</a> first."
@@ -69,7 +71,7 @@ object Application extends Controller {
   }
 
   private def setTotalPage(passageCount: Int) = {
-    val totalPage = Application.getTotalPage(passageCount)
+    val totalPage = getTotalPage(passageCount)
     Cache.set(Application.KEY_PAGE_COUNT, totalPage)
     Logger.info("App get total page num: " + totalPage)
   }

@@ -16,6 +16,8 @@ import tables.PassageTable
 @Singleton()
 class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
+  private lazy val log = Logger
+
   override protected val modelQuery = TableQuery[PassageTable]
 
   override type T = PassageTable
@@ -94,7 +96,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     Await.result(query(id), waitTime) match {
       case Some(passage) => Some(passage, getKeywords(id), getComments(id))
       case None =>
-        Logger.info("Passage: " + id + " not found!")
+        log.info("Passage: " + id + " not found!")
         None
     }
   }
@@ -112,7 +114,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     if (isAuthorized(userId, id))
       Await.result(super.delete(id), waitTime)
     else {
-      Logger.warn("user: " + userId + " try to delete passage: " + id)
+      log.warn("user: " + userId + " try to delete passage: " + id)
       0
     }
   }
@@ -123,6 +125,13 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
         p.authorId.equals(userId)
       case None => false
     }
+  }
+
+  def updateViewCount(id: Int, viewCount: Int): Future[Int] = {
+    log.info(Application.now + ": passage: " + id + " start to sync up view count:" + viewCount)
+
+    val action = modelQuery.filter(_.id === id).map(_.viewCount).update(viewCount)
+    db.run(action)
   }
 
   implicit val listPassagesResult = GetResult(

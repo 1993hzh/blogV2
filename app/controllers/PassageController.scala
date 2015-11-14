@@ -7,6 +7,7 @@ import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
+import scala.collection.mutable.{Set => Mset}
 
 /**
  * Created by Leo.
@@ -20,9 +21,25 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   def passage(id: Int) = Action { implicit request =>
     val passageDetail = passageDAO.getDetail(id)
     passageDetail match {
-      case Some(p) => Ok(views.html.passage(p._1, p._2, p._3))
+      case Some(p) =>
+        setViewCount(p._1.id, p._1.viewCount) //here set view count in cache, will get a schedule to sync up
+
+        Ok(views.html.passage(p._1, p._2, p._3))
       case None => Redirect(routes.Index.index)
     }
+  }
+
+  private def setViewCount(passageId: Int, viewCount: Int) = {
+    //first set
+    var set = cache.getOrElse[Mset[Int]](Application.PASSAGE_BEEN_READ_LIST)(Mset.empty[Int])
+    set += passageId
+    cache.set(Application.PASSAGE_BEEN_READ_LIST, set)
+
+    var currentViewCount = cache.getOrElse[Int](Application.PASSAGE_VIEW_COUNT_PREFIX + passageId)(0)
+    if (currentViewCount == 0) //if the currentViewCount is 0, we should init the value with viewCount stored in db
+      currentViewCount += viewCount
+    currentViewCount += 1
+    cache.set(Application.PASSAGE_VIEW_COUNT_PREFIX + passageId, currentViewCount)
   }
 
   def manage(page: Int) = Action { implicit request =>
@@ -47,6 +64,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
       },
       data => {
         //TODO
+        Application.setPassageCount
         Ok("")
       }
     )
@@ -72,6 +90,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
     passageDAO.delete(userId, id) match {
       case 1 =>
         Logger.info("passage: " + id + " delete succeed")
+        Application.setPassageCount
         Ok("Success")
       case i if i != 1 =>
         Logger.info("passage: " + id + " delete failed, return value: " + i)
