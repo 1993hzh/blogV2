@@ -1,7 +1,7 @@
 import actors.ViewCountActor
 import akka.actor.Props
 import controllers.Application
-import filters.ManageFilter
+import filters.{LoginFilter, ManageFilter}
 import play.api._
 import play.api.libs.concurrent.Akka
 import play.api.mvc._
@@ -9,18 +9,20 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Global extends WithFilters(ManageFilter) with GlobalSettings {
+object Global extends WithFilters(LoginFilter, ManageFilter) with GlobalSettings {
 
   private val log = Logger
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)
 
-    log.info("App starts on: " + Application.now)
+    if (!app.mode.equals(Mode.Test)) {
+      log.info("App starts on: " + Application.now)
 
-    Application.setPassageCount
+      Application.setPassageCount
 
-    syncUpWithPassageViewCount(app)
+      syncUpWithPassageViewCount(app)
+    }
   }
 
   override def onError(request: RequestHeader, ex: Throwable): Future[Result] = super.onError(request, ex)

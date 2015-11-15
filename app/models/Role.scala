@@ -12,6 +12,7 @@ case class Role(id: Int,
 object RoleType {
   val OWNER = "owner"
   val COMMON = "common"
+  val THIRD_PARTY = "3rd-party"
 }
 
 object WebSite {

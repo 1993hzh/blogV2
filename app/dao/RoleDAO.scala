@@ -2,7 +2,7 @@ package dao
 
 import javax.inject.Singleton
 
-import models.Role
+import models.{RoleType, Role}
 import slick.lifted.TableQuery
 import tables.RoleTable
 import scala.concurrent.{Await, Future}
@@ -33,6 +33,12 @@ class RoleDAO extends AbstractDAO[Role] with RoleTable {
   }
 
   def getRoleByLoginUserSync(userId: Int): String = Await.result(getRoleByLoginUser(userId), waitTime)
+
+  def getRoleId(roleType: String = RoleType.COMMON): Future[Int] = {
+    db.run(modelQuery.filter(_.roleType === roleType).map(_.id).result.head)
+  }
+
+  def getRoleIdSync(roleType: String = RoleType.COMMON): Int = Await.result(getRoleId(), waitTime)
 
 }
 

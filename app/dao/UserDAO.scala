@@ -3,6 +3,7 @@ package dao
 import java.sql.Timestamp
 import javax.inject.Singleton
 
+import controllers.Application
 import models.{Role, RoleType, User}
 import play.api.Logger
 import slick.lifted.TableQuery
@@ -20,9 +21,37 @@ class UserDAO extends AbstractDAO[User] with UserTable {
 
   override type T = UserTable
 
-  lazy val roleDAO = RoleDAO()
+  private lazy val roleDAO = RoleDAO()
+
+  private lazy val log = Logger
 
   import driver.api._
+
+  def createCommonUser(userName: String, password: String, mail: String): Future[Int] = {
+    val roleId = roleDAO.getRoleIdSync()
+    val encodePassword = Encryption.encodeBySHA1(password)
+    val user = User(0, userName, encodePassword, mail, roleId)
+    log.info("User: " + user + " is going to be created.")
+    super.insert(user)
+  }
+
+  def createCommonUserSync(userName: String, password: String, mail: String): Int = {
+    Await.result(createCommonUser(userName, password, mail), waitTime)
+  }
+
+  def getUserCount(): Future[Int] = db.run(modelQuery.length.result)
+
+  def getUserCountSync(): Int = Await.result(getUserCount, waitTime)
+
+  def getUsersWithRole(pageNum: Int, pageSize: Int = Application.PAGE_SIZE): Future[Seq[(User, Role)]] = {
+    val action = modelQuery.join(RoleDAO.roles).on(_.roleId === _.id)
+      .sortBy(_._1.userName.desc).drop((pageNum - 1) * pageSize).take(pageSize).result
+    db.run(action)
+  }
+
+  def getUsersWithRoleSync(pageNum: Int, pageSize: Int = Application.PAGE_SIZE): Seq[(User, Role)] = {
+    Await.result(getUsersWithRole(pageNum, pageSize), waitTime)
+  }
 
   def queryByUserName(userName: String): Future[Option[User]] = {
     db.run(modelQuery.filter(_.userName === userName).result.headOption)
@@ -40,7 +69,8 @@ class UserDAO extends AbstractDAO[User] with UserTable {
         //pwd must equals
         var returnUser: Option[(User, Role)] = None
         Await.result(roleDAO.query(u.roleId), waitTime) match {
-          case Some(role) if role.roleType.equals(RoleType.OWNER) =>
+          //3rd party user cannot login use this function
+          case Some(role) if !role.roleType.equals(RoleType.THIRD_PARTY) =>
             returnUser = Some((u, role))
           case _ =>
         }
@@ -67,7 +97,7 @@ class UserDAO extends AbstractDAO[User] with UserTable {
   def updateLoginInfo(userName: String, lastLoginIp: String, lastLoginTime: Timestamp, lastLogoutTime: Timestamp): Unit = {
     Await.result(queryByUserName(userName), waitTime) match {
       case Some(u) => updateLogInfo(u.id, lastLoginIp, lastLoginTime, lastLogoutTime)
-      case None => Logger.error("User: " + userName + " not found!")
+      case None => log.error("User: " + userName + " not found!")
     }
   }
 
