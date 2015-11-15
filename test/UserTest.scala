@@ -22,7 +22,7 @@ class UserTest extends AbstractTest {
 
   @Before
   def insertUserLikeBinding(): Unit = {
-    val sinaRole = Role(0, RoleType.COMMON, WebSite.SINA)
+    val sinaRole = Role(0, RoleType.THIRD_PARTY, WebSite.SINA)
     val roleId = Await.result(roleDAO.insert(sinaRole), Duration.Inf)
 
     val sinaUser = User(0, "sina", Encryption.encodeBySHA1("sina111"), "sina@test.com", roleId, bindingId = Some("sinaId"))
@@ -91,6 +91,6 @@ class UserTest extends AbstractTest {
     Await.result(userDAO.deleteByUserName("sina"), Duration.Inf)
 
     Await.result(roleDAO.deleteByRoleTypeAndWebsite(RoleType.OWNER, WebSite.MY), Duration.Inf)
-    Await.result(roleDAO.deleteByRoleTypeAndWebsite(RoleType.COMMON, WebSite.SINA), Duration.Inf)
+    Await.result(roleDAO.deleteByRoleTypeAndWebsite(RoleType.THIRD_PARTY, WebSite.SINA), Duration.Inf)
   }
 }

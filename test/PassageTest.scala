@@ -10,8 +10,8 @@ import scala.concurrent.duration.Duration
 import controllers.Application
 
 /**
-  * Created by leo on 15-11-2.
-  */
+ * Created by leo on 15-11-2.
+ */
 class PassageTest extends AbstractTest {
 
   val PASSAGE_SIZE = 22
@@ -69,7 +69,7 @@ class PassageTest extends AbstractTest {
     })
   }
 
-  @After
+//  @After
   def destorySelf(): Unit = {
     tagIds.foreach(e => Await.result(tagDAO.delete(e), Duration.Inf))
     passageIds.foreach(p => Await.result(passageDAO.delete(p), Duration.Inf))
@@ -137,18 +137,16 @@ class PassageTest extends AbstractTest {
   }
 
   def initAdmin(): Int = {
-    val adminRole = Role(0, RoleType.OWNER)
-    val roleId = Await.result(roleDAO.insert(adminRole), Duration.Inf)
+    val roleId = roleDAO.getRoleIdSync(RoleType.OWNER)
 
     val admin = User(0, "admin", Encryption.encodeBySHA1("admin_admin"), "admin@test.com", roleId)
     Await.result(userDAO.insert(admin), Duration.Inf)
   }
 
   def initUser(): Int = {
-    val commonUserRole = Role(0, RoleType.COMMON, WebSite.SINA)
-    val roleId = Await.result(roleDAO.insert(commonUserRole), Duration.Inf)
+    val roleId = roleDAO.getRoleIdSync(RoleType.COMMON)
 
-    val commonUser = User(0, "commonUser", Encryption.encodeBySHA1("commonUser"), "commonUser@test.com", roleId, bindingId = Some("sinaId"))
+    val commonUser = User(0, "commonUser", Encryption.encodeBySHA1("commonUser"), "commonUser@test.com", roleId)
     Await.result(userDAO.insert(commonUser), Duration.Inf)
   }
 
