@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.Inject
-import dao.{CommentDAO, PassageDAO}
+import dao.{TagDAO, CommentDAO, PassageDAO}
 import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
@@ -15,8 +15,9 @@ import scala.collection.mutable.{Set => Mset}
  */
 class PassageController @Inject()(cache: CacheApi) extends Controller {
 
-  lazy val passageDAO = PassageDAO()
-  lazy val commentDAO = CommentDAO()
+  private lazy val passageDAO = PassageDAO()
+  private lazy val commentDAO = CommentDAO()
+  private lazy val tagDAO = TagDAO()
 
   def passage(id: Int) = Action { implicit request =>
     val passageDetail = passageDAO.getDetail(id)
@@ -54,7 +55,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   }
 
   def create = Action { implicit request =>
-    Ok(views.html.createOrUpdatePassage())
+    Ok(views.html.createOrUpdatePassage(allTag = tagDAO.getAllTagSync.toList))
   }
 
   def doCreateOrUpdate = Action { implicit request =>
@@ -74,7 +75,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
     val passage = passageDAO.getPassage(id)
     val tags = passageDAO.getTags(id)
     val keywords = passageDAO.getKeywords(id)
-    Ok(views.html.createOrUpdatePassage(passage, tags, keywords))
+    Ok(views.html.createOrUpdatePassage(passage, tags, tagDAO.getAllTagSync.toList, keywords))
   }
 
   /**

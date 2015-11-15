@@ -229,6 +229,17 @@ function createOrUpdateTag() {
     });
 }
 
+function closeKeyword(id) {
+    $("span#keyword-" + id).remove();
+}
+
+function addKeyword() {
+    var append = "<span class=\"label label-primary\" id=\"keyword-@kw.id\"> <a href=\"javascript:closeKeyword('@kw.id')\">" +
+        "<i class=\"fa fa-times\"></i></a></span> &nbsp;"
+
+    $("div#keywords").append(append);
+}
+
 //here is the drag
 $(function () {
     var isClear = true;

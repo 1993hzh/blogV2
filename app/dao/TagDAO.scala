@@ -44,6 +44,10 @@ class TagDAO extends AbstractDAO[MyTag] with TagTable {
 
   def upsertSync(tag: MyTag): Int = Await.result(super.upsert(tag), waitTime)
 
+  private def getAllTag(): Future[Seq[MyTag]] = db.run(modelQuery.sortBy(_.name.desc).result)
+
+  def getAllTagSync(): Seq[MyTag] = Await.result(getAllTag(), waitTime)
+
 }
 
 object TagDAO {
