@@ -12,6 +12,7 @@
     <div class="col-lg-10 col-md-10 col-md-offset-1">
       <button type="button" class="btn btn-primary" onclick="pop_createUser()">NEW</button>
       <hr>
+      <div id="error"></div>
       <table class="table table-hover my-font-color">
         <thead>
           <tr>
@@ -50,7 +51,7 @@
     </div>
   </div>
   <div id="userwrap" style="display:none;">
-      <form id="userForm" role="form" action="mood/mood!create.action" type="post">
+      <form id="userForm" role="form" type="post">
           <input type="userName" class="form-control my-font-color" placeholder="UserName" id="userName" name="userName">
           <hr>
           <input type="password" class="form-control my-font-color" placeholder="Password" id="password" name="password">

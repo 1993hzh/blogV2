@@ -17,7 +17,7 @@ object LoginFilter extends Filter {
   private lazy val log = Logger
 
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
-    if (rh.path.contains("logged")) {
+    if (rh.path.contains("logged") || rh.path.contains("manage")) {
       
       val isAjax = rh.headers.get("X-Requested-With") match {
         case Some(x) => true
