@@ -190,6 +190,11 @@ body {
     /*font-weight: normal !important;*/
 }
 
+#keywordAdd {
+    display: inline;
+    width: 150px;
+}
+
 @font-face {
     font-family: "iconfont-zhihu";
     src: url('../fonts/iconfont-zhihu.eot'); /* IE9*/

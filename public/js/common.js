@@ -229,15 +229,18 @@ function createOrUpdateTag() {
     });
 }
 
-function closeKeyword(id) {
-    $("span#keyword-" + id).remove();
+function deleteKeyword(obj) {
+    $(obj).parent().parent("span.label").remove();
 }
 
 function addKeyword() {
-    var append = "<span class=\"label label-primary\" id=\"keyword-@kw.id\"> <a href=\"javascript:closeKeyword('@kw.id')\">" +
-        "<i class=\"fa fa-times\"></i></a></span> &nbsp;"
-
+    var newKw = $("input#keywordAdd").val();
+    var append = "<span class=\"label label-primary\">" +
+        "<input type=\"text\" class=\"hidden\" id=\"keywords\" name=\"keywords\" value=\"" + newKw + "\">" + newKw +
+        "<a href=\"javascript:void(0);\"><i class=\"fa fa-times\" onclick=\"deleteKeyword(this)\"></i></a></span> &nbsp;";
     $("div#keywords").append(append);
+
+    $("input#keywordAdd").val("");
 }
 
 //here is the drag

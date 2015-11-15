@@ -29,22 +29,21 @@
                             <hr>
                             <div id="keywords" style="display : inline-block ;">
                             @for(kw <- keywords) {
-                                <span class="label label-primary" id="keyword-@kw.id">
+                                <span class="label label-primary">
+                                    <input type="text" class="hidden" id="keywords" name="keywords" value="@kw.name">
                                     @kw.name
-                                <a href="javascript:closeKeyword('@kw.id')">
-                                    <i class="fa fa-times"></i>
-                                </a>
+                                    <a href="javascript:void(0);"><i class="fa fa-times" onclick="deleteKeyword(this)"></i></a>
                                 </span> &nbsp;
                             }
                             </div>
-                            <input type="text" placeholder="Keyword" id="keywordAdd">
+                            <input type="text" placeholder="Keyword" id="keywordAdd" class="form-control">
                             <a href="javascript:addKeyword()">
                                 <i class="fa fa-plus-circle"></i>
                             </a>
                             <hr>
                             <div class="my-font-color">
                             @for(t <- allTag) {
-                                <input type="checkbox" name="tags" @if(tags.contains(t)) {
+                                <input type="checkbox" name="tagIds" value="@t.id" @if(tags.contains(t)) {
                                     checked="checked"}> @t.name
                                 }
                             </div>
