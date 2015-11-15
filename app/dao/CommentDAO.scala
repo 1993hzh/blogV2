@@ -7,7 +7,6 @@ import models.{CommentStatus, Comment}
 import play.api.Logger
 import slick.lifted.TableQuery
 import tables.CommentTable
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 
 /**
@@ -16,6 +15,7 @@ import scala.concurrent.{Await, Future}
 @Singleton()
 class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
+  private lazy val log = Logger
 
   override type T = CommentTable
   override protected val modelQuery = TableQuery[CommentTable]
@@ -71,17 +71,32 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
     db.run(action)
   }
 
-  def markAsSync(commentId: Int, status: String = CommentStatus.read): Boolean = {
-    Await.result(markAs(commentId, status), waitTime) match {
-      case r: Int if r == 1 => true
-      case _ => Logger.info("Comment: " + commentId + " mark as " + status + " failed"); false
+  def markAsSync(commentId: Int, status: String = CommentStatus.read, markerId: Int): Boolean = {
+    val comment = Await.result(super.query(commentId), waitTime)
+    comment match {
+      case Some(c) => {
+        val doMark = c.toId match {
+          //reply
+          case Some(toId) => toId.equals(markerId)
+          //comment on passage, no receiver
+          case None => true
+        }
+        if (doMark)
+          Await.result(markAs(commentId, status), waitTime) match {
+            case r: Int if r == 1 => true
+            case _ => log.info("Comment: " + commentId + " mark as " + status + " failed"); false
+          }
+        else false
+      }
+      case None => false
+      case _ => log.info("User: " + markerId + " try to mark " + comment + " as " + status); false
     }
   }
 
   def marksAsSync(commentIds: Set[Int], status: String = CommentStatus.read): Boolean = {
     Await.result(marksAs(commentIds, status), waitTime) match {
       case r: Int if r == 1 => true
-      case _ => Logger.info("Comment: " + commentIds + " mark as " + status + " failed"); false
+      case _ => log.info("Comment: " + commentIds + " mark as " + status + " failed"); false
     }
   }
 

@@ -27,8 +27,7 @@ object Application extends Controller {
   val PASSAGE_VIEW_COUNT_PREFIX = "passage-id-"
   val PASSAGE_BEEN_READ_LIST = "passage_has_been_read"
 
-  def LOGIN_FIRST(passageId: Int) = "Please <a href=\"/loginWithCallback?callback=/passage?id=" +
-    passageId + "&append=doComment\">login</a> first."
+  def loginAjax() = "Please <a href=\"" + routes.Login.index() + "\">login</a> first."
 
   def tooLong(name: String, length: Int) = name + "'s length too long, should less than " + length
 

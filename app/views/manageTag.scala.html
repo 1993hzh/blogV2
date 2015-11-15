@@ -24,8 +24,8 @@
         </thead>
         <tbody>
         @for(t <- tags) {
-          <tr>
-            <td><i class="fa fa-pencil-square-o"></i></td>
+          <tr id="@t.id">
+            <td><a href="/manage/tag/delete?id=@t.id"><i class="fa fa-trash-o"></i></a></td>
             <td><i class="fa fa-trash-o"></i></td>
             <td>@t.name</td>
             <td>@t.description</td>
@@ -34,7 +34,7 @@
         }
         </tbody>
       </table>
-      @pager("/tagManage", currentPage, totalPage)
+      @pager("/manage/tag", currentPage, totalPage)
     </div>
   </div>
     @footer()

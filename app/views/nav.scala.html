@@ -44,7 +44,7 @@
         @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
           case Some((u, r)) => {
               <li>
-                  <a href="/message">Notification&nbsp;
+                  <a href="/logged/message">Notification&nbsp;
                     <span id="unreadDrag" class="badge" draggable="true">
                       @Cache.getOrElse(u.userName+"-unreadMessage")("0")
                     </span>
@@ -56,11 +56,11 @@
                       Manage <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a href="/passageManage">Passage</a></li>
+                      <li><a href="/manage/passage">Passage</a></li>
                       <li role="separator" class="divider"></li>
-                      <li><a href="/tagManage">Tag</a></li>
+                      <li><a href="/manage/tag">Tag</a></li>
                       <li role="separator" class="divider"></li>
-                      <li><a href="/userManage">User</a></li>
+                      <li><a href="/manage/user">User</a></li>
                     </ul>
                   </li>
               }

@@ -17,7 +17,7 @@ function doComment() {
     var toName = $("input#toName").val();
     var toCommentId = $("input#toCommentId").val();
     $.ajax({
-        url: "/comment",
+        url: "/logged/comment",
         type: "POST",
         data: {
             content: content,
@@ -74,34 +74,11 @@ function showError(msg) {
 
 function markAs(type, commentId) {
     $.ajax({
-        url: "markAs",
+        url: "/logged/markAs",
         type: "GET",
         data: {
             markType: type,
             commentId: commentId
-        },
-        cache: false,
-        success: function (result) {
-            if (result == "Success") {
-                window.location.href = window.location.href
-                return;
-            }
-            // error message
-            showError(result)
-        },
-        error: function (msg) {
-            showError(msg)
-        },
-    });
-}
-
-function marksAs(type, commentIds) {
-    $.ajax({
-        url: "marksAs",
-        type: "GET",
-        data: {
-            markType: type,
-            commentId: commentIds
         },
         cache: false,
         success: function (result) {
@@ -146,13 +123,61 @@ function doRemove(id, url) {
     });
 }
 
+function pop_createUser() {
+    $('#userForm').trigger("reset");
+    $("#userwrap").show();
+    $("#userwrap").dialog({
+        title: "CreateUser", classed: "mydialog", onClose: function () {
+            $(this).dialog("close");
+        },
+        buttons: [
+            {
+                text: "Submit", classed: "btn-primary", click: function () {
+                createUser();
+            }
+            },
+            {
+                text: "Cancel", classed: "btn-default", click: function () {
+                $(this).dialog("close");
+            }
+            }
+        ]
+    });
+}
+
+function createUser() {
+    var userName = $("input#userName").val()
+    var password = $("input#password").val()
+    var mail = $("input#mail").val()
+    $.ajax({
+        url: "/manage/user/create",
+        type: "POST",
+        data: {
+            userName: userName,
+            password: password,
+            mail: mail
+        },
+        cache: false,
+        success: function (result) {
+            if (result == "Success") {
+                window.location.href = window.location.href
+            }
+            // error message
+            $.messager.alert(result)
+        },
+        error: function (msg) {
+            $.messager.alert("Internal Error")
+        },
+    });
+}
+
 //here is the drag
 $(function () {
     var isClear = true;
 
     function markAllAsRead() {
         $.ajax({
-            url: '/markAll',
+            url: '/logged/markAll',
             dataType: "text",
             type: "post",
             success: function (result) {

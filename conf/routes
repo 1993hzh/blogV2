@@ -3,31 +3,40 @@
 # ~~~~
 
 # Home page
-GET         /                                      controllers.Index.index
-GET         /index                                 controllers.Index.showPassages(page:Int?=1)
-GET         /passage                               controllers.PassageController.passage(id:Int?=1)
-GET         /message                               controllers.CommentController.getComments(page:Int?=1)
-POST        /comment                               controllers.CommentController.createComment
-GET         /viewComment                           controllers.CommentController.viewComment(passageId:Int, commentId:Int)
-GET         /markAs                                controllers.CommentController.markInMessageAs(markType:String, commentId:Int)
-POST        /markAll                               controllers.CommentController.markInMessagesAsRead
-GET         /about                                 controllers.Index.about
-GET         /login                                 controllers.Login.index
-GET         /loginWithCallback                     controllers.Login.loginWithCallback(callback:String, append:String)
-GET         /logout                                controllers.Login.logout
-POST        /doLogin                               controllers.Login.login
+#Do not need login filter
+GET         /                                       controllers.Index.index
+GET         /index                                  controllers.Index.showPassages(page:Int?=1)
+GET         /passage                                controllers.PassageController.passage(id:Int?=1)
+GET         /about                                  controllers.Index.about
+GET         /login                                  controllers.Login.index
+GET         /loginWithCallback                      controllers.Login.loginWithCallback(callback:String, append:String)
+GET         /logout                                 controllers.Login.logout
+POST        /doLogin                                controllers.Login.login
+
+#Need login filter
+GET         /logged/message                         controllers.CommentController.getComments(page:Int?=1)
+POST        /logged/comment                         controllers.CommentController.createComment
+GET         /logged/viewComment                     controllers.CommentController.viewComment(passageId:Int, commentId:Int)
+GET         /logged/markAs                          controllers.CommentController.markInMessageAs(markType:String, commentId:Int)
+POST        /logged/markAll                         controllers.CommentController.markInMessagesAsRead
 
 #below is management, need permission, do not change the url unless you updated the filter as well
-GET         /passageManage                         controllers.PassageController.manage(page:Int?=1)
-GET         /passageManage-create                  controllers.PassageController.create
-POST        /passageManage-doCreateOrUpdate        controllers.PassageController.doCreateOrUpdate
-GET         /passageManage-update                  controllers.PassageController.update(id:Int)
-GET         /passageManage-delete                  controllers.PassageController.delete(id:Int)
-GET         /tagManage                             controllers.TagController.manage(page:Int?=1)
-GET         /tagManage-create                      controllers.TagController.create
-GET         /tagManage-update                      controllers.TagController.update(id:Int)
-GET         /tagManage-delete                      controllers.TagController.delete(id:Int)
-#GET         /userManage               controllers.PassageController.manage
+#passage management
+GET         /manage/passage                         controllers.PassageController.manage(page:Int?=1)
+GET         /manage/passage/create                  controllers.PassageController.create
+POST        /manage/passage/doCreateOrUpdate        controllers.PassageController.doCreateOrUpdate
+GET         /manage/passage/update                  controllers.PassageController.update(id:Int)
+GET         /manage/passage/delete                  controllers.PassageController.delete(id:Int)
+#tag management
+GET         /manage/tag                             controllers.TagController.manage(page:Int?=1)
+POST        /manage/tag/create                      controllers.TagController.create
+GET         /manage/tag/update                      controllers.TagController.update(id:Int)
+GET         /manage/tag/delete                      controllers.TagController.delete(id:Int)
+#user management
+GET         /manage/user                            controllers.UserController.manage(page:Int?=1)
+POST        /manage/user/create                     controllers.UserController.create
+#Do not provide user update, no need to update users' info, they will do this by themself
+GET         /manage/user/delete                     controllers.UserController.delete(id:Int)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                          controllers.Assets.at(path="/public", file)
+GET         /assets/*file                           controllers.Assets.at(path="/public", file)

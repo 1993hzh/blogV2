@@ -21,16 +21,9 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
   lazy val passageDAO = PassageDAO()
 
   def getComments(page: Int) = Action { implicit request =>
-    request.session.get("loginUser") match {
-      case Some(lu) =>
-        cache.get[(User, Role)](lu) match {
-          case Some((u, r)) =>
-            val result = getInMessage(u.id, page)
-            Ok(views.html.message(result._1, result._2, result._3))
-          case None => Redirect(routes.Login.index)
-        }
-      case None => Redirect(routes.Login.index)
-    }
+    val loginUserId = Application.getLoginUserId(request.session)
+    val result = getInMessage(loginUserId, page)
+    Ok(views.html.message(result._1, result._2, result._3))
   }
 
   private def getInMessage(userId: Int, page: Int): (List[(Comment, String)], Int, Int) = {
@@ -47,40 +40,35 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
         Ok(formWithErrors.errors.map(_.message).mkString(", "))
       },
       data => {
-        request.session.get("loginUser") match {
-          case Some(lu) =>
-            cache.get[(User, Role)](lu) match {
-              case Some((u, r)) =>
-                val fromId = u.id
-                val fromName = u.userName
-                val comment = Comment(0, data.content, data.passageId,
-                  new Timestamp(System.currentTimeMillis), fromId, fromName, toId = data.toId, toName = data.toName)
-                //here create the comment
-                commentDAO.insert(comment) onSuccess {
-                  case r: Int =>
-                    data.toName match {
-                      case Some(to) =>
-                        //here we update the receiver unreadCount if exists
-                        resetUnreadCountInCache(to, 1)
-                      case None =>
-                        //here we update the authorF unreadCount if exists
-                        val authorName = passageDAO.getAuthorNameWithPassageIdSync(data.passageId)
-                        resetUnreadCountInCache(authorName, 1)
-                    }
-                }
-                //here update the original comment status
-                data.toCommentId match {
-                  case Some(cId) =>
-                    if (commentDAO.markAsSync(cId, CommentStatus.commented))
-                      resetUnreadCountInCache(fromName, -1) //here we update the replier unreadCount
-                  case None =>
-                }
-
-                Ok("Success")
-              case None => Ok(Application.LOGIN_FIRST(data.passageId))
+        val loginUserId = Application.getLoginUserId(request.session)
+        val loginUserName = Application.getLoginUserName(request.session)
+        val fromId = loginUserId
+        val fromName = loginUserName
+        val comment = Comment(0, data.content, data.passageId,
+          new Timestamp(System.currentTimeMillis), fromId, fromName, toId = data.toId, toName = data.toName)
+        //here create the comment
+        commentDAO.insert(comment) onSuccess {
+          case r: Int =>
+            data.toName match {
+              case Some(to) =>
+                //here we update the receiver unreadCount if exists
+                resetUnreadCountInCache(to, 1)
+              case None =>
+                //here we update the authorF unreadCount if exists
+                val authorName = passageDAO.getAuthorNameWithPassageIdSync(data.passageId)
+                resetUnreadCountInCache(authorName, 1)
             }
-          case None => Ok(Application.LOGIN_FIRST(data.passageId))
         }
+        //here update the original comment status
+        data.toCommentId match {
+          //User A replied to Comment1 which is sent to User B
+          //in this case, Comment1 should not mark as read or commented
+          case Some(cId) =>
+            if (commentDAO.markAsSync(cId, CommentStatus.commented, fromId))
+              resetUnreadCountInCache(fromName, -1) //here we update the replier unreadCount
+          case None =>
+        }
+        Ok("Success")
       }
     )
   }
@@ -93,8 +81,10 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
   }
 
   def markInMessageAs(markType: String, commentId: Int) = Action { implicit request =>
+    val loginUserId = Application.getLoginUserId(request.session)
+
     val status = CommentStatus.getStatus(markType.toUpperCase)
-    val result = commentDAO.markAsSync(commentId, status)
+    val result = commentDAO.markAsSync(commentId, status, loginUserId)
     val userName = Application.getLoginUserName(request.session)
 
     result match {
@@ -148,8 +138,9 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
   }
 
   def viewComment(passageId: Int, commentId: Int) = Action { implicit request =>
+    val loginUserId = Application.getLoginUserId(request.session)
     val userName = Application.getLoginUserName(request.session)
-    if (commentDAO.markAsSync(commentId))
+    if (commentDAO.markAsSync(commentId, markerId = loginUserId))
       resetUnreadCountInCache(userName, -1)
 
     val url = "/passage?id=" + passageId + "#" + commentId
