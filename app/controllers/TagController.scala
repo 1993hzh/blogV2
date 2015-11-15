@@ -3,11 +3,13 @@ package controllers
 import javax.inject.Inject
 
 import dao.TagDAO
+import models.Tag
 import play.api.Logger
 import play.api.cache.CacheApi
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
 
 /**
  * Created by Leo.
@@ -15,30 +17,42 @@ import scala.util.{Failure, Success}
  */
 class TagController @Inject()(cache: CacheApi) extends Controller {
 
-  lazy val tagDAO = TagDAO()
+  private lazy val tagDAO = TagDAO()
+
+  private lazy val log = Logger
 
   def manage(page: Int) = Action { implicit request =>
     val pageSize = 10
-    val totalPage = tagDAO.getTagCountSync()
+    val totalTagCount = tagDAO.getTagCountSync()
+    val totalPage = Application.getTotalPage(totalTagCount, pageSize)
     val pageNum: Int = Application.getPageNum(page, totalPage)
+
     val tags = tagDAO.getTagsSync(pageNum, pageSize)
     Ok(views.html.manageTag(tags, pageNum, totalPage))
   }
 
-  def create = Action { implicit request =>
-    //TODO
-    Ok(views.html.createOrUpdatePassage())
-  }
+  def upsert = Action { implicit request =>
+    tagForm.bindFromRequest.fold(
+      formWithErrors => {
+        Ok(formWithErrors.errors.map(_.message).mkString(", "))
+      },
+      data => {
+        val tagId = data.id.getOrElse(0)
 
-  def doCreateOrUpdate = Action { implicit request =>
-    //TODO
-    Ok("")
-  }
-
-  def update(id: Int) = Action { implicit request =>
-    //    val tag = tagDAO.getTags(id)
-    //TODO
-    Ok("")
+        val result = tagDAO.upsertSync(Tag(tagId, data.name, data.description))
+        result match {
+          case result: Int if result == 0 =>
+            log.info("Tag: " + data.name + " createOrUpdate failed, return value: " + result)
+            Ok("Tag: " + data.name + " createOrUpdate failed, return value: " + result)
+          case result: Int if result != 0 && tagId != 0 =>
+            log.info("Tag: " + data.name + " is updated, id: " + tagId)
+            Ok("Success")
+          case result: Int if result != 0 && tagId == 0 =>
+            log.info("Tag: " + data.name + " is created.")
+            Ok("Success")
+        }
+      }
+    )
   }
 
   /**
@@ -46,21 +60,28 @@ class TagController @Inject()(cache: CacheApi) extends Controller {
    * @param id
    * @return
    */
-  def delete(id: Int) = Action { implicit request =>
-    val user = Application.getLoginUserName(request.session)
-    Logger.info(user + " delete tag: " + id + " from: " + request.remoteAddress + " at: " + Application.now)
-
-    tagDAO.delete(id) onComplete {
-      case Success(r) if (r == 1) =>
-        Logger.info("tag: " + id + " delete succeed")
+  def delete(id: Int) = Action.async { implicit request =>
+    tagDAO.delete(id) map {
+      case result: Int if (result == 1) =>
+        log.info("tag: " + id + " delete succeed")
         Ok("Success")
-      case Success(r) if (r != 1) =>
-        Logger.info("tag: " + id + " delete failed, return value: " + r)
+      case result: Int if (result != 1) =>
+        log.info("tag: " + id + " delete failed, return value: " + result)
         Ok("Failure has been logged.")
-      case Failure(f) =>
-        Logger.error(f.getLocalizedMessage)
-        Ok(f.getLocalizedMessage)
     }
-    Ok("")
   }
+
+  val tagForm = Form(
+    mapping(
+      "id" -> optional(number),
+      "name" -> nonEmptyText,
+      "description" -> text
+    )(TagForm.apply)(TagForm.unapply)
+      verifying(Application.tooLong("name", 32), fields => fields.name.length < 32)
+      verifying(Application.tooLong("description", 255), fields => fields.description.length < 255)
+  )
 }
+
+case class TagForm(id: Option[Int],
+                   name: String,
+                   description: String)

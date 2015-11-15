@@ -1,4 +1,4 @@
-@(tags:Seq[Tag], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+@(tags:Seq[(Tag, Int)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
 <html>
@@ -7,11 +7,12 @@
     <title></title>
   </head>
   <body>
-    @nav()
+  @nav()
   <div class="container">
     <div class="col-lg-10 col-md-10 col-md-offset-1">
-      <button type="button" class="btn btn-primary">NEW</button>
+      <button type="button" class="btn btn-primary" onclick="pop_createTag()">NEW</button>
       <hr>
+      <div id="error"></div>
       <table class="table table-hover my-font-color">
         <thead>
           <tr>
@@ -19,17 +20,17 @@
             <th>Delete</th>
             <th>name</th>
             <th>description</th>
-            <th>passages</th>
+            <th>passageCount</th>
           </tr>
         </thead>
         <tbody>
-        @for(t <- tags) {
+        @for((t, count) <- tags) {
           <tr id="@t.id">
-            <td><a href="/manage/tag/delete?id=@t.id"><i class="fa fa-trash-o"></i></a></td>
-            <td><i class="fa fa-trash-o"></i></td>
+            <td><a href="javascript:pop_updateTag('@t.id', '@t.name','@t.description')"><i class="fa fa-pencil-square-o"></i></a></td>
+            <td><a href="javascript:remove('@t.id','/manage/tag/delete')"><i class="fa fa-trash-o"></i></a></td>
             <td>@t.name</td>
             <td>@t.description</td>
-            <td>0</td>
+            <td>@count</td>
           </tr>
         }
         </tbody>
@@ -37,6 +38,14 @@
       @pager("/manage/tag", currentPage, totalPage)
     </div>
   </div>
-    @footer()
+  <div id="tagwrap" style="display:none;">
+    <form id="tagForm" role="form" type="post">
+      <input type="id" class="hidden" id="id" name="id">
+      <input type="name" class="form-control my-font-color" placeholder="Name" id="name" name="name">
+      <hr>
+      <input type="description" class="form-control my-font-color" placeholder="Description" id="description" name="description">
+    </form>
+  </div>
+  @footer()
   </body>
 </html>

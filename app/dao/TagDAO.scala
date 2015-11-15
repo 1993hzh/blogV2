@@ -26,17 +26,23 @@ class TagDAO extends AbstractDAO[MyTag] with TagTable {
     db.run(modelQuery.filter(_.name === name).result.headOption)
   }
 
-  private def getTags(num: Int, pageSize: Int = Application.PAGE_SIZE): Future[Seq[MyTag]] = {
-    db.run(modelQuery.sortBy(_.id.desc).drop((num - 1) * pageSize).take(pageSize).result)
+  private def getTags(num: Int, pageSize: Int = Application.PAGE_SIZE): Future[Seq[(MyTag, Int)]] = {
+    val action = modelQuery.sortBy(_.id.desc).drop((num - 1) * pageSize).take(pageSize)
+      .map(t => (t, Passage2TagDAO.passage2Tags.filter(_.tagId === t.id).length))
+      .result
+
+    db.run(action)
   }
 
-  def getTagsSync(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[MyTag] = {
+  def getTagsSync(num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[(MyTag, Int)] = {
     Await.result(getTags(num, pageSize), waitTime)
   }
 
   private def getTagCount(): Future[Int] = db.run(modelQuery.length.result)
 
   def getTagCountSync(): Int = Await.result(getTagCount(), waitTime)
+
+  def upsertSync(tag: MyTag): Int = Await.result(super.upsert(tag), waitTime)
 
 }
 

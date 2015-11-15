@@ -36,7 +36,7 @@ function doComment() {
             showError(result)
         },
         error: function (msg) {
-            showError(msg)
+            showError(msg.statusText)
         },
     });
 }
@@ -90,7 +90,7 @@ function markAs(type, commentId) {
             showError(result)
         },
         error: function (msg) {
-            showError(msg)
+            showError(msg.statusText)
         },
     });
 }
@@ -118,7 +118,7 @@ function doRemove(id, url) {
             showError(result)
         },
         error: function (msg) {
-            showError(msg)
+            showError(msg.statusText)
         },
     });
 }
@@ -161,12 +161,70 @@ function createUser() {
         success: function (result) {
             if (result == "Success") {
                 window.location.href = window.location.href
+                return;
             }
             // error message
-            $.messager.alert(result)
+            showError(result)
         },
         error: function (msg) {
-            $.messager.alert("Internal Error")
+            showError(msg.statusText)
+        },
+    });
+}
+
+function pop_createTag() {
+    $('#tagForm').trigger("reset");
+    $("#tagwrap").show();
+    $("#tagwrap").dialog({
+        title: "Tag", classed: "mydialog", onClose: function () {
+            $(this).dialog("close");
+        },
+        buttons: [
+            {
+                text: "Submit", classed: "btn-primary", click: function () {
+                createOrUpdateTag();
+            }
+            },
+            {
+                text: "Cancel", classed: "btn-default", click: function () {
+                $(this).dialog("close");
+            }
+            }
+        ]
+    });
+}
+
+function pop_updateTag(id, name, description) {
+    pop_createTag();
+
+    $("#id").val(id);
+    $("#name").val(name);
+    $("#description").val(description);
+}
+
+function createOrUpdateTag() {
+    var id = $("input#id").val();
+    var name = $("input#name").val();
+    var description = $("input#description").val();
+    $.ajax({
+        url: "/manage/tag/upsert",
+        type: "POST",
+        data: {
+            id: id,
+            name: name,
+            description: description
+        },
+        cache: false,
+        success: function (result) {
+            if (result == "Success") {
+                window.location.href = window.location.href
+                return;
+            }
+            // error message
+            showError(result)
+        },
+        error: function (msg) {
+            showError(msg.statusText)
         },
     });
 }

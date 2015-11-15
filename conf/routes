@@ -29,13 +29,11 @@ GET         /manage/passage/update                  controllers.PassageControlle
 GET         /manage/passage/delete                  controllers.PassageController.delete(id:Int)
 #tag management
 GET         /manage/tag                             controllers.TagController.manage(page:Int?=1)
-POST        /manage/tag/create                      controllers.TagController.create
-GET         /manage/tag/update                      controllers.TagController.update(id:Int)
+POST        /manage/tag/upsert                      controllers.TagController.upsert
 GET         /manage/tag/delete                      controllers.TagController.delete(id:Int)
-#user management
+#user management, do not provide user update, they will do this by themself
 GET         /manage/user                            controllers.UserController.manage(page:Int?=1)
 POST        /manage/user/create                     controllers.UserController.create
-#Do not provide user update, no need to update users' info, they will do this by themself
 GET         /manage/user/delete                     controllers.UserController.delete(id:Int)
 
 # Map static resources from the /public folder to the /assets URL path
