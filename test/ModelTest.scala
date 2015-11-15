@@ -45,6 +45,19 @@ class ModelTest extends AbstractTest {
     Assert.assertEquals(1, result)
   }
 
+  @Test
+  def upsert() = {
+    val tm = TestModel(name = "test3", description = "testUpsert")
+    val insertResult = Await.result(modelDAO.upsert(tm), Duration.Inf)
+    Assert.assertEquals(1, insertResult)
+
+    val tmQuery = Await.result(modelDAO.queryName("test3"), Duration.Inf)
+
+    val tmUpdated = TestModel(tmQuery.id, "test3", "testUpsert_updated")
+    val updateResult = Await.result(modelDAO.upsert(tmUpdated), Duration.Inf)
+    Assert.assertEquals(1, updateResult)
+  }
+
   @After
   def delete(): Unit = {
     modelDAO.delete("test1") onComplete {
@@ -54,6 +67,12 @@ class ModelTest extends AbstractTest {
 
     modelDAO.delete("test2") onComplete {
       case Success(result) => Assert.assertEquals(1, result)
+      case Failure(f) => Assert.fail(f.getLocalizedMessage)
+    }
+
+    modelDAO.delete("test3") onComplete {
+      case Success(result) =>
+        Assert.assertTrue(result == 1 || result == 0)
       case Failure(f) => Assert.fail(f.getLocalizedMessage)
     }
   }
