@@ -96,7 +96,7 @@ function markAs(type, commentId) {
 }
 
 function remove(id, url) {
-    $.messager.confirm("Delete Passage", "You are going to delete passage, sure?", function () {
+    $.messager.confirm("Delete", "You are going to delete, sure?", function () {
         doRemove(id, url);
     })
 }

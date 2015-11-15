@@ -28,7 +28,7 @@
         <tbody>
         @for((u, r) <- users) {
           <tr id="@u.id">
-            <td><a href="/manage/user/delete?id=@u.id"><i class="fa fa-trash-o"></i></a></td>
+            <td><a href="javascript:remove('@u.id','/manage/user/delete')"><i class="fa fa-trash-o"></i></a></td>
             <td>@u.userName</td>
             <td>@u.mail</td>
             <td>@r.roleType</td>

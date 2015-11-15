@@ -18,8 +18,7 @@ object LoginFilter extends Filter {
 
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     if (rh.path.contains("logged")) {
-      log.info(rh.remoteAddress + " is requesting logged-permission-url: '" + rh.uri + "' at: " + LocalDateTime.now)
-
+      
       val isAjax = rh.headers.get("X-Requested-With") match {
         case Some(x) => true
         case None => false
@@ -27,10 +26,10 @@ object LoginFilter extends Filter {
 
       Application.getLoginUser(rh.session) match {
         case None if (isAjax) =>
-          log.info("user not login at: " + rh.remoteAddress + ", send a ajax with login info.")
+          log.info(LocalDateTime.now + ": " + rh.remoteAddress + " is requesting " + rh.uri + " without login, send ajax.")
           Future.successful(Results.Ok(Application.loginAjax()))
         case None if (!isAjax) =>
-          log.info("user not login at: " + rh.remoteAddress + ", redirected.")
+          log.info(LocalDateTime.now + ": " + rh.remoteAddress + " is requesting " + rh.uri + ", redirected.")
           Future.successful(Results.Redirect(routes.Login.index))
         case Some((u, r)) => f(rh)
       }
