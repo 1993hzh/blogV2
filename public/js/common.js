@@ -235,10 +235,16 @@ function deleteKeyword(obj) {
 
 function addKeyword() {
     var newKw = $("input#keywordAdd").val();
+    if (!isRequired(newKw, "keyword")) {
+        return;
+    }
+
+    var index = $("div#keywordList").find("span.label").length;
+
     var append = "<span class=\"label label-primary\">" +
-        "<input type=\"text\" class=\"hidden\" id=\"keywords\" name=\"keywords\" value=\"" + newKw + "\">" + newKw +
+        "<input type=\"text\" class=\"hidden\" name=\"keywords[" + index + "]\" value=\"" + newKw + "\">" + newKw +
         "<a href=\"javascript:void(0);\"><i class=\"fa fa-times\" onclick=\"deleteKeyword(this)\"></i></a></span> &nbsp;";
-    $("div#keywords").append(append);
+    $("div#keywordList").append(append);
 
     $("input#keywordAdd").val("");
 }

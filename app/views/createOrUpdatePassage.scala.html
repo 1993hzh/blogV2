@@ -1,68 +1,75 @@
 @(passage: Option[Passage] = None,
-        tags: List[Tag] = Nil,
-        allTag: List[Tag] = Nil,
-        keywords: List[Keyword] = Nil,
-        error: Option[String] = None)(implicit session: play.api.mvc.Session)
+tags: List[Tag] = Nil,
+allTag: List[Tag],
+keywords: List[Keyword] = Nil,
+error: Option[String] = None)(implicit session: play.api.mvc.Session)
 
 
 <!DOCTYPE html>
 <html>
-    <head lang="en">
-        <meta charset="UTF-8">
-        <title>
-            @passage match {
-                case Some(p) => {Edit [@p.title]}
-                case None => {New Passage}
-            }
-        </title>
-    </head>
-    <body>
-        @nav()
-        <div class="container">
-            <div class="col-lg-10 col-md-10 col-md-offset-1">
-                <div id="error"></div>
-                <form id="passageForm" action="/manage/passage/doCreateOrUpdate" method="post">
-                    @passage match {
-                        case Some(p) => {
-                            <input type="text" class="hidden" id="id" name="id" value="@p.id"/>
-                            <input type="text" class="form-control" placeholder="Title" id="title" name="title" value="@p.title"/>
-                            <hr>
-                            <div id="keywords" style="display : inline-block ;">
-                            @for(kw <- keywords) {
-                                <span class="label label-primary">
-                                    <input type="text" class="hidden" id="keywords" name="keywords" value="@kw.name">
-                                    @kw.name
-                                    <a href="javascript:void(0);"><i class="fa fa-times" onclick="deleteKeyword(this)"></i></a>
-                                </span> &nbsp;
-                            }
-                            </div>
-                            <input type="text" placeholder="Keyword" id="keywordAdd" class="form-control">
-                            <a href="javascript:addKeyword()">
-                                <i class="fa fa-plus-circle"></i>
-                            </a>
-                            <hr>
-                            <div class="my-font-color">
-                            @for(t <- allTag) {
-                                <input type="checkbox" name="tagIds" value="@t.id" @if(tags.contains(t)) {
-                                    checked="checked"}> @t.name
-                                }
-                            </div>
-                            <hr>
-                            <textarea id="content" name="content" class="form-control" rows="3">@p.content</textarea>
-                        }
-                        case None => {
-                            <input type="text" class="hidden" id="id" name="id" value="">
-                            <input type="text" class="form-control" placeholder="Title" id="title" name="title">
-                            <hr>
-                            <hr>
-                            <textarea id="content" name="content" class="form-control" rows="3"></textarea>
-                        }
-                    }
-                    <hr>
-                    <button type="submit" class="btn btn-default btn-right">Submit</button>
-                </form>
-            </div>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>
+    @passage match {
+    case Some(p) => {Edit [@p.title]}
+    case None => {New Passage}
+    }
+  </title>
+</head>
+<body>
+@nav()
+<div class="container">
+  <div class="col-lg-10 col-md-10 col-md-offset-1">
+    <div id="error"></div>
+    <form id="passageForm" action="/manage/passage/doCreateOrUpdate" method="post">
+      @passage match {
+        case Some(p) => {
+        <input type="text" class="hidden" id="id" name="id" value="@p.id"/>
+        <input type="text" class="form-control" placeholder="Title" id="title" name="title" value="@p.title"/>
+        <hr>
+        <div id="keywordList" style="display : inline-block ;">
+          @for((kw, index) <- keywords.zipWithIndex) {
+            <span class="label label-primary">
+                <input type="text" class="hidden" name="keywords[@index]" value="@kw.name">
+                @kw.name
+                <a href="javascript:void(0);"><i class="fa fa-times" onclick="deleteKeyword(this)"></i></a>
+            </span> &nbsp;
+          }
         </div>
-        @footer()
-    </body>
+        <input type="text" placeholder="Keyword" id="keywordAdd" class="form-control">
+        <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
+        <hr>
+        <div class="my-font-color">
+          @for((t, index) <- allTag.zipWithIndex) {
+          <input type="checkbox" name="tagIds[@index]" value="@t.id" @if(tags.contains(t)) {
+                 checked="checked" }> @t.name
+          }
+        </div>
+        <hr>
+        <textarea id="content" name="content" class="form-control" rows="3">@p.content</textarea>
+        }
+        case None => {
+        <input type="text" class="hidden" id="id" name="id"/>
+        <input type="text" class="form-control" placeholder="Title" id="title" name="title"/>
+        <hr>
+        <div id="keywordList" style="display : inline-block ;"></div>
+        <input type="text" placeholder="Keyword" id="keywordAdd" class="form-control">
+        <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
+        <hr>
+        <div class="my-font-color">
+          @for((t, index) <- allTag.zipWithIndex) {
+          <input type="checkbox" name="tagIds[@index]" value="@t.id"> @t.name
+          }
+        </div>
+        <hr>
+        <textarea id="content" name="content" class="form-control" rows="3"></textarea>
+        }
+      }
+      <hr>
+      <button type="submit" class="btn btn-default btn-right">Submit</button>
+    </form>
+  </div>
+</div>
+@footer()
+</body>
 </html>
