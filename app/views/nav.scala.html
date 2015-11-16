@@ -43,31 +43,30 @@
 
         @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
           case Some((u, r)) => {
-              <li>
-                  <a href="/logged/message">Notification&nbsp;
-                    <span id="unreadDrag" class="badge" draggable="true">
-                      @Cache.getOrElse(u.userName+"-unreadMessage")("0")
-                    </span>
-                  </a>
-              </li>
-              @if(r.roleType.equals(RoleType.OWNER)) {
-                  <li>
-                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                      Manage <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                      <li><a href="/manage/passage">Passage</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="/manage/tag">Tag</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="/manage/user">User</a></li>
-                    </ul>
-                  </li>
-              }
+            <li>
+              <a href="/logged/message">Notification&nbsp;
+                <span id="unreadDrag" class="badge" draggable="true">
+                  @Cache.getOrElse(u.userName+"-unreadMessage")("0")
+                </span>
+              </a>
+            </li>
+            @if(r.roleType.equals(RoleType.OWNER)) {
+            <li>
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Manage <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="/manage/passage">Passage</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/manage/tag">Tag</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/manage/user">User</a></li>
+              </ul>
+            </li>
+            }
           }
           case None => {}
         }
-
         <li>
           <a href="/about">About</a>
         </li>
