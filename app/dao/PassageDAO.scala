@@ -186,6 +186,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     }
   }
 
+  @deprecated("passage upsert should not be block", "2015-15-17 (no version num)")
   def getUpsertResultSync(passageId: Option[Int], passage: Passage, keywords: List[String], tagIds: List[Int]): AnyVal = {
     val result = passageId match {
       case Some(id) =>

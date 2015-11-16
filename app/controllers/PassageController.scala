@@ -3,14 +3,15 @@ package controllers
 import java.sql.Timestamp
 import javax.inject.Inject
 import dao.{TagDAO, CommentDAO, PassageDAO}
-import models.Passage
+import models.{Keyword, Passage}
 import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Results, Action, Controller}
 import scala.collection.mutable.{Set => Mset}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
  * Created by Leo.
@@ -63,54 +64,43 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   }
 
   def doCreateOrUpdate = Action.async { implicit request =>
-    var passageId: Option[Int] = None
-    var keywords: List[String] = Nil
-    var tagIds: List[Int] = Nil
-    var title = ""
-    var content = ""
-    passageForm.bindFromRequest.fold(
-      formWithErrors => {
-        Ok(formWithErrors.errors.map(_.message).mkString(", "))
-      },
-      data => {
-        passageId = data.id
-        keywords = data.keywords
-        tagIds = data.tagIds
-        title = data.title
-        content = data.content
-      }
-    )
     val authorId = Application.getLoginUserId(request.session)
     val authorName = Application.getLoginUserName(request.session)
     val createTime = new Timestamp(System.currentTimeMillis)
-    val passage = Passage(passageId.getOrElse(0), authorId, authorName, title, content, createTime)
-    val result = passageId match {
-      case Some(id) =>
-        passageDAO.update(passage, keywords, tagIds)
-      case None =>
-        passageDAO.insert(passage, keywords, tagIds)
-    }
-
-    result.map {
-      case r: Boolean if r =>
-        passageId match {
-          case Some(id) => Redirect(routes.PassageController.passage(id))
+    passageForm.bindFromRequest.fold(
+      formWithErrors => {
+        Future.successful(Ok(formWithErrors.errors.map(_.message).mkString(", ")))
+      },
+      data => {
+        val passage = Passage(data.id.getOrElse(0), authorId, authorName, data.title, data.content, createTime)
+        val result = data.id match {
+          case Some(id) =>
+            passageDAO.update(passage, data.keywords, data.tagIds)
           case None =>
-            log.info(Application.now + ": " + authorName + " update passage: " + title
-              + " succeed, however, id not found, it should never happened.")
-            Ok("update passage: " + title + " succeed, however, id not found, it should never happened.")
+            passageDAO.insert(passage, data.keywords, data.tagIds)
         }
-      case r: Boolean if !r =>
-        log.info(Application.now + ": " + authorName + " update passage: " + title + ", id: " + passageId + " failed.")
-        Ok("update passage: " + title + ", id: " + passageId + " failed.")
-      case r: Int if r > 0 => Redirect(routes.PassageController.passage(r))
-      case r: Int if r <= 0 =>
-        log.info(Application.now + ": " + authorName + " create passage: " + title + " failed, return value: " + r)
-        Ok("create passage: " + title + " failed, return value: " + r)
-      case _ =>
-        log.info(Application.now + ": " + authorName + " upsert passage: " + title + " , id: " + passageId + " failed.")
-        Ok("upsert passage: " + title + " , id: " + passageId + " failed.")
-    }
+        result.map {
+          case r: Boolean if r =>
+            data.id match {
+              case Some(id) => Redirect(routes.PassageController.passage(id))
+              case None =>
+                log.info(Application.now + ": " + authorName + " update passage: " + data.title
+                  + " succeed, however, id not found, it should never happened.")
+                Ok("update passage: " + data.title + " succeed, however, id not found, it should never happened.")
+            }
+          case r: Boolean if !r =>
+            log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " failed.")
+            Ok("update passage: " + data.title + ", id: " + data.id + " failed.")
+          case r: Int if r > 0 => Redirect(routes.PassageController.passage(r))
+          case r: Int if r <= 0 =>
+            log.info(Application.now + ": " + authorName + " create passage: " + data.title + " failed, return value: " + r)
+            Ok("create passage: " + data.title + " failed, return value: " + r)
+          case _ =>
+            log.info(Application.now + ": " + authorName + " upsert passage: " + data.title + " , id: " + data.id + " failed.")
+            Ok("upsert passage: " + data.title + " , id: " + data.id + " failed.")
+        }
+      }
+    )
   }
 
   def update(id: Int) = Action { implicit request =>
@@ -149,7 +139,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
       "keywords" -> list(nonEmptyText),
       "tagIds" -> list(number)
     )(PassageForm.apply)(PassageForm.unapply)
-      verifying(Application.tooLong("title", 200), fields => fields.content.length < 200)
+      verifying(Application.tooLong("title", 200), fields => fields.title.length < 200)
   )
 }
 
