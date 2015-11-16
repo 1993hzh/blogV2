@@ -75,23 +75,22 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
         val passage = Passage(data.id.getOrElse(0), authorId, authorName, data.title, data.content, createTime)
         val result = data.id match {
           case Some(id) =>
+            log.info(Application.now + ": " + authorName + " try to update passage: " + data.title + ", id: " + data.id)
             passageDAO.update(passage, data.keywords, data.tagIds)
           case None =>
+            log.info(Application.now + ": " + authorName + " try to create passage: " + data.title)
             passageDAO.insert(passage, data.keywords, data.tagIds)
         }
         result.map {
-          case r: Boolean if r =>
-            data.id match {
-              case Some(id) => Redirect(routes.PassageController.passage(id))
-              case None =>
-                log.info(Application.now + ": " + authorName + " update passage: " + data.title
-                  + " succeed, however, id not found, it should never happened.")
-                Ok("update passage: " + data.title + " succeed, however, id not found, it should never happened.")
-            }
+          case r: Boolean if (r && !data.id.isEmpty) =>
+            log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " succeed.")
+            Redirect(routes.PassageController.passage(data.id.getOrElse(0)))
           case r: Boolean if !r =>
             log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " failed.")
             Ok("update passage: " + data.title + ", id: " + data.id + " failed.")
-          case r: Int if r > 0 => Redirect(routes.PassageController.passage(r))
+          case r: Int if r > 0 =>
+            log.info(Application.now + ": " + authorName + " create passage: " + data.title + " succeed, new id: " + r)
+            Redirect(routes.PassageController.passage(r))
           case r: Int if r <= 0 =>
             log.info(Application.now + ": " + authorName + " create passage: " + data.title + " failed, return value: " + r)
             Ok("create passage: " + data.title + " failed, return value: " + r)

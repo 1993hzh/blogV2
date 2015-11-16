@@ -150,7 +150,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   }
 
   def update(model: Passage, keywords: List[String], tagIds: List[Int]): Future[Boolean] = {
-    super.update(model) map {
+    this.update(model) map {
       case r: Int if r > 0 =>
         val originKeywords = getKeywords(model.id)
         val originTags = getTags(model.id)
@@ -184,6 +184,11 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
         true
       case r: Int if r <= 0 => false
     }
+  }
+
+  override def update(model: Passage): Future[Int] = {
+    val action = modelQuery.filter(_.id === model.id).map(p => (p.title, p.content)).update((model.title, model.content))
+    db.run(action)
   }
 
   @deprecated("passage upsert should not be block", "2015-15-17 (no version num)")
