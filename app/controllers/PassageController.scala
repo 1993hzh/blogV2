@@ -86,16 +86,16 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
             log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " succeed.")
             Redirect(routes.PassageController.passage(data.id.getOrElse(0)))
           case r: Boolean if !r =>
-            log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " failed.")
+            log.warn(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " failed.")
             Ok("update passage: " + data.title + ", id: " + data.id + " failed.")
           case r: Int if r > 0 =>
             log.info(Application.now + ": " + authorName + " create passage: " + data.title + " succeed, new id: " + r)
             Redirect(routes.PassageController.passage(r))
           case r: Int if r <= 0 =>
-            log.info(Application.now + ": " + authorName + " create passage: " + data.title + " failed, return value: " + r)
+            log.warn(Application.now + ": " + authorName + " create passage: " + data.title + " failed, return value: " + r)
             Ok("create passage: " + data.title + " failed, return value: " + r)
           case _ =>
-            log.info(Application.now + ": " + authorName + " upsert passage: " + data.title + " , id: " + data.id + " failed.")
+            log.warn(Application.now + ": " + authorName + " upsert passage: " + data.title + " , id: " + data.id + " failed.")
             Ok("upsert passage: " + data.title + " , id: " + data.id + " failed.")
         }
       }
