@@ -1,13 +1,16 @@
 package controllers
 
+import java.sql.Timestamp
 import javax.inject.Inject
 import dao.{TagDAO, CommentDAO, PassageDAO}
+import models.Passage
 import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
 import scala.collection.mutable.{Set => Mset}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by Leo.
@@ -18,6 +21,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   private lazy val passageDAO = PassageDAO()
   private lazy val commentDAO = CommentDAO()
   private lazy val tagDAO = TagDAO()
+  private lazy val log = Logger
 
   def passage(id: Int) = Action { implicit request =>
     val passageDetail = passageDAO.getDetail(id)
@@ -58,17 +62,55 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
     Ok(views.html.createOrUpdatePassage(allTag = tagDAO.getAllTagSync.toList))
   }
 
-  def doCreateOrUpdate = Action { implicit request =>
+  def doCreateOrUpdate = Action.async { implicit request =>
+    var passageId: Option[Int] = None
+    var keywords: List[String] = Nil
+    var tagIds: List[Int] = Nil
+    var title = ""
+    var content = ""
     passageForm.bindFromRequest.fold(
       formWithErrors => {
         Ok(formWithErrors.errors.map(_.message).mkString(", "))
       },
       data => {
-        //TODO
-        Application.setPassageCount
-        Ok("")
+        passageId = data.id
+        keywords = data.keywords
+        tagIds = data.tagIds
+        title = data.title
+        content = data.content
       }
     )
+    val authorId = Application.getLoginUserId(request.session)
+    val authorName = Application.getLoginUserName(request.session)
+    val createTime = new Timestamp(System.currentTimeMillis)
+    val passage = Passage(passageId.getOrElse(0), authorId, authorName, title, content, createTime)
+    val result = passageId match {
+      case Some(id) =>
+        passageDAO.update(passage, keywords, tagIds)
+      case None =>
+        passageDAO.insert(passage, keywords, tagIds)
+    }
+
+    result.map {
+      case r: Boolean if r =>
+        passageId match {
+          case Some(id) => Redirect(routes.PassageController.passage(id))
+          case None =>
+            log.info(Application.now + ": " + authorName + " update passage: " + title
+              + " succeed, however, id not found, it should never happened.")
+            Ok("update passage: " + title + " succeed, however, id not found, it should never happened.")
+        }
+      case r: Boolean if !r =>
+        log.info(Application.now + ": " + authorName + " update passage: " + title + ", id: " + passageId + " failed.")
+        Ok("update passage: " + title + ", id: " + passageId + " failed.")
+      case r: Int if r > 0 => Redirect(routes.PassageController.passage(r))
+      case r: Int if r <= 0 =>
+        log.info(Application.now + ": " + authorName + " create passage: " + title + " failed, return value: " + r)
+        Ok("create passage: " + title + " failed, return value: " + r)
+      case _ =>
+        log.info(Application.now + ": " + authorName + " upsert passage: " + title + " , id: " + passageId + " failed.")
+        Ok("upsert passage: " + title + " , id: " + passageId + " failed.")
+    }
   }
 
   def update(id: Int) = Action { implicit request =>
@@ -86,21 +128,22 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   def delete(id: Int) = Action { implicit request =>
     val user = Application.getLoginUserName(request.session)
     val userId = Application.getLoginUserId(request.session)
-    Logger.info(user + " try to delete passage: " + id + " from: " + request.remoteAddress + " at: " + Application.now)
+    log.info(user + " try to delete passage: " + id + " from: " + request.remoteAddress + " at: " + Application.now)
 
     passageDAO.delete(userId, id) match {
       case 1 =>
-        Logger.info("passage: " + id + " delete succeed")
+        log.info("passage: " + id + " delete succeed")
         Application.setPassageCount
         Ok("Success")
       case i if i != 1 =>
-        Logger.info("passage: " + id + " delete failed, return value: " + i)
+        log.info("passage: " + id + " delete failed, return value: " + i)
         Ok("Failure has been logged.")
     }
   }
 
   val passageForm = Form(
     mapping(
+      "id" -> optional(number),
       "title" -> nonEmptyText,
       "content" -> nonEmptyText,
       "keywords" -> list(nonEmptyText),
@@ -110,7 +153,8 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   )
 }
 
-case class PassageForm(title: String,
+case class PassageForm(id: Option[Int],
+                       title: String,
                        content: String,
                        keywords: List[String],
                        tagIds: List[Int])

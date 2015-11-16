@@ -19,6 +19,8 @@ trait KeywordTable extends AbstractTable[Keyword] {
 
     def passageFK = foreignKey("passage_fk", passageId, PassageDAO.passages)(_.id, onDelete = ForeignKeyAction.Cascade)
 
+    def passage_keyword_unique_Index = index("PASSAGE_KEYWORD_UNIQUE_IDX", (passageId, name), unique = true)
+
     override def * = (id, name, passageId) <>(Keyword.tupled, Keyword.unapply)
   }
 

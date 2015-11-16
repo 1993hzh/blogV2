@@ -2,12 +2,13 @@ package dao
 
 import javax.inject.Singleton
 import controllers.Application
-import models.{Tag => MyTag, Comment, Keyword, Passage}
+import models.{Tag => MyTag, Passage2Tag, Comment, Keyword, Passage}
 import play.api.Logger
 import slick.jdbc.GetResult
 import slick.lifted.TableQuery
 import scala.concurrent.{Await, Future}
 import tables.PassageTable
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by Leo.
@@ -17,6 +18,10 @@ import tables.PassageTable
 class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
   private lazy val log = Logger
+
+  private lazy val passage2TagDAO = Passage2TagDAO()
+
+  private lazy val keywordDAO = KeywordDAO()
 
   override protected val modelQuery = TableQuery[PassageTable]
 
@@ -71,7 +76,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   def queryTagsByPassageId(passageId: Int): Future[Seq[MyTag]] = {
     db.run(modelQuery.filter(_.id === passageId)
       .join(Passage2TagDAO.passage2Tags).on(_.id === _.passageId)
-      .join(TagDAO.tags).on(_._2.tagId === _.id).sortBy(_._2.name.desc).map(_._2).result)
+      .join(TagDAO.tags).on(_._2.tagId === _.id).sortBy(_._2.name.asc).map(_._2).result)
   }
 
   def queryCommentsByPassageId(passageId: Int): Future[Seq[Comment]] = {
@@ -132,6 +137,63 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
     val action = modelQuery.filter(_.id === id).map(_.viewCount).update(viewCount)
     db.run(action)
+  }
+
+  def insert(model: Passage, keywords: List[String], tagIds: List[Int]): Future[Int] = {
+    super.insert(model) map {
+      case r: Int if r > 0 =>
+        keywords.foreach(kw => keywordDAO.insert(Keyword(0, kw, r)))
+        tagIds.foreach(tid => passage2TagDAO.insert(Passage2Tag(0, r, tid)))
+        r
+      case r: Int if r <= 0 => r
+    }
+  }
+
+  def update(model: Passage, keywords: List[String], tagIds: List[Int]): Future[Boolean] = {
+    super.update(model) map {
+      case r: Int if r > 0 =>
+        val originKeywords = getKeywords(model.id)
+        val originTags = getTags(model.id)
+
+        originKeywords.foreach(okw => {
+          if (!keywords.contains(okw.name))
+            keywordDAO.delete(okw) map {
+              case r: Int if r <= 0 => log.warn("Delete keyword: " + okw + " failed.")
+            }
+        })
+        keywords.foreach(kw => {
+          if (!originKeywords.map(_.name).contains(kw))
+            keywordDAO.insert(Keyword(0, kw, model.id)) map {
+              case r: Int if r <= 0 => log.warn("Create keyword: " + kw + " failed.")
+            }
+        })
+
+        originTags.foreach(ot => {
+          if (!tagIds.contains(ot.id))
+            passage2TagDAO.remove(model.id, ot.id) map {
+              case r: Int if r <= 0 => log.warn("Delete Passage2Tag relationship: (" + model.id + ", " + ot.id + ") failed.")
+            }
+        })
+        tagIds.foreach(t => {
+          if (!originTags.map(_.id).contains(t))
+            passage2TagDAO.insert(Passage2Tag(0, model.id, t)) map {
+              case r: Int if r <= 0 => log.warn("Create Passage2Tag relationship: (" + model.id + ", " + t + ") failed.")
+            }
+        })
+
+        true
+      case r: Int if r <= 0 => false
+    }
+  }
+
+  def getUpsertResultSync(passageId: Option[Int], passage: Passage, keywords: List[String], tagIds: List[Int]): AnyVal = {
+    val result = passageId match {
+      case Some(id) =>
+        update(passage, keywords, tagIds)
+      case None =>
+        insert(passage, keywords, tagIds)
+    }
+    Await.result(result, waitTime)
   }
 
   implicit val listPassagesResult = GetResult(
