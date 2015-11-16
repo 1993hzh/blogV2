@@ -38,7 +38,7 @@ class RoleDAO extends AbstractDAO[Role] with RoleTable {
     db.run(modelQuery.filter(_.roleType === roleType).map(_.id).result.head)
   }
 
-  def getRoleIdSync(roleType: String = RoleType.COMMON): Int = Await.result(getRoleId(), waitTime)
+  def getRoleIdSync(roleType: String = RoleType.COMMON): Int = Await.result(getRoleId(roleType), waitTime)
 
 }
 
