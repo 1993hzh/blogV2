@@ -7,6 +7,7 @@ import dao.PassageDAO
 import models.{Role, User}
 import play.api._
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
+import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.cache.Cache
 import play.api.Play.current
@@ -27,7 +28,7 @@ object Application extends Controller {
   val PASSAGE_VIEW_COUNT_PREFIX = "passage-id-"
   val PASSAGE_BEEN_READ_LIST = "passage_has_been_read"
 
-  def loginAjax() = "Please <a href=\"" + routes.Login.index() + "\">login</a> first."
+  def loginAjax(callback: String) = "Please <a href=\"" + routes.Login.index() + "?callback=" + callback + "\">login</a> first."
 
   def tooLong(name: String, length: Int) = name + "'s length too long, should less than " + length
 
@@ -81,4 +82,8 @@ object Application extends Controller {
   }
 
   def now = LocalDateTime.now()
+
+  def sendJsonResult(isSuccess: Boolean, detail: String) = {
+    Ok(Json.obj("isSuccess" -> isSuccess, "detail" -> detail))
+  }
 }

@@ -8,7 +8,6 @@ import models.{Role, User}
 import play.api.Logger
 import play.api.cache._
 import utils.Encryption
-import scala.concurrent.duration._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
@@ -24,13 +23,14 @@ class Login @Inject()(cache: CacheApi) extends Controller {
   private var logoutTime: Timestamp = null
 
   def index = Action { implicit request =>
-    Ok(views.html.login())
+    val callback = request.getQueryString(Application.LOGIN_CALL_BACK)
+    Ok(views.html.login(callback))
   }
 
   def login = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => {
-        Ok(views.html.login(Some(formWithErrors.errors.map(_.message).mkString(", ")), formWithErrors("callback").value))
+        Application.sendJsonResult(false, formWithErrors.errors.map(_.message).mkString(", "))
       },
       data => {
         val loginUser = userDAO.login(data.name, data.password)
@@ -49,12 +49,14 @@ class Login @Inject()(cache: CacheApi) extends Controller {
             cache.set(u.userName + "-unreadMessage", getUnreadInMessage(u.id)) //add unreadMessage into public cache
 
             data.callback match {
-              case Some(str) => Redirect(str) withSession (loginUserSession) //callback exists
-              case None => Redirect(routes.Index.index) withSession (loginUserSession)
+              case Some(str) =>
+                Application.sendJsonResult(true, str) withSession (loginUserSession) //callback exists
+              case None =>
+                Application.sendJsonResult(true, routes.Index.index().url) withSession (loginUserSession) //callback exists
             }
 
           case None =>
-            Ok(views.html.login(Some(Application.ERROR_NAME_OR_PWD), data.callback))
+            Application.sendJsonResult(false, Application.ERROR_NAME_OR_PWD)
         }
       }
     )
@@ -86,11 +88,6 @@ class Login @Inject()(cache: CacheApi) extends Controller {
         Logger.info("Didn't find " + loginToken)
     }
     Redirect(routes.Index.index()).withNewSession
-  }
-
-  //Need to filter the callback url
-  def loginWithCallback(callback: String, append: String) = Action { implicit request =>
-    Ok(views.html.login(None, Some(callback + "#" + append)))
   }
 
   val loginForm = Form(

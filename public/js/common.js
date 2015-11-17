@@ -28,12 +28,12 @@ function doComment() {
         },
         cache: false,
         success: function (result) {
-            if (result == "Success") {
-                window.location.href = "/passage?id=" + passageId;
+            if (result.isSuccess == true) {
+                window.location.href = result.detail;
                 return;
+            } else {
+                showError(result.detail);
             }
-            // error message
-            showError(result)
         },
         error: function (msg) {
             showError(msg.statusText)
@@ -82,12 +82,12 @@ function markAs(type, commentId) {
         },
         cache: false,
         success: function (result) {
-            if (result == "Success") {
-                window.location.href = window.location.href
+            if (result.isSuccess == true) {
+                window.location.href = window.location.href;
                 return;
+            } else {
+                showError(result.detail);
             }
-            // error message
-            showError(result)
         },
         error: function (msg) {
             showError(msg.statusText)
@@ -110,12 +110,12 @@ function doRemove(id, url) {
         },
         cache: false,
         success: function (result) {
-            if (result == "Success") {
+            if (result.isSuccess == true) {
                 $("#" + id).remove();
                 return;
+            } else {
+                showError(result.detail);
             }
-            // error message
-            showError(result)
         },
         error: function (msg) {
             showError(msg.statusText)
@@ -159,12 +159,12 @@ function createUser() {
         },
         cache: false,
         success: function (result) {
-            if (result == "Success") {
+            if (result.isSuccess == true) {
                 window.location.href = window.location.href
                 return;
+            } else {
+                showError(result.detail);
             }
-            // error message
-            showError(result)
         },
         error: function (msg) {
             showError(msg.statusText)
@@ -216,12 +216,12 @@ function createOrUpdateTag() {
         },
         cache: false,
         success: function (result) {
-            if (result == "Success") {
+            if (result.isSuccess == true) {
                 window.location.href = window.location.href
                 return;
+            } else {
+                showError(result.detail);
             }
-            // error message
-            showError(result)
         },
         error: function (msg) {
             showError(msg.statusText)
@@ -256,14 +256,13 @@ $(function () {
     function markAllAsRead() {
         $.ajax({
             url: '/logged/markAll',
-            dataType: "text",
             type: "post",
             success: function (result) {
-                if (result != "Success") {
-                    $.messager.popup(result);
+                if (result.isSuccess == true) {
+                    $('#unreadDrag').text(0);
                     return;
                 } else {
-                    $('#unreadDrag').text(0);
+                    $.messager.popup(result.detail);
                 }
             },
             error: function (msg) {
@@ -307,13 +306,33 @@ $(function () {
         var data = $("#passageForm").serialize();
         $.ajax({
             url: '/manage/passage/doCreateOrUpdate',
-            dataType: "text",
             type: "post",
             data: data,
-            success: function (msg) {
-                var result = $.parseJSON(msg);
+            success: function (result) {
                 if (result.isSuccess == true) {
-                    window.location.href = "/passage?id=" + result.detail;
+                    window.location.href = result.detail;
+                    return;
+                } else {
+                    showError(result.detail);
+                }
+            },
+            error: function (msg) {
+                showError("Internal Error");
+            }
+        });
+    });
+
+    $("#loginFormSubmit").on("click", function(event) {
+        event.preventDefault();
+        hideError();
+        var data = $("#loginForm").serialize();
+        $.ajax({
+            url: '/doLogin',
+            type: "post",
+            data: data,
+            success: function (result) {
+                if (result.isSuccess == true) {
+                    window.location.href = result.detail;
                     return;
                 } else {
                     showError(result.detail);

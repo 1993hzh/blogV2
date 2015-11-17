@@ -1,4 +1,4 @@
-@(error: Option[String] = None, callback: Option[String] = None)(implicit session: play.api.mvc.Session)
+@(callback: Option[String] = None)(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,38 +13,28 @@
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <form name="loginForm" id="loginForm" action="/doLogin" method="post" onsubmit="return doLogin();">
-        <input class="hidden" name="callback" id="callback" value="@callback.getOrElse(None)"/>
+        <input class="hidden" name="callback" id="callback" value='@callback.getOrElse("")'/>
         <div class="row control-group">
           <div class="form-group col-xs-12 floating-label-form-group controls">
             <label>Name</label>
-            <input type="text" class="form-control my-font-color" placeholder="Name" id="name" name="name" required data-validation-required-message="Please enter your name.">
+            <input type="text" class="form-control my-font-color" placeholder="Name" id="name"
+                   name="name" required data-validation-required-message="Please enter your name.">
             <p class="help-block text-danger"></p>
           </div>
         </div>
         <div class="row control-group">
           <div class="form-group col-xs-12 floating-label-form-group controls">
             <label>Password</label>
-            <input type="password" class="form-control my-font-color" placeholder="Password" id="password" name="password" required data-validation-required-message="Please enter your password.">
+            <input type="password" class="form-control my-font-color" placeholder="Password" id="password"
+                   name="password" required data-validation-required-message="Please enter your password.">
             <p class="help-block text-danger"></p>
           </div>
         </div>
         <br>
-        @error match {
-          case Some(e) => {
-            <div id="error">
-              <div class='alert alert-danger'>
-                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-                <strong>@e</strong>
-              </div>
-            </div>
-          }
-          case None => {
-            <div id="error"></div>
-          }
-        }
+        <div id="error"></div>
         <div class="row">
           <div class="form-group col-xs-12">
-            <button type="submit" class="btn btn-default btn-right">Login</button>
+            <button id="loginFormSubmit" type="submit" class="btn btn-default btn-right">Login</button>
           </div>
         </div>
       </form>

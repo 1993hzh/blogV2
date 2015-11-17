@@ -4,7 +4,7 @@ import java.sql.Timestamp
 import javax.inject.Inject
 
 import dao.{PassageDAO, CommentDAO}
-import models.{CommentStatus, Comment, Role, User}
+import models.{CommentStatus, Comment}
 import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
@@ -13,9 +13,9 @@ import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
- * Created by Leo.
- * 2015/11/10 22:24
- */
+  * Created by Leo.
+  * 2015/11/10 22:24
+  */
 class CommentController @Inject()(cache: CacheApi) extends Controller {
   lazy val commentDAO = CommentDAO()
   lazy val passageDAO = PassageDAO()
@@ -37,7 +37,7 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
   def createComment = Action { implicit request =>
     commentForm.bindFromRequest.fold(
       formWithErrors => {
-        Ok(formWithErrors.errors.map(_.message).mkString(", "))
+        Application.sendJsonResult(false, formWithErrors.errors.map(_.message).mkString(", "))
       },
       data => {
         val loginUserId = Application.getLoginUserId(request.session)
@@ -66,9 +66,10 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
           case Some(cId) =>
             if (commentDAO.markAsSync(cId, CommentStatus.commented, fromId))
               resetUnreadCountInCache(fromName, -1) //here we update the replier unreadCount
+            Application.sendJsonResult(true, routes.PassageController.passage(data.passageId).url + "#" + cId)
           case None =>
+            Application.sendJsonResult(true, routes.PassageController.passage(data.passageId).url)
         }
-        Ok("Success")
       }
     )
   }
@@ -90,8 +91,9 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
     result match {
       case true =>
         resetUnreadCountInCache(userName, if (status.equals(CommentStatus.unread)) 1 else -1) //here we update the replier unreadCount
-        Ok("Success")
-      case false => Ok("Sorry that markAs" + markType + " failed, this issue has been logged, will be fixed later")
+        Application.sendJsonResult(true, "")
+      case false =>
+        Application.sendJsonResult(false, "Sorry that markAs" + markType + " failed, this issue has been logged, will be fixed later")
     }
   }
 
@@ -116,14 +118,14 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
         commentDAO.marksAsSync(cSet, status) match {
           case true =>
             resetUnreadCountInCache(userName, if (status.equals(CommentStatus.unread)) markSize else -markSize) //here we update the replier unreadCount
-            Ok("Success")
+            Application.sendJsonResult(true, "")
           case false =>
-            Ok("Sorry that markAs" + status + " failed, this issue has been logged, will be fixed later")
+            Application.sendJsonResult(false, "Sorry that markAs" + status + " failed, this issue has been logged, will be fixed later")
         }
 
       case _ =>
         Logger.info("markAsRead with commentIdList error with: " + commentIds)
-        Ok("markAsRead with commentIdList error with: " + commentIds)
+        Application.sendJsonResult(false, "markAsRead with commentIdList error with: " + commentIds)
     }
   }
 
@@ -134,7 +136,7 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
     val result = commentDAO.markAllAsReadSync(userId)
     resetUnreadCountInCache(userName, -result)
 
-    Ok("Success")
+    Application.sendJsonResult(true, "")
   }
 
   def viewComment(passageId: Int, commentId: Int) = Action { implicit request =>
@@ -143,8 +145,7 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
     if (commentDAO.markAsSync(commentId, markerId = loginUserId))
       resetUnreadCountInCache(userName, -1)
 
-    val url = "/passage?id=" + passageId + "#" + commentId
-    Redirect(url)
+    Redirect(routes.PassageController.passage(passageId).url + "#" + commentId)
   }
 
   val commentForm = Form(

@@ -9,7 +9,6 @@ GET         /index                                  controllers.Index.showPassag
 GET         /passage                                controllers.PassageController.passage(id:Int?=1)
 GET         /about                                  controllers.Index.about
 GET         /login                                  controllers.Login.index
-GET         /loginWithCallback                      controllers.Login.loginWithCallback(callback:String, append:String)
 GET         /logout                                 controllers.Login.logout
 POST        /doLogin                                controllers.Login.login
 

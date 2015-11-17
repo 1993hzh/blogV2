@@ -2,14 +2,13 @@ package controllers
 
 import java.sql.Timestamp
 import javax.inject.Inject
-import dao.{TagDAO, CommentDAO, PassageDAO}
-import models.{Keyword, Passage}
+import dao.{TagDAO, PassageDAO}
+import models.{Passage}
 import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.json.Json
-import play.api.mvc.{Results, Action, Controller}
+import play.api.mvc.{Action, Controller}
 import scala.collection.mutable.{Set => Mset}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -21,7 +20,6 @@ import scala.concurrent.Future
 class PassageController @Inject()(cache: CacheApi) extends Controller {
 
   private lazy val passageDAO = PassageDAO()
-  private lazy val commentDAO = CommentDAO()
   private lazy val tagDAO = TagDAO()
   private lazy val log = Logger
 
@@ -70,8 +68,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
     val createTime = new Timestamp(System.currentTimeMillis)
     passageForm.bindFromRequest.fold(
       formWithErrors => {
-        val msg = Json.obj("isSuccess" -> false, "detail" -> formWithErrors.errors.map(_.message).mkString(", "))
-        Future.successful(Ok(msg))
+        Future.successful(Application.sendJsonResult(false, formWithErrors.errors.map(_.message).mkString(", ")))
       },
       data => {
         val passage = Passage(data.id.getOrElse(0), authorId, authorName, data.title, data.content, createTime)
@@ -86,22 +83,22 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
         result.map {
           case r: Boolean if (r && !data.id.isEmpty) =>
             log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " succeed.")
-            Ok(Json.obj("isSuccess" -> true, "detail" -> data.id.getOrElse[Int](0)))
+            Application.sendJsonResult(true, routes.PassageController.passage(data.id.getOrElse[Int](0)).url)
           case r: Boolean if !r =>
             val error = "update passage: " + data.title + ", id: " + data.id + " failed."
             log.warn(Application.now + ": " + authorName + " " + error)
-            Ok(Json.obj("isSuccess" -> false, "detail" -> error))
+            Application.sendJsonResult(false, error)
           case r: Int if r > 0 =>
             log.info(Application.now + ": " + authorName + " create passage: " + data.title + " succeed, new id: " + r)
-            Ok(Json.obj("isSuccess" -> true, "detail" -> r))
+            Application.sendJsonResult(true, routes.PassageController.passage(r).url)
           case r: Int if r <= 0 =>
             val error = "create passage: " + data.title + " failed, return value: " + r
             log.warn(Application.now + ": " + authorName + " " + error)
-            Ok(Json.obj("isSuccess" -> false, "detail" -> error))
+            Application.sendJsonResult(false, error)
           case _ =>
             val error = "upsert passage: " + data.title + " , id: " + data.id + " failed."
             log.warn(Application.now + ": " + authorName + " " + error)
-            Ok(Json.obj("isSuccess" -> false, "detail" -> error))
+            Application.sendJsonResult(false, error)
         }
       }
     )
@@ -128,10 +125,10 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
       case 1 =>
         log.info("passage: " + id + " delete succeed")
         Application.setPassageCount
-        Ok("Success")
+        Application.sendJsonResult(true, "")
       case i if i != 1 =>
         log.info("passage: " + id + " delete failed, return value: " + i)
-        Ok("Failure has been logged.")
+        Application.sendJsonResult(false, "Failure has been logged.")
     }
   }
 

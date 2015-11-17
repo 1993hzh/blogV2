@@ -12,9 +12,9 @@ import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
- * Created by Leo.
- * 2015/11/14 23:07
- */
+  * Created by Leo.
+  * 2015/11/14 23:07
+  */
 class TagController @Inject()(cache: CacheApi) extends Controller {
 
   private lazy val tagDAO = TagDAO()
@@ -34,7 +34,7 @@ class TagController @Inject()(cache: CacheApi) extends Controller {
   def upsert = Action { implicit request =>
     tagForm.bindFromRequest.fold(
       formWithErrors => {
-        Ok(formWithErrors.errors.map(_.message).mkString(", "))
+        Application.sendJsonResult(false, formWithErrors.errors.map(_.message).mkString(", "))
       },
       data => {
         val tagId = data.id.getOrElse(0)
@@ -43,31 +43,31 @@ class TagController @Inject()(cache: CacheApi) extends Controller {
         result match {
           case result: Int if result == 0 =>
             log.info("Tag: " + data.name + " createOrUpdate failed, return value: " + result)
-            Ok("Tag: " + data.name + " createOrUpdate failed, return value: " + result)
+            Application.sendJsonResult(false, "Tag: " + data.name + " createOrUpdate failed, return value: " + result)
           case result: Int if result != 0 && tagId != 0 =>
             log.info("Tag: " + data.name + " is updated, id: " + tagId)
-            Ok("Success")
+            Application.sendJsonResult(true, "")
           case result: Int if result != 0 && tagId == 0 =>
             log.info("Tag: " + data.name + " is created.")
-            Ok("Success")
+            Application.sendJsonResult(true, "")
         }
       }
     )
   }
 
   /**
-   * I won't provide a function for batch deletion since it's unsafe
-   * @param id
-   * @return
-   */
+    * I won't provide a function for batch deletion since it's unsafe
+    * @param id
+    * @return
+    */
   def delete(id: Int) = Action.async { implicit request =>
     tagDAO.delete(id) map {
       case result: Int if (result == 1) =>
         log.info("tag: " + id + " delete succeed")
-        Ok("Success")
+        Application.sendJsonResult(true, "")
       case result: Int if (result != 1) =>
         log.info("tag: " + id + " delete failed, return value: " + result)
-        Ok("Failure has been logged.")
+        Application.sendJsonResult(false, "Failure has been logged.")
     }
   }
 
