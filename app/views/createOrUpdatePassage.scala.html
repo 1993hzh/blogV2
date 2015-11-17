@@ -56,7 +56,8 @@ error: String = "")(implicit session: play.api.mvc.Session)
           }
         </div>
         <hr>
-        <textarea id="content" name="content" class="form-control" rows="3">@p.content</textarea>
+        @toolbar()
+        <div id="content" name="content">@p.content</div>
         }
         case None => {
         <input type="text" class="hidden" id="id" name="id"/>
@@ -72,7 +73,8 @@ error: String = "")(implicit session: play.api.mvc.Session)
           }
         </div>
         <hr>
-        <textarea id="content" name="content" class="form-control" rows="3"></textarea>
+        @toolbar()
+        <div id="content" name="content"></div>
         }
       }
       <hr>
@@ -82,4 +84,15 @@ error: String = "")(implicit session: play.api.mvc.Session)
 </div>
 @footer()
 </body>
+  <link href="/assets/css/tomorrow-night.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/editor.css" rel="stylesheet" type="text/css">
+  <script src="/assets/js/bootstrap-wysiwyg.js"></script>
+  <script src="/assets/js/prettify.js"></script>
+  <script>
+    $(function() {
+      $('div#content').wysiwyg();
+      prettyPrint();
+      $("content").addClass("prettyprint linenums");
+    })
+  </script>
 </html>
