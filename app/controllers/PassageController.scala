@@ -8,15 +8,16 @@ import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.libs.json.Json
 import play.api.mvc.{Results, Action, Controller}
 import scala.collection.mutable.{Set => Mset}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
- * Created by Leo.
- * 2015/11/7 20:00
- */
+  * Created by Leo.
+  * 2015/11/7 20:00
+  */
 class PassageController @Inject()(cache: CacheApi) extends Controller {
 
   private lazy val passageDAO = PassageDAO()
@@ -69,7 +70,8 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
     val createTime = new Timestamp(System.currentTimeMillis)
     passageForm.bindFromRequest.fold(
       formWithErrors => {
-        Future.successful(Ok(formWithErrors.errors.map(_.message).mkString(", ")))
+        val msg = Json.obj("isSuccess" -> false, "detail" -> formWithErrors.errors.map(_.message).mkString(", "))
+        Future.successful(Ok(msg))
       },
       data => {
         val passage = Passage(data.id.getOrElse(0), authorId, authorName, data.title, data.content, createTime)
@@ -84,19 +86,22 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
         result.map {
           case r: Boolean if (r && !data.id.isEmpty) =>
             log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " succeed.")
-            Redirect(routes.PassageController.passage(data.id.getOrElse(0)))
+            Ok(Json.obj("isSuccess" -> true, "detail" -> data.id.getOrElse[Int](0)))
           case r: Boolean if !r =>
-            log.warn(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " failed.")
-            Ok("update passage: " + data.title + ", id: " + data.id + " failed.")
+            val error = "update passage: " + data.title + ", id: " + data.id + " failed."
+            log.warn(Application.now + ": " + authorName + " " + error)
+            Ok(Json.obj("isSuccess" -> false, "detail" -> error))
           case r: Int if r > 0 =>
             log.info(Application.now + ": " + authorName + " create passage: " + data.title + " succeed, new id: " + r)
-            Redirect(routes.PassageController.passage(r))
+            Ok(Json.obj("isSuccess" -> true, "detail" -> r))
           case r: Int if r <= 0 =>
-            log.warn(Application.now + ": " + authorName + " create passage: " + data.title + " failed, return value: " + r)
-            Ok("create passage: " + data.title + " failed, return value: " + r)
+            val error = "create passage: " + data.title + " failed, return value: " + r
+            log.warn(Application.now + ": " + authorName + " " + error)
+            Ok(Json.obj("isSuccess" -> false, "detail" -> error))
           case _ =>
-            log.warn(Application.now + ": " + authorName + " upsert passage: " + data.title + " , id: " + data.id + " failed.")
-            Ok("upsert passage: " + data.title + " , id: " + data.id + " failed.")
+            val error = "upsert passage: " + data.title + " , id: " + data.id + " failed."
+            log.warn(Application.now + ": " + authorName + " " + error)
+            Ok(Json.obj("isSuccess" -> false, "detail" -> error))
         }
       }
     )
@@ -104,16 +109,16 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
 
   def update(id: Int) = Action { implicit request =>
     val passage = passageDAO.getPassage(id)
-    val tags = passageDAO.getTags(id)
-    val keywords = passageDAO.getKeywords(id)
+    val tags = passageDAO.getTags(id).map(_.id)
+    val keywords = passageDAO.getKeywords(id).map(_.name)
     Ok(views.html.createOrUpdatePassage(passage, tags, tagDAO.getAllTagSync.toList, keywords))
   }
 
   /**
-   * I won't provide a function for batch deletion since it's unsafe
-   * @param id
-   * @return
-   */
+    * I won't provide a function for batch deletion since it's unsafe
+    * @param id
+    * @return
+    */
   def delete(id: Int) = Action { implicit request =>
     val user = Application.getLoginUserName(request.session)
     val userId = Application.getLoginUserId(request.session)

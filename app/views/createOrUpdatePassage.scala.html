@@ -1,8 +1,8 @@
 @(passage: Option[Passage] = None,
-tags: List[Tag] = Nil,
+tags: List[Int] = Nil,
 allTag: List[Tag],
-keywords: List[Keyword] = Nil,
-error: Option[String] = None)(implicit session: play.api.mvc.Session)
+keywords: List[String] = Nil,
+error: String = "")(implicit session: play.api.mvc.Session)
 
 
 <!DOCTYPE html>
@@ -20,7 +20,17 @@ error: Option[String] = None)(implicit session: play.api.mvc.Session)
 @nav()
 <div class="container">
   <div class="col-lg-10 col-md-10 col-md-offset-1">
-    <div id="error"></div>
+    <div id="error">
+      @error match {
+        case e if !e.isEmpty => {
+          <div class='alert alert-danger'>
+            <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+            <strong>@error</strong>
+          </div>
+        }
+        case _ => {}
+      }
+    </div>
     <form id="passageForm" action="/manage/passage/doCreateOrUpdate" method="post">
       @passage match {
         case Some(p) => {
@@ -30,8 +40,8 @@ error: Option[String] = None)(implicit session: play.api.mvc.Session)
         <div id="keywordList" style="display : inline-block ;">
           @for((kw, index) <- keywords.zipWithIndex) {
             <span class="label label-primary">
-                <input type="text" class="hidden" name="keywords[@index]" value="@kw.name">
-                @kw.name
+                <input type="text" class="hidden" name="keywords[@index]" value="@kw">
+                @kw
                 <a href="javascript:void(0);"><i class="fa fa-times" onclick="deleteKeyword(this)"></i></a>
             </span> &nbsp;
           }
@@ -41,7 +51,7 @@ error: Option[String] = None)(implicit session: play.api.mvc.Session)
         <hr>
         <div class="my-font-color">
           @for((t, index) <- allTag.zipWithIndex) {
-          <input type="checkbox" name="tagIds[@index]" value="@t.id" @if(tags.contains(t)) {
+          <input type="checkbox" name="tagIds[@index]" value="@t.id" @if(tags.contains(t.id)) {
                  checked="checked" }> @t.name
           }
         </div>
@@ -66,7 +76,7 @@ error: Option[String] = None)(implicit session: play.api.mvc.Session)
         }
       }
       <hr>
-      <button type="submit" class="btn btn-default btn-right">Submit</button>
+      <button id="passageFormSubmit" type="submit" class="btn btn-default btn-right">Submit</button>
     </form>
   </div>
 </div>

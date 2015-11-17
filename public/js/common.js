@@ -300,4 +300,28 @@ $(function () {
             isClear = false
         }
     });
+
+    $("#passageFormSubmit").on("click", function(event) {
+        event.preventDefault();
+        hideError();
+        var data = $("#passageForm").serialize();
+        $.ajax({
+            url: '/manage/passage/doCreateOrUpdate',
+            dataType: "text",
+            type: "post",
+            data: data,
+            success: function (msg) {
+                var result = $.parseJSON(msg);
+                if (result.isSuccess == true) {
+                    window.location.href = "/passage?id=" + result.detail;
+                    return;
+                } else {
+                    showError(result.detail);
+                }
+            },
+            error: function (msg) {
+                showError("Internal Error");
+            }
+        });
+    });
 })
