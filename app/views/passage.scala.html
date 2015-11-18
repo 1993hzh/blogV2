@@ -44,10 +44,16 @@
 </body>
   <link href="/assets/css/tomorrow-night.css" rel="stylesheet" type="text/css">
   <script src="/assets/js/prettify.js"></script>
+  @*<script src="/assets/js/highlight.pack.js"></script>*@
+  <!-- here import language modules -->
+  <script src="/assets/js/lang-sql.js"></script>
+  <script src="/assets/js/lang-scala.js"></script>
+  <script src="/assets/js/lang-css.js"></script>
   <script>
     $(function() {
+      /*hljs.initHighlightingOnLoad();*/
       prettyPrint();
-      $("code").addClass("prettyprint linenums");
+      $("pre").addClass("prettyprint linenums");
     });
   </script>
 </html>

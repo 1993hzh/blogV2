@@ -89,6 +89,11 @@ error: String = "")(implicit session: play.api.mvc.Session)
   <script src="/assets/js/jquery.hotkeys.js"></script>
   <script src="/assets/js/bootstrap-wysiwyg.js"></script>
   <script src="/assets/js/prettify.js"></script>
+  @*<script src="/assets/js/highlight.pack.js"></script>*@
+  <!-- here import language modules -->
+  <script src="/assets/js/lang-sql.js"></script>
+  <script src="/assets/js/lang-scala.js"></script>
+  <script src="/assets/js/lang-css.js"></script>
   <script>
     $(function() {
       $('#content').wysiwyg({
@@ -103,8 +108,9 @@ error: String = "")(implicit session: play.api.mvc.Session)
           $.messager.alert("File upload error due to: " + reason + ", details: " + detail);
         }
       });
+//    hljs.initHighlightingOnLoad();
       prettyPrint();
-      $("code").addClass("prettyprint linenums");
+      $("pre").addClass("prettyprint linenums");
     });
   </script>
 </html>

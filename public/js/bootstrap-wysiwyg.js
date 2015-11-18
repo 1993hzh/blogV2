@@ -184,7 +184,7 @@
             toggleHtmlEdit = function() {
 				if ( $(editor).data("wysiwyg-html-mode") !== true ) {
 					var oContent = $(editor).html();
-					var editorPre = $( "<pre />" );
+					var editorPre = $( "<div />" );
                 	$(editorPre).append( document.createTextNode( oContent ) );
                 	$(editorPre).attr('contenteditable',true);
                 	$(editor).html(' ');
@@ -203,17 +203,17 @@
 			// Add by Leo
 			insertCode = function () {
 				if ($(editor).data("wysiwyg-insert-code-mode") !== true) {
-					var editorCode = $("<code />");
-					$(editorCode).attr('contenteditable', true);
-					$(editorCode).append("Insert your code here.");
+					var editorCode = $("<pre />");
+					$(editorCode).addClass("prettyprint linenums");
+					$(editorCode).append("/*Insert your code here.*/");
 					$(editor).data("wysiwyg-insert-code-mode", true);
-					$(editor).append("<br>");
 					$(editor).append($(editorCode));
 					$(editorCode).focus();
 				}
 				else {
-					var next = $("<br>");
+					var next = $("<br />");
 					$(editor).append($(next));
+					$(editor).data("wysiwyg-insert-code-mode", false);
 					$(next).focus();
 				}
 			},
