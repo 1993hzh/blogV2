@@ -247,6 +247,7 @@ function addKeyword() {
     $("div#keywordList").append(append);
 
     $("input#keywordAdd").val("");
+    $("input#keywordAdd").focus();
 }
 
 //here is the drag
@@ -300,14 +301,17 @@ $(function () {
         }
     });
 
-    $("#passageFormSubmit").on("click", function(event) {
+    $("#passageFormSubmit").on("click", function (event) {
         event.preventDefault();
         hideError();
+        var content = $("#content").html();
         var data = $("#passageForm").serialize();
         $.ajax({
-            url: '/manage/passage/doCreateOrUpdate',
+            url: '/manage/passage/doCreateOrUpdate?' + data,
             type: "post",
-            data: data,
+            data: {
+                content: content,
+            },
             success: function (result) {
                 if (result.isSuccess == true) {
                     window.location.href = result.detail;
@@ -322,7 +326,7 @@ $(function () {
         });
     });
 
-    $("#loginFormSubmit").on("click", function(event) {
+    $("#loginFormSubmit").on("click", function (event) {
         event.preventDefault();
         hideError();
         var data = $("#loginForm").serialize();

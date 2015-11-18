@@ -1,7 +1,6 @@
 @(p: models.Passage, kws: List[Keyword], c: List[Comment])(implicit session: play.api.mvc.Session)
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
   <meta charset="utf-8">
@@ -10,9 +9,7 @@
   <meta name="description" content="">
   <meta name="keywords" content='@kws.map(_.name).mkString(", ")'>
   <meta name="author" content="Leo">
-
   <title>@p.title</title>
-
 </head>
 
 <body>
@@ -33,7 +30,7 @@
       <div class="override-no-margin-top">
         <div class="row">
           <div class="my-font-color">
-            @p.content
+            @Html(p.content)
           </div>
         </div>
       </div>
@@ -45,4 +42,12 @@
 <hr>
 @footer()
 </body>
+  <link href="/assets/css/tomorrow-night.css" rel="stylesheet" type="text/css">
+  <script src="/assets/js/prettify.js"></script>
+  <script>
+    $(function() {
+      prettyPrint();
+      $("code").addClass("prettyprint linenums");
+    });
+  </script>
 </html>

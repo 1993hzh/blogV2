@@ -57,7 +57,7 @@ error: String = "")(implicit session: play.api.mvc.Session)
         </div>
         <hr>
         @toolbar()
-        <div id="content" name="content">@p.content</div>
+        <div id="content" name="content">@Html(p.content)</div>
         }
         case None => {
         <input type="text" class="hidden" id="id" name="id"/>
@@ -84,15 +84,27 @@ error: String = "")(implicit session: play.api.mvc.Session)
 </div>
 @footer()
 </body>
-  <link href="/assets/css/tomorrow-night.css" rel="stylesheet" type="text/css">
   <link href="/assets/css/editor.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/tomorrow-night.css" rel="stylesheet" type="text/css">
+  <script src="/assets/js/jquery.hotkeys.js"></script>
   <script src="/assets/js/bootstrap-wysiwyg.js"></script>
   <script src="/assets/js/prettify.js"></script>
   <script>
     $(function() {
-      $('div#content').wysiwyg();
+      $('#content').wysiwyg({
+        hotKeys: {
+          'ctrl+b meta+b': 'bold',
+          'ctrl+i meta+i': 'italic',
+          'ctrl+u meta+u': 'underline',
+          'ctrl+z meta+z': 'undo',
+          'ctrl+y meta+y meta+shift+z': 'redo'
+        },
+        fileUploadError: function (reason, detail) {
+          $.messager.alert("File upload error due to: " + reason + ", details: " + detail);
+        }
+      });
       prettyPrint();
-      $("content").addClass("prettyprint linenums");
-    })
+      $("code").addClass("prettyprint linenums");
+    });
   </script>
 </html>
