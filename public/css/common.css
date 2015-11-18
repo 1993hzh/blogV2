@@ -227,6 +227,10 @@ pre {
     color: #adadad;
 }
 
+pre code {
+    padding: inherit;
+}
+
 .iconfont-zhihu {
     font-family: "iconfont-zhihu" !important;
     font-style: normal;
