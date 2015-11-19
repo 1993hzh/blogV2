@@ -215,7 +215,7 @@
 					var next = $("<br />");
 					$(editor).append($(next));
 					$(editor).data("wysiwyg-insert-code-mode", false);
-					$(next).focus();
+					$(next)[0].focus();
 				}
 			},
 

@@ -4,6 +4,7 @@ function reply(toId, toName, toCommentId) {
     $("#toId").attr("value", toId);
     $("#toName").attr("value", toName);
     $("#toCommentId").attr("value", toCommentId);
+    $("#comment")[0].focus();
 }
 
 function doComment() {

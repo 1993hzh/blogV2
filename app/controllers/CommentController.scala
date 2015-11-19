@@ -13,9 +13,9 @@ import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
-  * Created by Leo.
-  * 2015/11/10 22:24
-  */
+ * Created by Leo.
+ * 2015/11/10 22:24
+ */
 class CommentController @Inject()(cache: CacheApi) extends Controller {
   lazy val commentDAO = CommentDAO()
   lazy val passageDAO = PassageDAO()
@@ -63,13 +63,11 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
         data.toCommentId match {
           //User A replied to Comment1 which is sent to User B
           //in this case, Comment1 should not mark as read or commented
-          case Some(cId) =>
-            if (commentDAO.markAsSync(cId, CommentStatus.commented, fromId))
-              resetUnreadCountInCache(fromName, -1) //here we update the replier unreadCount
-            Application.sendJsonResult(true, routes.PassageController.passage(data.passageId).url + "#" + cId)
-          case None =>
-            Application.sendJsonResult(true, routes.PassageController.passage(data.passageId).url)
+          case Some(cId) if (commentDAO.markAsSync(cId, CommentStatus.commented, fromId)) =>
+            resetUnreadCountInCache(fromName, -1) //here we update the replier unreadCount
+          case _ =>
         }
+        Application.sendJsonResult(true, routes.PassageController.passage(data.passageId).url)
       }
     )
   }
