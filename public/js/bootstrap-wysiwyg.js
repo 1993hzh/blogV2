@@ -204,12 +204,12 @@
 			insertCode = function () {
 				if ($(editor).data("wysiwyg-insert-code-mode") !== true) {
 					var editorCode = $("<pre />");
-					var code = $("<code />");
+					var code = "/*Insert Code Here.*/";
 					$(editorCode).addClass("prettyprint linenums");
-					$(editorCode).append($(code));
+					$(editorCode).append(code);
 					$(editor).data("wysiwyg-insert-code-mode", true);
 					$(editor).append($(editorCode));
-					$(code).focus();
+					$(editorCode).focus();
 				}
 				else {
 					var next = $("<br />");
