@@ -18,13 +18,7 @@
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header page-scroll">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
+    <div class="navbar-header page-scroll pull-right">
         @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
           case Some((u, r)) => {
             <a class="navbar-brand" title="logout" href="/logout">@u.userName <i class="fa fa-power-off"></i></a>
@@ -33,6 +27,13 @@
             <a class="navbar-brand" href="/login">Log in</a>
           }
         }
+    </div>
+    <!-- Search box -->
+    <div class="input-group pull-right search-box">
+      <span class="input-group-addon pull-right mark-button" onclick="">
+          <i class="fa fa-search"></i>
+      </span>
+      <input id="search" type="search" class="form-control pull-right" placeholder="Search for passage" aria-describedby="basic-addon2">
     </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

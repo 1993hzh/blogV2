@@ -22,6 +22,14 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
   import driver.api._
 
+  private def getCommentCountByPassageId(passageId: Int): Future[Int] = {
+    db.run(modelQuery.filter(_.passageId === passageId).length.result)
+  }
+
+  def getCommentCountByPassageIdSync(passageId: Int): Int = {
+    Await.result(getCommentCountByPassageId(passageId), waitTime)
+  }
+
   private def getInMessageQuery(userId: Int) = {
     val replies = modelQuery.filter(_.toId === userId).join(PassageDAO.passages).on(_.passageId === _.id)
     val commentsToPassage = modelQuery.join(PassageDAO.passages).on(_.passageId === _.id)

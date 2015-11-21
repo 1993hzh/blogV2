@@ -27,7 +27,21 @@ body {
 }
 
 .navbar-header {
-    float: right !important;
+    padding: 20px !important;
+}
+
+.search-box {
+    padding: 12.5px 30px 10px 20px;
+}
+
+.search-box input {
+    border-radius: 4px 0px 0px 4px !important;
+}
+
+.search-box span {
+    border-radius: 0px 4px 4px 0px !important;
+    padding: 11px !important;
+    width: 50px !important;
 }
 
 .container-fluid {
@@ -40,11 +54,10 @@ body {
 }
 
 .navbar-brand {
+    padding: 0px !important;
+    margin-left: 0px !important;
     font-size: 24px !important;
-}
-
-.navbar-custom .navbar-brand {
-    padding: 20px 30px 20px 20px !important;
+    height: 100%;
 }
 
 .btn-right {
@@ -229,6 +242,10 @@ pre {
 
 pre code {
     padding: inherit;
+}
+
+input[type="search"] {
+    width: 200px !important;
 }
 
 .iconfont-zhihu {

@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-import dao.PassageDAO
+import dao.{CommentDAO, PassageDAO}
 import models.{Tag, Passage}
 import play.api.Logger
 import play.api.cache.CacheApi
@@ -13,7 +13,8 @@ import play.api.mvc.{Action, Controller}
  */
 class Index @Inject()(cache: CacheApi) extends Controller {
 
-  private val passageDAO = PassageDAO()
+  private lazy val passageDAO = PassageDAO()
+  private lazy val commentDAO = CommentDAO()
 
   def index = {
     showPassages(1)
@@ -29,10 +30,11 @@ class Index @Inject()(cache: CacheApi) extends Controller {
     Ok(views.html.about())
   }
 
-  def listPassages(num: Any, totalPage: Int): (List[(Passage, List[Tag])], Int) = {
+  def listPassages(num: Any, totalPage: Int): (List[(Passage, List[Tag], Int)], Int) = {
     val pageNo: Int = Application.getPageNum(num, totalPage)
-    val passageWithTags = passageDAO.queryPassages(pageNo).map(p => (p, passageDAO.getTags(p.id)))
-    (passageWithTags.toList, pageNo)
+    val passageWithTagsAndCommentNum = passageDAO.queryPassages(pageNo)
+      .map(p => (p, passageDAO.getTags(p.id), commentDAO.getCommentCountByPassageIdSync(p.id)))
+    (passageWithTagsAndCommentNum.toList, pageNo)
   }
 
 }

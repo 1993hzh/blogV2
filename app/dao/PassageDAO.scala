@@ -44,8 +44,8 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   }
 
   def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE,
-                    contentMaxLength: Int = 110, userId: Option[Int] = None): Seq[Passage] = {
-    val contentPreview = " ... [Click to see details]"
+                    contentMaxLength: Int = 150, userId: Option[Int] = None): Seq[Passage] = {
+    val contentPreview = " ..."
     val offSet = (num - 1) * pageSize
 
     val action = userId match {
@@ -203,7 +203,9 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   }
 
   implicit val listPassagesResult = GetResult(
-    r => (Passage(r.nextInt, r.nextInt, r.nextString, r.nextString, r.nextString, r.nextTimestamp, r.nextInt))
+    r => (
+      Passage(r.nextInt, r.nextInt, r.nextString, r.nextString, r.nextString, r.nextTimestamp, r.nextInt)
+      )
   )
 }
 
