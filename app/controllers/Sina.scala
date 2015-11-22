@@ -7,6 +7,7 @@ import play.api.mvc.Controller
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by Leo.
