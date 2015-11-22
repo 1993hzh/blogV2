@@ -29,14 +29,23 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
   import driver.api._
 
-  def queryTotalCount(userId: Option[Int] = None): Future[Int] = {
+  private def getQueryWithConditions(userId: Option[Int] = None, query: Option[String] = None) = {
+    val q = query.getOrElse("")
     userId match {
-      case Some(u) => db.run(modelQuery.filter(_.authorId === u).length.result)
-      case None => db.run(modelQuery.length.result)
+      case Some(u) if query.isEmpty => modelQuery.filter(_.authorId === u)
+      case Some(u) if !query.isEmpty => modelQuery.filter(_.authorId === u).filter(_.title like "%" + q + "%")
+      case None if !query.isEmpty => modelQuery.filter(_.title like "%" + q + "%")
+      case None if query.isEmpty => modelQuery
     }
   }
 
-  def queryTotalCountSync(userId: Option[Int] = None): Int = Await.result(queryTotalCount(userId), waitTime)
+  def queryTotalCount(userId: Option[Int] = None, query: Option[String] = None): Future[Int] = {
+    db.run(getQueryWithConditions(userId, query).length.result)
+  }
+
+  def queryTotalCountSync(userId: Option[Int] = None, query: Option[String] = None): Int = {
+    Await.result(queryTotalCount(userId, query), waitTime)
+  }
 
   def queryByUserId(userId: Int, num: Int, pageSize: Int = Application.PAGE_SIZE): Seq[Passage] = {
     Await.result(db.run(modelQuery.filter(_.authorId === userId).sortBy(_.createTime.desc)
@@ -63,16 +72,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
     //      from t_passage p where p.title like '%$q%' order by p.createtime desc limit $pageSize offset $offSet
     //      """.as[Passage]
 
-    val queryWithConditions = userId match {
-      case Some(u) if query.isEmpty => modelQuery.filter(_.authorId === u)
-      case Some(u) if !query.isEmpty => modelQuery.filter(_.authorId === u).filter(_.title like "%" + q + "%")
-      case None if !query.isEmpty => modelQuery.filter(_.title like "%" + q + "%")
-      case None if query.isEmpty => modelQuery
-    }
-
-    val action = queryWithConditions.sortBy(_.createTime.desc).drop((num - 1) * pageSize).take(pageSize).result
-
-    println(action.statements)
+    val action = getQueryWithConditions(userId, query).sortBy(_.createTime.desc).drop((num - 1) * pageSize).take(pageSize).result
 
     Await.result(db.run(action), waitTime)
   }

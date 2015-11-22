@@ -1,5 +1,7 @@
 @import models.Passage
-@(passagesWithTags: List[(Passage, List[Tag], Int)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+@(passagesWithTags: List[(Passage, List[Tag], Int)],
+        currentPage: Int, totalPage: Int,
+        query: Option[String] = None)(implicit session: play.api.mvc.Session)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +49,7 @@
         </div>
         <hr>
       }
-      @pager("/index", currentPage, totalPage)
+      @pager("/index", currentPage, totalPage, query)
     </div>
   </div>
 </div>

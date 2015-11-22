@@ -1,15 +1,17 @@
-@(url: String, currentPage: Int, totalPage: Int)
+@(url: String, currentPage: Int, totalPage: Int, query: Option[String] = None)
 
 <!-- Pager -->
 <ul class="pager">
-  @if(currentPage >= 2) {
-    <li class="prev">
-      <a href="@url?page=@(currentPage - 1)">&larr; Prev</a>
-    </li>
-  }
-  @if(currentPage < totalPage) {
-    <li class="next">
-      <a href="@url?page=@(currentPage + 1)">Next &rarr;</a>
-    </li>
+  @defining(if(!query.isEmpty) "&query=" + query.getOrElse("") else "") { queryStr =>
+    @if(currentPage >= 2) {
+      <li class="prev">
+        <a href="@url?page=@(currentPage - 1)@queryStr">&larr; Prev</a>
+      </li>
+    }
+    @if(currentPage < totalPage) {
+      <li class="next">
+        <a href="@url?page=@(currentPage + 1)@queryStr">Next &rarr;</a>
+      </li>
+    }
   }
 </ul>

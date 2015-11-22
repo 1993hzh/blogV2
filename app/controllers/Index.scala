@@ -25,13 +25,14 @@ class Index @Inject()(cache: CacheApi) extends Controller {
     var totalPage = 0
     query match {
       case Some(q) =>
-        totalPage = 1
+        val count = passageDAO.queryTotalCountSync(query = query)
+        totalPage = Application.getTotalPage(count)
         passages = listPassages(currentPage, totalPage, getQuery(q))
       case None =>
         totalPage = cache.getOrElse(Application.KEY_PAGE_COUNT)(0)
         passages = listPassages(currentPage, totalPage)
     }
-    Ok(views.html.index(passages._1, passages._2, totalPage))
+    Ok(views.html.index(passages._1, passages._2, totalPage, query))
   }
 
   def about() = Action { implicit request =>

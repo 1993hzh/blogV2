@@ -14,9 +14,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
-  * Created by Leo.
-  * 2015/11/7 20:00
-  */
+ * Created by Leo.
+ * 2015/11/7 20:00
+ */
 class PassageController @Inject()(cache: CacheApi) extends Controller {
 
   private lazy val passageDAO = PassageDAO()
@@ -89,9 +89,11 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
             log.warn(Application.now + ": " + authorName + " " + error)
             Application.sendJsonResult(false, error)
           case r: Int if r > 0 =>
+            Application.setPassageCount
             log.info(Application.now + ": " + authorName + " create passage: " + data.title + " succeed, new id: " + r)
             Application.sendJsonResult(true, routes.PassageController.passage(r).url)
           case r: Int if r <= 0 =>
+            Application.setPassageCount
             val error = "create passage: " + data.title + " failed, return value: " + r
             log.warn(Application.now + ": " + authorName + " " + error)
             Application.sendJsonResult(false, error)
@@ -112,10 +114,10 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   }
 
   /**
-    * I won't provide a function for batch deletion since it's unsafe
-    * @param id
-    * @return
-    */
+   * I won't provide a function for batch deletion since it's unsafe
+   * @param id
+   * @return
+   */
   def delete(id: Int) = Action { implicit request =>
     val user = Application.getLoginUserName(request.session)
     val userId = Application.getLoginUserId(request.session)
