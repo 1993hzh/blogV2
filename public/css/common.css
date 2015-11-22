@@ -44,6 +44,10 @@ body {
     width: 50px !important;
 }
 
+.search-box span a {
+    color: white !important;
+}
+
 .container-fluid {
     padding-top: 15px;
     padding-bottom: 15px;

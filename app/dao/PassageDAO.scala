@@ -2,7 +2,7 @@ package dao
 
 import javax.inject.Singleton
 import controllers.Application
-import models.{Tag => MyTag, Passage2Tag, Comment, Keyword, Passage}
+import models.{Tag => MyTag, _}
 import play.api.Logger
 import slick.jdbc.GetResult
 import slick.lifted.TableQuery
@@ -43,27 +43,36 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
       .drop((num - 1) * pageSize).take(pageSize).result), waitTime)
   }
 
-  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE,
-                    contentMaxLength: Int = 150, userId: Option[Int] = None): Seq[Passage] = {
-    val contentPreview = " ..."
-    val offSet = (num - 1) * pageSize
+  def queryPassages(num: Int, pageSize: Int = Application.PAGE_SIZE, contentMaxLength: Int = 150,
+                    userId: Option[Int] = None, query: Option[String] = None): Seq[Passage] = {
+    val q = query.getOrElse("")
+    //    val contentPreview = "..."
+    //    val offSet = (num - 1) * pageSize
+    //    val appendQuery = userId match {
+    //      case Some(u) if query.isEmpty => sql"""where p.author_id = $u"""
+    //      case Some(u) if !query.isEmpty => sql"""where p.author_id = $u and p.title like '%#$q%'"""
+    //      case None if !query.isEmpty => sql"""where p.title like '%#$q%'"""
+    //      case _ => sql""
+    //
+    //    }
+    //    val action = sql"""
+    //      select p.id, p.author_id, p.author_name, p.title,
+    //      case when length (p.content) > $contentMaxLength then substring(p.content for $contentMaxLength) || $contentPreview
+    //      else p.content || $contentPreview end
+    //      , p.createtime, p.viewcount
+    //      from t_passage p where p.title like '%$q%' order by p.createtime desc limit $pageSize offset $offSet
+    //      """.as[Passage]
 
-    val action = userId match {
-      case Some(u) => sql"""
-          select p.id, p.author_id, p.author_name, p.title,
-          case when length(p.content) > $contentMaxLength then substring(p.content for $contentMaxLength) || $contentPreview
-          else p.content || $contentPreview end
-          , p.createtime, p.viewcount
-          from t_passage p where p.author_id = $userId order by p.createtime desc limit $pageSize offset $offSet
-        """.as[Passage]
-      case None => sql"""
-          select p.id, p.author_id, p.author_name, p.title,
-          case when length(p.content) > $contentMaxLength then substring(p.content for $contentMaxLength) || $contentPreview
-          else p.content || $contentPreview end
-          , p.createtime, p.viewcount
-          from t_passage p order by p.createtime desc limit $pageSize offset $offSet
-        """.as[Passage]
+    val queryWithConditions = userId match {
+      case Some(u) if query.isEmpty => modelQuery.filter(_.authorId === u)
+      case Some(u) if !query.isEmpty => modelQuery.filter(_.authorId === u).filter(_.title like "%" + q + "%")
+      case None if !query.isEmpty => modelQuery.filter(_.title like "%" + q + "%")
+      case None if query.isEmpty => modelQuery
     }
+
+    val action = queryWithConditions.sortBy(_.createTime.desc).drop((num - 1) * pageSize).take(pageSize).result
+
+    println(action.statements)
 
     Await.result(db.run(action), waitTime)
   }

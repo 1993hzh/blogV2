@@ -86,4 +86,11 @@ object Application extends Controller {
   def sendJsonResult(isSuccess: Boolean, detail: String) = {
     Ok(Json.obj("isSuccess" -> isSuccess, "detail" -> detail))
   }
+
+  def getContent(content: String, maxLength: Int) = {
+    content.length match {
+      case length if length > maxLength => content.substring(0, maxLength).concat(" ...")
+      case _ => content
+    }
+  }
 }

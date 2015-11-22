@@ -20,9 +20,17 @@ class Index @Inject()(cache: CacheApi) extends Controller {
     showPassages(1)
   }
 
-  def showPassages(currentPage: Any) = Action { implicit request =>
-    val totalPage = cache.getOrElse(Application.KEY_PAGE_COUNT)(0)
-    val passages = listPassages(currentPage, totalPage)
+  def showPassages(currentPage: Any, query: Option[String] = None) = Action { implicit request =>
+    var passages: (List[(Passage, List[Tag], Int)], Int) = (Nil, 0)
+    var totalPage = 0
+    query match {
+      case Some(q) =>
+        totalPage = 1
+        passages = listPassages(currentPage, totalPage, getQuery(q))
+      case None =>
+        totalPage = cache.getOrElse(Application.KEY_PAGE_COUNT)(0)
+        passages = listPassages(currentPage, totalPage)
+    }
     Ok(views.html.index(passages._1, passages._2, totalPage))
   }
 
@@ -30,11 +38,20 @@ class Index @Inject()(cache: CacheApi) extends Controller {
     Ok(views.html.about())
   }
 
-  def listPassages(num: Any, totalPage: Int): (List[(Passage, List[Tag], Int)], Int) = {
+  def listPassages(num: Any, totalPage: Int, query: Option[String] = None): (List[(Passage, List[Tag], Int)], Int) = {
     val pageNo: Int = Application.getPageNum(num, totalPage)
-    val passageWithTagsAndCommentNum = passageDAO.queryPassages(pageNo)
+    val passageWithTagsAndCommentNum = passageDAO.queryPassages(pageNo, query = query)
       .map(p => (p, passageDAO.getTags(p.id), commentDAO.getCommentCountByPassageIdSync(p.id)))
     (passageWithTagsAndCommentNum.toList, pageNo)
+  }
+
+  private def getQuery(query: String) = {
+    val result = query.length match {
+      case l if l < 64 => query
+      case l if l >= 64 => query.substring(0, 64)
+      case _ => ""
+    }
+    Some(result)
   }
 
 }

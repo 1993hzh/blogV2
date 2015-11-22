@@ -1,3 +1,16 @@
+function search() {
+    var query = $("#search").val();
+    if ($.trim(query) == "") {
+        $.messager.alert("Search shouldn't be empty!")
+        return false;
+    }
+    if ($.trim(query).length > 64) {
+        $.messager.alert("Search word too long!")
+        return false;
+    }
+    window.location.href = "/index?query=" + query;
+}
+
 function reply(toId, toName, toCommentId) {
     $("#comment").attr("placeholder", "Re @" + toName + ": ");
     $("#comment").empty();

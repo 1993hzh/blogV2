@@ -34,7 +34,7 @@
                     <td>@p.id</td>
                     <td>@p.authorName</td>
                     <td>@p.title</td>
-                    <td>@p.content</td>
+                    <td>@Application.getContent(p.content, 110)</td>
                     <td>@p.createTime.format("yyy-MM-dd HH:mm:ss")</td>
                     <td>@p.viewCount</td>
                 </tr>
