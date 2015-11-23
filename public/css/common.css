@@ -252,6 +252,11 @@ input[type="search"] {
     width: 200px !important;
 }
 
+.login-sign {
+    padding-top: 15px;
+    padding-right: 30px;
+}
+
 .iconfont-zhihu {
     font-family: "iconfont-zhihu" !important;
     font-style: normal;
