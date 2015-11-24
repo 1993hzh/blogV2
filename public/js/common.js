@@ -340,25 +340,25 @@ $(function () {
         });
     });
 
-    $("#loginFormSubmit").on("click", function (event) {
-        event.preventDefault();
-        hideError();
-        var data = $("#loginForm").serialize();
-        $.ajax({
-            url: '/doLogin',
-            type: "post",
-            data: data,
-            success: function (result) {
-                if (result.isSuccess == true) {
-                    window.location.href = result.detail;
-                    return;
-                } else {
-                    showError(result.detail);
-                }
-            },
-            error: function (msg) {
-                showError("Internal Error");
-            }
-        });
-    });
+    //$("#loginFormSubmit").on("click", function (event) {
+    //    event.preventDefault();
+    //    hideError();
+    //    var data = $("#loginForm").serialize();
+    //    $.ajax({
+    //        url: '/doLogin',
+    //        type: "post",
+    //        data: data,
+    //        success: function (result) {
+    //            if (result.isSuccess == true) {
+    //                window.location.href = result.detail;
+    //                return;
+    //            } else {
+    //                showError(result.detail);
+    //            }
+    //        },
+    //        error: function (msg) {
+    //            showError("Internal Error");
+    //        }
+    //    });
+    //});
 })

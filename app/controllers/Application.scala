@@ -1,24 +1,29 @@
 package controllers
 
 
+import java.sql.Timestamp
 import java.time.LocalDateTime
 
-import dao.PassageDAO
+import dao.{UserDAO, CommentDAO, PassageDAO}
 import models.{Role, User}
 import play.api._
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.api.cache.Cache
+import play.api.cache.{CacheApi, Cache}
 import play.api.Play.current
+import utils.Encryption
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.i18n.Messages.Implicits._
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 object Application extends Controller {
 
   private lazy val passageDAO = PassageDAO()
+  private lazy val commentDAO = CommentDAO()
+  private lazy val userDAO = UserDAO()
 
   val ERROR_NAME_OR_PWD = "Wrong username or password!"
   val KEY_PASSAGE_COUNT = "totalPassage"
@@ -92,5 +97,31 @@ object Application extends Controller {
       case length if length > maxLength => content.substring(0, maxLength).concat(" ...")
       case _ => content
     }
+  }
+
+  def doUserLogin(cache: CacheApi, u: User, r: Role, request: Request[AnyContent], callback: Option[String] = None): Future[Result] = {
+    val loginTime = new Timestamp(System.currentTimeMillis())
+    val ip = request.remoteAddress
+
+    userDAO.updateLoginInfo(u.userName, ip, loginTime)
+    Logger.info("User: " + u.userName + " on behalf of: " + r.roleType + ", login from: " + ip + " at: " + now)
+
+    val loginToken = Encryption.encodeBySHA1(u.userName + current)
+    val loginUserSession = request.session + ("loginUser" -> loginToken) // add loginToken into session
+
+    cache.set(loginToken, (u, r)) // add loginToken into public cache
+    cache.set(u.userName + "-unreadMessage", getUnreadInMessage(u.id)) //add unreadMessage into public cache
+
+    callback match {
+      case Some(str) =>
+        Future.successful(Redirect(str) withSession (loginUserSession)) //callback exists
+      case None =>
+        Future.successful(Redirect(routes.Index.index()) withSession (loginUserSession)) //callback exists
+    }
+  }
+
+  private def getUnreadInMessage(userId: Int): String = {
+    val count = commentDAO.getUnreadInMessagesCountSync(userId)
+    count.toString
   }
 }

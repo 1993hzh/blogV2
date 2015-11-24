@@ -11,6 +11,8 @@ GET         /about                                  controllers.Index.about
 GET         /login                                  controllers.Login.index
 GET         /logout                                 controllers.Login.logout
 POST        /doLogin                                controllers.Login.login
+GET         /loginWithSina                          controllers.Sina.login
+GET         /getTokenForSina                        controllers.Sina.getToken
 
 #Need login filter
 GET         /logged/message                         controllers.CommentController.getComments(page:Int?=1)

@@ -10,6 +10,7 @@ import slick.lifted.TableQuery
 import tables.UserTable
 import utils.Encryption
 import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by leo on 15-10-28.
@@ -84,8 +85,9 @@ class UserDAO extends AbstractDAO[User] with UserTable {
     user match {
       case Some(u) =>
         var returnUser: Option[(User, Role)] = None
-        Await.result(roleDAO.query(u.roleId), waitTime) match {
-          case Some(role) if role.roleType.equals(RoleType.COMMON) && role.webSite.equals(website) =>
+        val role = Await.result(roleDAO.query(u.roleId), waitTime)
+        role match {
+          case Some(role) if role.roleType.equals(RoleType.THIRD_PARTY) && role.webSite.equals(website) =>
             returnUser = Some((u, role))
           case _ =>
         }
@@ -94,18 +96,42 @@ class UserDAO extends AbstractDAO[User] with UserTable {
     }
   }
 
-  def updateLoginInfo(userName: String, lastLoginIp: String, lastLoginTime: Timestamp, lastLogoutTime: Timestamp): Unit = {
-    Await.result(queryByUserName(userName), waitTime) match {
-      case Some(u) => updateLogInfo(u.id, lastLoginIp, lastLoginTime, lastLogoutTime)
-      case None => log.error("User: " + userName + " not found!")
+  def updateLoginInfo(userName: String, lastLoginIp: String, lastLoginTime: Timestamp): Unit = {
+    updateLogInfo(userName, Some(lastLoginIp), Some(lastLoginTime), isUpdateLoginInfo = true) map {
+      case result: Int if result > 0 => log.info("User: " + userName + " login info update successfully.")
+      case _ => log.error("User: " + userName + " login info update failed.")
     }
   }
 
-  private def updateLogInfo(id: Int, lastLoginIp: String, lastLoginTime: Timestamp, lastLogoutTime: Timestamp): Future[Int] = {
-    val action = modelQuery.filter(_.id === id)
-      .map(u => (u.lastLoginIp, u.lastLoginTime, u.lastLogoutTime))
-      .update((Some(lastLoginIp), Some(lastLoginTime), Some(lastLogoutTime)))
+  def updateLogoutInfo(userName: String, lastLogoutTime: Timestamp): Unit = {
+    updateLogInfo(userName, lastLogoutTime = Some(lastLogoutTime), isUpdateLoginInfo = false) map {
+      case result: Int if result > 0 => log.info("User: " + userName + " logout info update successfully.")
+      case _ => log.error("User: " + userName + " logout info update failed.")
+    }
+  }
 
+  /**
+   *
+   * @param userName
+   * @param lastLoginIp
+   * @param lastLoginTime
+   * @param lastLogoutTime
+   * @param isUpdateLoginInfo
+   * @return
+   */
+  private def updateLogInfo(userName: String,
+                            lastLoginIp: Option[String] = None,
+                            lastLoginTime: Option[Timestamp] = None,
+                            lastLogoutTime: Option[Timestamp] = None,
+                            isUpdateLoginInfo: Boolean = true): Future[Int] = {
+
+    val filter = modelQuery.filter(_.userName === userName)
+    val action = isUpdateLoginInfo match {
+      case true =>
+        filter.map(u => (u.lastLoginIp, u.lastLoginTime)).update((lastLoginIp, lastLoginTime))
+      case false =>
+        filter.map(u => (u.lastLogoutTime)).update(lastLogoutTime)
+    }
     db.run(action)
   }
 }
