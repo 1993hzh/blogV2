@@ -63,8 +63,11 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
         data.toCommentId match {
           //User A replied to Comment1 which is sent to User B
           //in this case, Comment1 should not mark as read or commented
-          case Some(cId) if (commentDAO.markAsSync(cId, CommentStatus.commented, fromId)) =>
-            resetUnreadCountInCache(fromName, -1) //here we update the replier unreadCount
+          case Some(cId) =>
+            commentDAO.markAsSync(cId, CommentStatus.commented, fromId) match {
+              case (true, true) => resetUnreadCountInCache(fromName, -1) //here we update the replier unreadCount
+              case _ =>
+            }
           case _ =>
         }
         Application.sendJsonResult(true, routes.PassageController.passage(data.passageId).url)
@@ -87,10 +90,10 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
     val userName = Application.getLoginUserName(request.session)
 
     result match {
-      case true =>
+      case (true, true) =>
         resetUnreadCountInCache(userName, if (status.equals(CommentStatus.unread)) 1 else -1) //here we update the replier unreadCount
         Application.sendJsonResult(true, "")
-      case false =>
+      case _ =>
         Application.sendJsonResult(false, "Sorry that markAs" + markType + " failed, this issue has been logged, will be fixed later")
     }
   }
@@ -140,8 +143,10 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
   def viewComment(passageId: Int, commentId: Int) = Action { implicit request =>
     val loginUserId = Application.getLoginUserId(request.session)
     val userName = Application.getLoginUserName(request.session)
-    if (commentDAO.markAsSync(commentId, markerId = loginUserId))
-      resetUnreadCountInCache(userName, -1)
+    commentDAO.markAsSync(commentId, markerId = loginUserId) match {
+      case (true, true) => resetUnreadCountInCache(userName, -1)
+      case _ =>
+    }
 
     Redirect(routes.PassageController.passage(passageId).url + "#" + commentId)
   }

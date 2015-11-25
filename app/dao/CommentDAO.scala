@@ -17,6 +17,8 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
   private lazy val log = Logger
 
+  private lazy val passageDAO = PassageDAO()
+
   override type T = CommentTable
   override protected val modelQuery = TableQuery[CommentTable]
 
@@ -79,7 +81,14 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
     db.run(action)
   }
 
-  def markAsSync(commentId: Int, status: String = CommentStatus.read, markerId: Int): Boolean = {
+  /**
+   *
+   * @param commentId
+   * @param status
+   * @param markerId
+   * @return (Boolean, Boolean) first param means mark result, second param means need to do cache update or not
+   */
+  def markAsSync(commentId: Int, status: String = CommentStatus.read, markerId: Int): (Boolean, Boolean) = {
     val comment = Await.result(super.query(commentId), waitTime)
     comment match {
       case Some(c) => {
@@ -87,17 +96,18 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
           //reply
           case Some(toId) => toId.equals(markerId)
           //comment on passage, no receiver
-          case None => true
+          case None =>
+            passageDAO.isAuthorized(markerId, c.passageId)
         }
         if (doMark)
           Await.result(markAs(commentId, status), waitTime) match {
-            case r: Int if r == 1 => true
-            case _ => log.info("Comment: " + commentId + " mark as " + status + " failed"); false
+            //only if mark done successfully and the comment is unread before, we need to do cache update
+            case r: Int if r == 1 => (true, c.status == CommentStatus.unread)
+            case _ => log.info("Comment: " + commentId + " mark as " + status + " failed"); (false, false)
           }
-        else false
+        else (false, false)
       }
-      case None => false
-      case _ => log.info("User: " + markerId + " try to mark " + comment + " as " + status); false
+      case _ => log.info("User: " + markerId + " try to mark " + comment + " as " + status); (false, false)
     }
   }
 
