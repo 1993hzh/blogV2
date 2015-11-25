@@ -16,4 +16,5 @@ dist
 /.settings
 hk-debug
 
-conf/db.conf
+/conf/db.conf
+/conf/oauth.conf

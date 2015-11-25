@@ -14,9 +14,9 @@ import scala.concurrent.{Future, Await}
 import scala.concurrent.duration.Duration
 
 /**
- * Created by Leo.
- * 2015/11/22 21:41
- */
+  * Created by Leo.
+  * 2015/11/22 21:41
+  */
 class Sina @Inject()(ws: WSClient, cache: CacheApi) extends Controller {
 
   private lazy val log = Logger
@@ -87,8 +87,14 @@ class Sina @Inject()(ws: WSClient, cache: CacheApi) extends Controller {
           case Some(r) =>
             val user = User(0, uname, Encryption.encodeBySHA1(uname), uname + "@test.com", r.id, bindingId = Some(uid))
             log.info("Insert user from Sina: " + user)
-            userDAO.insert(user)
-            Application.doUserLogin(cache, user, r, request)
+
+            userDAO.createThirdPartyUser(user) match {
+              case Some(u) => Application.doUserLogin(cache, u, r, request)
+              case None =>
+                val msg = "User create failed."
+                log.error(msg)
+                returnFutureResult(msg)
+            }
           case None =>
             val msg = "Website: " + WebSite.SINA + ", with RoleType: " + RoleType.THIRD_PARTY + " not found!"
             log.error(msg)

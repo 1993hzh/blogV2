@@ -28,6 +28,16 @@ class UserDAO extends AbstractDAO[User] with UserTable {
 
   import driver.api._
 
+  /**
+    * it's a bad idea to query DB again for NewUser
+    * @param user
+    * @return
+    */
+  def createThirdPartyUser(user: User): Option[User] = {
+    val id = Await.result(super.insert(user), waitTime)
+    Await.result(super.query(id), waitTime)
+  }
+
   def createCommonUser(userName: String, password: String, mail: String): Future[Int] = {
     val roleId = roleDAO.getRoleIdSync()
     val encodePassword = Encryption.encodeBySHA1(password)
