@@ -73,7 +73,7 @@ object Application extends Controller {
   def setPassageCount = {
     passageDAO.queryTotalCount() onComplete {
       case Success(result) =>
-        Cache.set(Application.KEY_PASSAGE_COUNT, result)
+        Cache.set(KEY_PASSAGE_COUNT, result)
         setTotalPage(result)
       case Failure(f) =>
         Logger.error("App get passage count failed due to: " + f.getLocalizedMessage)
@@ -82,7 +82,7 @@ object Application extends Controller {
 
   private def setTotalPage(passageCount: Int) = {
     val totalPage = getTotalPage(passageCount)
-    Cache.set(Application.KEY_PAGE_COUNT, totalPage)
+    Cache.set(KEY_PAGE_COUNT, totalPage)
     Logger.info("App get total page num: " + totalPage)
   }
 
