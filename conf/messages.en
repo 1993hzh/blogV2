@@ -1,1 +1,75 @@
-index.message=Home Message
+index=index
+post.meta=Posted by <a href="#">{0}</a> at {1}
+
+login=Sign in
+login.name=Name
+login.password=Password
+
+button.login=Sign in
+button.submit=Submit
+button.new=New
+
+nav.search.placeholder=Search for passage
+nav.home=Home
+nav.notification=Notification
+nav.manage=Manage
+nav.manage.passage=Passage
+nav.manage.tag=Tag
+nav.manage.user=User
+nav.about=About
+
+pager.prev=Prev
+pager.next=Next
+
+comment.label=Leave a Comment:
+comment.re=Re @{0}: {1}
+
+message=Notification
+message.mark.title.read=Mark as read
+message.mark.title.unread=Mark as unread
+message.meta=Received at {0}
+message.meta.reply=replied to:
+message.meta.comment=commented on:
+
+manage.table.edit=Edit
+manage.table.delete=Delete
+manage.table.id=id
+
+manage.passage.edit=Edit [{0}]
+manage.passage.new=New Passage
+manage.passage.title.placeholder=Title
+manage.passage.keyword.placeholder=Keyword
+manage.passage.table.author=author
+manage.passage.table.title=title
+manage.passage.table.content=content
+manage.passage.table.createTime=createTime
+manage.passage.table.view=view
+
+manage.tag.table.name=name
+manage.tag.table.description=description
+manage.tag.table.passageCount=passageCount
+manage.tag.name.placeholder=Name
+manage.tag.description.placeholder=Description
+
+manage.user.table.name=name
+manage.user.table.mail=mail
+manage.user.table.role=role
+manage.user.table.website=website
+manage.user.table.lastLoginIp=lastLoginIp
+manage.user.table.lastLoginTime=lastLoginTime
+manage.user.table.lastLogoutTime=lastLogoutTime
+manage.user.username.placeholder=UserName
+manage.user.password.placeholder=Password
+manage.user.mail.placeholder=Mail
+
+about=about
+about.title=About Blog & Me
+about.content.blog=This blog was written in Scala with Play Framework2.4, deployed in Heroku, \
+  you can view the source in <a href="https://github.com/1993hzh/blogV2" target="_blank" class="about-href">github</a>. \
+  If you find some defect or security issues, please email me thanks.
+about.content.me=I am now working in SAP Labs China as Java Developer since 2015/8, \
+  I graduated from university in 2014, and worked in IBM as Data Specialist from 2014-2015. \
+  I mainly focus on backend development and sometimes work as a full-stack developer. \
+  You can follow me at <a href="http://weibo.com/2440019140/profile" target="_blank" class="about-href">sina</a>.
+about.content.last=You can send me your question by comment on target post and contact me by \
+  <a href="mailto:mail@@huzhonghua.cn" class="about-href">email</a>.

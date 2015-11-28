@@ -1,7 +1,5 @@
 package filters
 
-import java.time.LocalDateTime
-
 import controllers.{routes, Application}
 import models.RoleType
 import play.api.Logger
@@ -15,11 +13,11 @@ import scala.concurrent.Future
  */
 object ManageFilter extends Filter {
 
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
 
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     if (rh.path.contains("manage")) {
-      log.info(rh.remoteAddress + " is requesting management: '" + rh.uri + "' at: " + LocalDateTime.now)
+      log.info(rh.remoteAddress + " is requesting management: '" + rh.uri + "'")
 
       Application.getLoginUser(rh.session) match {
         case Some((u, r)) =>

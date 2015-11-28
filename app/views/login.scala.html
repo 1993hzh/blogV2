@@ -1,10 +1,10 @@
-@(callback: Option[String] = None, error:Option[String] = None)(implicit session: play.api.mvc.Session)
+@(callback: Option[String] = None, error:Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages)
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Log in</title>
+  <title>@messages("login")</title>
 </head>
 <body>
 
@@ -16,16 +16,16 @@
         <input class="hidden" name="callback" id="callback" value='@callback.getOrElse("")'/>
         <div class="row control-group">
           <div class="form-group col-xs-12 floating-label-form-group controls">
-            <label>Name</label>
-            <input type="text" class="form-control my-font-color" placeholder="Name" id="name"
+            <label>@messages("login.name")</label>
+            <input type="text" class="form-control my-font-color" placeholder="@messages("login.name")" id="name"
                    name="name" required data-validation-required-message="Please enter your name.">
             <p class="help-block text-danger"></p>
           </div>
         </div>
         <div class="row control-group">
           <div class="form-group col-xs-12 floating-label-form-group controls">
-            <label>Password</label>
-            <input type="password" class="form-control my-font-color" placeholder="Password" id="password"
+            <label>@messages("login.password")</label>
+            <input type="password" class="form-control my-font-color" placeholder="@messages("login.password")" id="password"
                    name="password" required data-validation-required-message="Please enter your password.">
             <p class="help-block text-danger"></p>
           </div>
@@ -46,7 +46,7 @@
         }
         <div class="row">
           <div class="form-group col-xs-12">
-            <button id="loginFormSubmit" type="submit" class="btn btn-default btn-right pull-right">Login</button>
+            <button id="loginFormSubmit" type="submit" class="btn btn-default btn-right pull-right">@messages("button.login")</button>
             <a href="/loginWithSina"><i class="fa fa-weibo fa-1x fa-inverse login-sign pull-right my-href"></i></a>
           </div>
         </div>

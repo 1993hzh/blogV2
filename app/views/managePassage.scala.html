@@ -1,4 +1,4 @@
-@(passages:Seq[Passage], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+@(passages:Seq[Passage], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session, messages: Messages)
 
 <!DOCTYPE html>
 <html>
@@ -10,20 +10,20 @@
 @nav()
 <div class="container">
     <div class="col-lg-10 col-md-10 col-md-offset-1">
-        <a type="button" class="btn btn-primary" href="/manage/passage/create">NEW</a>
+        <a type="button" class="btn btn-primary" href="/manage/passage/create">@messages("button.new")</a>
         <hr>
         <div id="error"></div>
         <table class="table table-hover my-font-color">
             <thead>
                 <tr>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                    <th>id</th>
-                    <th>author</th>
-                    <th>title</th>
-                    <th>content</th>
-                    <th>createTime</th>
-                    <th>view</th>
+                    <th>@messages("manage.table.edit")</th>
+                    <th>@messages("manage.table.delete")</th>
+                    <th>@messages("manage.table.id")</th>
+                    <th>@messages("manage.passage.table.author")</th>
+                    <th>@messages("manage.passage.table.title")</th>
+                    <th>@messages("manage.passage.table.content")</th>
+                    <th>@messages("manage.passage.table.createTime")</th>
+                    <th>@messages("manage.passage.table.view")</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,7 +34,7 @@
                     <td>@p.id</td>
                     <td>@p.authorName</td>
                     <td>@p.title</td>
-                    <td>@Application.getContent(p.content, 110)</td>
+                    <td>@Application.getContent(p.content, 30)</td>
                     <td>@p.createTime.format("yyy-MM-dd HH:mm:ss")</td>
                     <td>@p.viewCount</td>
                 </tr>

@@ -4,14 +4,15 @@ import javax.inject.Inject
 
 import dao.{CommentDAO, PassageDAO}
 import models.{Tag, Passage}
-import play.api.Logger
 import play.api.cache.CacheApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 /**
  * Created by leo on 15-11-3.
  */
-class Index @Inject()(cache: CacheApi) extends Controller {
+class Index @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
+  override def messagesApi: MessagesApi = messages
 
   private lazy val passageDAO = PassageDAO()
   private lazy val commentDAO = CommentDAO()

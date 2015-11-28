@@ -21,6 +21,8 @@ import scala.util.{Failure, Success}
 
 object Application extends Controller {
 
+  private lazy val log = Logger(this.getClass)
+
   private lazy val passageDAO = PassageDAO()
   private lazy val commentDAO = CommentDAO()
   private lazy val userDAO = UserDAO()
@@ -43,7 +45,7 @@ object Application extends Controller {
       case n: Int if (n >= totalPage) => totalPage
       case n: Int if (n > 1 && n < totalPage) => n
       case s: String if s.isEmpty => 1
-      case _ => Logger.info("Error page num fetched: " + num); 1
+      case _ => log.info("Error page num fetched: " + num); 1
     }
   }
 
@@ -76,14 +78,14 @@ object Application extends Controller {
         Cache.set(KEY_PASSAGE_COUNT, result)
         setTotalPage(result)
       case Failure(f) =>
-        Logger.error("App get passage count failed due to: " + f.getLocalizedMessage)
+        log.error("App get passage count failed due to: " + f.getLocalizedMessage)
     }
   }
 
   private def setTotalPage(passageCount: Int) = {
     val totalPage = getTotalPage(passageCount)
     Cache.set(KEY_PAGE_COUNT, totalPage)
-    Logger.info("App get total page num: " + totalPage)
+    log.info("App get total page num: " + totalPage)
   }
 
   def now = LocalDateTime.now()
@@ -104,7 +106,7 @@ object Application extends Controller {
     val ip = request.remoteAddress
 
     userDAO.updateLoginInfo(u.userName, ip, loginTime)
-    Logger.info("User: " + u.userName + " on behalf of: " + r.roleType + ", login from: " + ip + " at: " + now)
+    log.info("User: " + u.userName + " on behalf of: " + r.roleType + ", login from: " + ip)
 
     val loginToken = Encryption.encodeBySHA1(u.userName + current)
     val loginUserSession = request.session + ("loginUser" -> loginToken) // add loginToken into session

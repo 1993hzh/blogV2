@@ -2,7 +2,7 @@
 tags: List[Int] = Nil,
 allTag: List[Tag],
 keywords: List[String] = Nil,
-error: String = "")(implicit session: play.api.mvc.Session)
+error: String = "")(implicit session: play.api.mvc.Session, messages: Messages)
 
 
 <!DOCTYPE html>
@@ -11,8 +11,8 @@ error: String = "")(implicit session: play.api.mvc.Session)
   <meta charset="UTF-8">
   <title>
     @passage match {
-    case Some(p) => {Edit [@p.title]}
-    case None => {New Passage}
+    case Some(p) => {@messages("manage.passage.edit", p.title)}
+    case None => {@messages("manage.passage.new")}
     }
   </title>
 </head>
@@ -35,7 +35,8 @@ error: String = "")(implicit session: play.api.mvc.Session)
       @passage match {
         case Some(p) => {
         <input type="text" class="hidden" id="id" name="id" value="@p.id"/>
-        <input type="text" class="form-control" placeholder="Title" id="title" name="title" value="@p.title"/>
+        <input type="text" class="form-control" placeholder="@messages("manage.passage.title.placeholder")"
+          id="title" name="title" value="@p.title"/>
         <hr>
         <div id="keywordList" style="display : inline-block ;">
           @for((kw, index) <- keywords.zipWithIndex) {
@@ -46,7 +47,7 @@ error: String = "")(implicit session: play.api.mvc.Session)
             </span> &nbsp;
           }
         </div>
-        <input type="text" placeholder="Keyword" id="keywordAdd" class="form-control">
+        <input type="text" placeholder="@messages("manage.passage.keyword.placeholder")" id="keywordAdd" class="form-control">
         <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
         <hr>
         <div class="my-font-color">
@@ -61,10 +62,10 @@ error: String = "")(implicit session: play.api.mvc.Session)
         }
         case None => {
         <input type="text" class="hidden" id="id" name="id"/>
-        <input type="text" class="form-control" placeholder="Title" id="title" name="title"/>
+        <input type="text" class="form-control" placeholder="@messages("manage.passage.title.placeholder")" id="title" name="title"/>
         <hr>
         <div id="keywordList" style="display : inline-block ;"></div>
-        <input type="text" placeholder="Keyword" id="keywordAdd" class="form-control">
+        <input type="text" placeholder="@messages("manage.passage.keyword.placeholder")" id="keywordAdd" class="form-control">
         <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
         <hr>
         <div class="my-font-color">
@@ -78,7 +79,7 @@ error: String = "")(implicit session: play.api.mvc.Session)
         }
       }
       <hr>
-      <button id="passageFormSubmit" type="submit" class="btn btn-default btn-right">Submit</button>
+      <button id="passageFormSubmit" type="submit" class="btn btn-default btn-right">@messages("button.submit")</button>
     </form>
   </div>
 </div>

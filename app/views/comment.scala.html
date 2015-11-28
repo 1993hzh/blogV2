@@ -1,11 +1,11 @@
-@(comments: List[Comment], passageId: Int, error: Option[String] = None)(implicit session: play.api.mvc.Session)
+@(comments: List[Comment], passageId: Int, error: Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages)
 
 
 <div class="override-no-margin-top my-font-color">
     <!-- Comments Form -->
     <div class="row">
         <a id="doComment" name="doComment"></a>
-        <h4>Leave a Comment:</h4>
+        <h4>@messages("comment.label")</h4>
         <form role="form">
             <div class="form-group">
                 <textarea id="comment" class="form-control" rows="3"></textarea>
@@ -27,7 +27,7 @@
                     <div id="error"></div>
                 }
             }
-            <button type="button" class="btn btn-primary" onclick="doComment()">Submit</button>
+            <button type="button" class="btn btn-primary" onclick="doComment()">@messages("button.submit")</button>
         </form>
     </div>
 
@@ -44,7 +44,7 @@
                     <small>@c.createTime.format("yyy-MM-dd HH:mm:ss")</small>
                 </h4>
                 @c.toName match {
-                    case Some(n) => {Re @@@n: @c.content}
+                    case Some(n) => {@messages("comment.re", n, c.content)}
                     case None => {
                         @c.content
                     }

@@ -7,19 +7,21 @@ import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
-  * Created by Leo.
-  * 2015/11/15 10:15
-  */
-class UserController @Inject()(cache: CacheApi) extends Controller {
+ * Created by Leo.
+ * 2015/11/15 10:15
+ */
+class UserController @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
+  override def messagesApi: MessagesApi = messages
 
   private lazy val userDAO = UserDAO()
 
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
 
   def manage(page: Int) = Action { implicit request =>
     val pageSize = 10

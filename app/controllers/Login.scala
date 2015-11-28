@@ -8,6 +8,7 @@ import play.api.Logger
 import play.api.cache._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.Future
@@ -15,8 +16,10 @@ import scala.concurrent.Future
 /**
  * Created by leo on 15-11-4.
  */
-class Login @Inject()(cache: CacheApi) extends Controller {
+class Login @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
+  override def messagesApi: MessagesApi = messages
 
+  private lazy val log = Logger(this.getClass)
   private lazy val userDAO = UserDAO()
 
   def index = Action { implicit request =>
@@ -50,16 +53,16 @@ class Login @Inject()(cache: CacheApi) extends Controller {
       case Some((u, r)) =>
         val logoutTime = new Timestamp(System.currentTimeMillis())
         userDAO.updateLogoutInfo(u.userName, logoutTime)
-        Logger.info("User: " + u.userName + " logout at: " + logoutTime)
+        log.info("User: " + u.userName + " logout at: " + logoutTime)
 
         loginToken match {
           case Some(lt) =>
             cache.remove(lt) // remove loginToken from public cache
             cache.remove(u.userName + "-unreadMessage") // remove unreadMessage from public cache
-          case None => Logger.info("Session has no `loginUser` ")
+          case None => log.info("Session has no `loginUser` ")
         }
       case None =>
-        Logger.info("Didn't find " + loginToken)
+        log.info("Didn't find " + loginToken)
     }
     Redirect(routes.Index.index()).withNewSession
   }

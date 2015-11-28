@@ -15,7 +15,7 @@ import scala.concurrent.{Await, Future}
 @Singleton()
 class CommentDAO extends AbstractDAO[Comment] with CommentTable {
 
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
 
   private lazy val passageDAO = PassageDAO()
 

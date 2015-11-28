@@ -1,7 +1,7 @@
 @import models.Passage
 @(passagesWithTags: List[(Passage, List[Tag], Int)],
         currentPage: Int, totalPage: Int,
-        query: Option[String] = None)(implicit session: play.api.mvc.Session)
+        query: Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +14,7 @@
   <meta name="keywords" content="play, scala, blog">
   <meta name="author" content="Leo">
   <meta property="wb:webmaster" content="2c9caff4ab43a4dd" />
-  <title>Index</title>
+  <title>@messages("index")</title>
 
 </head>
 
@@ -40,7 +40,7 @@
             }
           </p>
           <p class="post-meta">
-            Posted by <a href="#">@p.authorName</a> at @p.createTime.format("yyy-MM-dd HH:mm:ss")
+            @Html(messages("post.meta", p.authorName, p.createTime.format("yyy-MM-dd HH:mm:ss")))
             <i class="pull-right">
               <i class="fa fa-eye">&nbsp;@p.viewCount&nbsp;</i>
               <i class="fa fa-comments-o">&nbsp;@cNum&nbsp;</i>

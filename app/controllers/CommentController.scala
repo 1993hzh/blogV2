@@ -9,6 +9,7 @@ import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -16,9 +17,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * Created by Leo.
  * 2015/11/10 22:24
  */
-class CommentController @Inject()(cache: CacheApi) extends Controller {
-  lazy val commentDAO = CommentDAO()
-  lazy val passageDAO = PassageDAO()
+class CommentController @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
+  override def messagesApi: MessagesApi = messages
+
+  private lazy val log = Logger(this.getClass)
+  private lazy val commentDAO = CommentDAO()
+  private lazy val passageDAO = PassageDAO()
 
   def getComments(page: Int) = Action { implicit request =>
     val loginUserId = Application.getLoginUserId(request.session)
@@ -110,7 +114,7 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
             try {
               c.trim.toInt
             } catch {
-              case ne: NumberFormatException => Logger.info("Try to format " + c + " to Int failed: " + ne.getLocalizedMessage)
+              case ne: NumberFormatException => log.info("Try to format " + c + " to Int failed: " + ne.getLocalizedMessage)
             }
         }
         val cSet = cList.map(c => c.toString.toInt).toSet
@@ -125,7 +129,7 @@ class CommentController @Inject()(cache: CacheApi) extends Controller {
         }
 
       case _ =>
-        Logger.info("markAsRead with commentIdList error with: " + commentIds)
+        log.info("markAsRead with commentIdList error with: " + commentIds)
         Application.sendJsonResult(false, "markAsRead with commentIdList error with: " + commentIds)
     }
   }

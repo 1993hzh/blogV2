@@ -1,1 +1,73 @@
-index.message=首页消息
+index=首页
+post.meta=<a href="#">{0}</a>发表于{1}
+
+login=登录
+login.name=用户名
+login.password=密码
+
+button.login=登录
+button.submit=提交
+button.new=新建
+
+nav.search.placeholder=搜索博文
+nav.home=主页
+nav.notification=消息
+nav.manage=管理
+nav.manage.passage=博文
+nav.manage.tag=标签
+nav.manage.user=用户
+nav.about=关于
+
+pager.prev=上一页
+pager.next=下一页
+
+comment.label=评论：
+comment.re=回复@{0}：{1}
+
+message=消息
+message.mark.title.read=标为已读
+message.mark.title.unread=标为未读
+message.meta=接收时间：{0}
+message.meta.reply=回复：
+message.meta.comment=评论：
+
+manage.table.edit=编辑
+manage.table.delete=删除
+manage.table.id=ID
+
+manage.passage.edit=编辑【{0}】
+manage.passage.new=新建博文
+manage.passage.title.placeholder=标题
+manage.passage.keyword.placeholder=关键字
+manage.passage.table.author=作者
+manage.passage.table.title=标题
+manage.passage.table.content=内容
+manage.passage.table.createTime=时间
+manage.passage.table.view=浏览数
+
+manage.tag.table.name=标签名
+manage.tag.table.description=标签描述
+manage.tag.table.passageCount=文章使用数
+manage.tag.name.placeholder=标签名
+manage.tag.description.placeholder=标签描述
+
+manage.user.table.name=用户名
+manage.user.table.mail=邮箱
+manage.user.table.role=角色
+manage.user.table.website=网址
+manage.user.table.lastLoginIp=上次登入IP
+manage.user.table.lastLoginTime=上次登入时间
+manage.user.table.lastLogoutTime=上次登出时间
+manage.user.username.placeholder=用户名
+manage.user.password.placeholder=密码
+manage.user.mail.placeholder=邮箱
+
+about=关于
+about.title= 关于博客和我
+about.content.blog=这是我个人博客的第二版，使用Scala编写（第一版使用Java），使用的框架为play2.4 + slick， 目前部署在heroku上。\
+  源码可以在<a href="https://github.com/1993hzh/blogV2" target="_blank" class="about-href">github</a>上查看。\
+  如果您发现有任何bug或者安全性问题，还请您邮件通知我谢谢。
+about.content.me=我从2015/8开始工作于SAP中国研究院，角色为Java开发工程师。2014年大学毕业，2014-2015工作于IBM。\
+  主攻后端开发，偶尔也会兼职全栈开发。喜欢跑步，看技术类书籍，关注SaaS、PaaS。\
+  你可以在<a href="http://weibo.com/2440019140/profile" target="_blank" class="about-href">新浪</a>上关注到我。
+about.content.last=你可以将你的疑问通过评论发在博文里面，当然也可以通过<a href="mailto:mail@@huzhonghua.cn" class="about-href">邮件</a>联系到我。

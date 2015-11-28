@@ -1,4 +1,4 @@
-@(tags:Seq[(Tag, Int)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+@(tags:Seq[(Tag, Int)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session, messages: Messages)
 
 <!DOCTYPE html>
 <html>
@@ -10,17 +10,17 @@
   @nav()
   <div class="container">
     <div class="col-lg-10 col-md-10 col-md-offset-1">
-      <button type="button" class="btn btn-primary" onclick="pop_createTag()">NEW</button>
+      <button type="button" class="btn btn-primary" onclick="pop_createTag()">@messages("button.new")</button>
       <hr>
       <div id="error"></div>
       <table class="table table-hover my-font-color">
         <thead>
           <tr>
-            <th>Edit</th>
-            <th>Delete</th>
-            <th>name</th>
-            <th>description</th>
-            <th>passageCount</th>
+            <th>@messages("manage.table.edit")</th>
+            <th>@messages("manage.table.delete")</th>
+            <th>@messages("manage.tag.table.name")</th>
+            <th>@messages("manage.tag.table.description")</th>
+            <th>@messages("manage.tag.table.passageCount")</th>
           </tr>
         </thead>
         <tbody>
@@ -41,9 +41,9 @@
   <div id="tagwrap" style="display:none;">
     <form id="tagForm" role="form" type="post">
       <input type="text" class="hidden" id="id" name="id">
-      <input type="text" class="form-control my-font-color" placeholder="Name" id="name" name="name">
+      <input type="text" class="form-control my-font-color" placeholder="@messages("manage.tag.name.placeholder")" id="name" name="name">
       <hr>
-      <input type="text" class="form-control my-font-color" placeholder="Description" id="description" name="description">
+      <input type="text" class="form-control my-font-color" placeholder="@messages("manage.tag.description.placeholder")" id="description" name="description">
     </form>
   </div>
   @footer()

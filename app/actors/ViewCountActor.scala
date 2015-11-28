@@ -17,12 +17,12 @@ import scala.util.{Failure, Success}
  */
 class ViewCountActor extends Actor {
 
-  lazy val log = Logger
+  lazy val log = Logger(this.getClass)
   lazy val passageDAO = PassageDAO()
 
   override def receive: Receive = {
     case isSyncUp: Boolean if isSyncUp =>
-      log.info(Application.now + ": Receive do viewCountSyncUp message.")
+      log.info("Receive do viewCountSyncUp message.")
       syncUp
   }
 
@@ -33,7 +33,7 @@ class ViewCountActor extends Actor {
       getViewCountFromCache(id) match {
         case Some(vc) =>
           doSyncUp(id, vc)
-        case None => log("passageId: " + id + " not found in Cache.")
+        case None => log.info("passageId: " + id + " not found in Cache.")
       }
     })
 
@@ -52,7 +52,7 @@ class ViewCountActor extends Actor {
         set.remove(passageId)
         setPassageViewCountSetFromCache(set)
 
-        log.info(Application.now + ": passage: " + passageId + " doSyncUp succeed.")
+        log.info("passage: " + passageId + " doSyncUp succeed.")
       case Failure(f) =>
         log.warn("passage: " + passageId + " doSyncUp failed due to: " + f.getLocalizedMessage)
     }

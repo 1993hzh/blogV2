@@ -8,18 +8,20 @@ import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
-  * Created by Leo.
-  * 2015/11/14 23:07
-  */
-class TagController @Inject()(cache: CacheApi) extends Controller {
+ * Created by Leo.
+ * 2015/11/14 23:07
+ */
+class TagController @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
+  override def messagesApi: MessagesApi = messages
 
   private lazy val tagDAO = TagDAO()
 
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
 
   def manage(page: Int) = Action { implicit request =>
     val pageSize = 10
@@ -56,10 +58,10 @@ class TagController @Inject()(cache: CacheApi) extends Controller {
   }
 
   /**
-    * I won't provide a function for batch deletion since it's unsafe
-    * @param id
-    * @return
-    */
+   * I won't provide a function for batch deletion since it's unsafe
+   * @param id
+   * @return
+   */
   def delete(id: Int) = Action.async { implicit request =>
     tagDAO.delete(id) map {
       case result: Int if (result == 1) =>

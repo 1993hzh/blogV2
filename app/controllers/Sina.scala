@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import dao.{RoleDAO, UserDAO}
 import models.{Role, RoleType, User, WebSite}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.{Play, Logger}
 import play.api.cache.CacheApi
 import play.api.libs.ws.{WSClient}
@@ -14,12 +15,13 @@ import scala.concurrent.{Future, Await}
 import scala.concurrent.duration.Duration
 
 /**
-  * Created by Leo.
-  * 2015/11/22 21:41
-  */
-class Sina @Inject()(ws: WSClient, cache: CacheApi) extends Controller {
+ * Created by Leo.
+ * 2015/11/22 21:41
+ */
+class Sina @Inject()(ws: WSClient, cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
+  override def messagesApi: MessagesApi = messages
 
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
   private lazy val userDAO = UserDAO()
   private lazy val roleDAO = RoleDAO()
 

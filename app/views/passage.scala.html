@@ -1,4 +1,4 @@
-@(p: models.Passage, kws: List[Keyword], c: List[Comment])(implicit session: play.api.mvc.Session)
+@(p: models.Passage, kws: List[Keyword], c: List[Comment])(implicit session: play.api.mvc.Session, messages: Messages)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,9 +20,7 @@
       <div class="row">
         <div class="post-heading override-no-padding my-font-color">
           <h1>@p.title</h1>
-            <span class="meta">Posted&nbsp;by&nbsp;<a href="#">@p.authorName</a>
-                &nbsp;at&nbsp;@p.createTime.format("yyy-MM-dd HH:mm:ss")
-            </span>
+            <span class="meta">@Html(messages("post.meta", p.authorName, p.createTime.format("yyy-MM-dd HH:mm:ss")))</span>
         </div>
       </div>
     </header>

@@ -257,6 +257,20 @@ input[type="search"] {
     padding-right: 30px;
 }
 
+.about-href {
+    color: #adadad;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.about-href:hover {
+    color: #0085a1;
+}
+
+.about-href:focus {
+    color: #0085a1;
+}
+
 .iconfont-zhihu {
     font-family: "iconfont-zhihu" !important;
     font-style: normal;

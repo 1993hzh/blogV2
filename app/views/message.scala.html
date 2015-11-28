@@ -1,11 +1,11 @@
 @import models.CommentStatus
-@(inMessage: List[(Comment, String)], currentPage: Int, totalPage: Int, error:String = "")(implicit session: play.api.mvc.Session)
+@(inMessage: List[(Comment, String)], currentPage: Int, totalPage: Int, error:String = "")(implicit session: play.api.mvc.Session, messages: Messages)
 
 <!DOCTYPE html>
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <title>Notification</title>
+  <title>@messages("message")</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
   <meta name="author" content="Leo">
@@ -26,11 +26,13 @@
       <div class="panel-body">
         <div class="message-meta">
           @if(c.status.equals(CommentStatus.unread)) {
-          <i class="fa fa-eye-slash pull-right mark-button" title="mark as read" onclick="markAs('read', '@c.id')"></i>
+          <i class="fa fa-eye-slash pull-right mark-button" title="@messages("message.mark.title.read")"
+            onclick="markAs('read', '@c.id')"></i>
           } else {
-          <i class="fa fa-eye pull-right mark-button" title="mark as unread" onclick="markAs('unread', '@c.id')"></i>
+          <i class="fa fa-eye pull-right mark-button" title="@messages("message.mark.title.unread")"
+            onclick="markAs('unread', '@c.id')"></i>
           }
-          @@@c.fromName @if(!c.toId.isEmpty) { replied to} else { commented on}:
+          @@@c.fromName @if(!c.toId.isEmpty) { @messages("message.meta.reply")} else { @messages("message.meta.comment")}
           <a class="my-href message-passage" href="/logged/viewComment?passageId=@c.passageId&commentId=@c.id">@s</a>
         </div>
         <div class="my-blockquote">
@@ -38,7 +40,7 @@
         </div>
       </div>
       <div class="my-panel-footer">
-        <div class="message-meta">Sent at @c.createTime.format("yyy-MM-dd HH:mm:ss")</div>
+        <div class="message-meta">@messages("message.meta", c.createTime.format("yyy-MM-dd HH:mm:ss"))</div>
       </div>
     </div>
     <hr class="row">

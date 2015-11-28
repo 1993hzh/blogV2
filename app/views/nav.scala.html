@@ -3,7 +3,7 @@
 @import models.User
 @import models.Role
 @import models.RoleType
-@()(implicit session: play.api.mvc.Session)
+@()(implicit session: play.api.mvc.Session, messages: Messages)
 <link rel="shortcut icon" type="image/x-icon" href="@routes.Assets.at("img/favicon.ico")">
 <link href="/assets/css/bootstrap-slate.min.css" rel="stylesheet">
 <link href="/assets/css/common.css" rel="stylesheet">
@@ -24,7 +24,7 @@
             <a class="navbar-brand" title="logout" href="/logout">@u.userName <i class="fa fa-power-off"></i></a>
           }
           case None => {
-            <a class="navbar-brand" href="/login">Log in</a>
+            <a class="navbar-brand" href="/login">@messages("button.login")</a>
           }
         }
     </div>
@@ -33,19 +33,19 @@
       <span class="input-group-addon pull-right mark-button" onclick="search()">
         <i class="fa fa-search"></i>
       </span>
-      <input id="search" type="search" class="form-control pull-right" placeholder="Search for passage">
+      <input id="search" type="search" class="form-control pull-right" placeholder="@messages("nav.search.placeholder")">
     </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-left">
         <li>
-          <a href="/index">Home</a>
+          <a href="/index">@messages("nav.home")</a>
         </li>
 
         @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
           case Some((u, r)) => {
             <li>
-              <a href="/logged/message">Notification&nbsp;
+              <a href="/logged/message">@messages("nav.notification")&nbsp;
                 <span id="unreadDrag" class="badge" draggable="true">
                   @Cache.getOrElse(u.userName+"-unreadMessage")("0")
                 </span>
@@ -54,14 +54,14 @@
             @if(r.roleType.equals(RoleType.OWNER)) {
             <li>
               <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Manage <span class="caret"></span>
+                @messages("nav.manage")&nbsp;<span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/manage/passage">Passage</a></li>
+                <li><a href="/manage/passage">@messages("nav.manage.passage")</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="/manage/tag">Tag</a></li>
+                <li><a href="/manage/tag">@messages("nav.manage.tag")</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="/manage/user">User</a></li>
+                <li><a href="/manage/user">@messages("nav.manage.user")</a></li>
               </ul>
             </li>
             }
@@ -69,7 +69,7 @@
           case None => {}
         }
         <li>
-          <a href="/about">About</a>
+          <a href="/about">@messages("nav.about")</a>
         </li>
       </ul>
     </div>

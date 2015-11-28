@@ -1,4 +1,4 @@
-@(users:Seq[(User,Role)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session)
+@(users:Seq[(User,Role)], currentPage: Int, totalPage: Int)(implicit session: play.api.mvc.Session, messages: Messages)
 
 <!DOCTYPE html>
 <html>
@@ -10,20 +10,20 @@
   @nav()
   <div class="container">
     <div class="col-lg-10 col-md-10 col-md-offset-1">
-      <button type="button" class="btn btn-primary" onclick="pop_createUser()">NEW</button>
+      <button type="button" class="btn btn-primary" onclick="pop_createUser()">@messages("button.new")</button>
       <hr>
       <div id="error"></div>
       <table class="table table-hover my-font-color">
         <thead>
           <tr>
-            <th>Delete</th>
-            <th>name</th>
-            <th>mail</th>
-            <th>role</th>
-            <th>website</th>
-            <th>lastLoginIp</th>
-            <th>lastLoginTime</th>
-            <th>lastLogoutTime</th>
+            <th>@messages("manage.table.delete")</th>
+            <th>@messages("manage.user.table.name")</th>
+            <th>@messages("manage.user.table.mail")</th>
+            <th>@messages("manage.user.table.role")</th>
+            <th>@messages("manage.user.table.website")</th>
+            <th>@messages("manage.user.table.lastLoginIp")</th>
+            <th>@messages("manage.user.table.lastLoginTime")</th>
+            <th>@messages("manage.user.table.lastLogoutTime")</th>
           </tr>
         </thead>
         <tbody>
@@ -52,11 +52,13 @@
   </div>
   <div id="userwrap" style="display:none;">
       <form id="userForm" role="form" type="post">
-          <input type="text" class="form-control my-font-color" placeholder="UserName" id="userName" name="userName">
+          <input type="text" class="form-control my-font-color" placeholder="@messages("manage.user.username.placeholder")"
+            id="userName" name="userName">
           <hr>
-          <input type="password" class="form-control my-font-color" placeholder="Password" id="password" name="password">
+          <input type="password" class="form-control my-font-color" placeholder="manage.user.password.placeholder"
+            id="password" name="password">
           <hr>
-          <input type="text" class="form-control my-font-color" placeholder="Mail" id="mail" name="mail">
+          <input type="text" class="form-control my-font-color" placeholder="manage.user.mail.placeholder" id="mail" name="mail">
       </form>
   </div>
   @footer()

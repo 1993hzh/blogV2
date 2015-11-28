@@ -11,13 +11,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Global extends WithFilters(LoginFilter, ManageFilter) with GlobalSettings {
 
-  private val log = Logger
+  private val log = Logger(this.getClass)
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)
 
     if (!app.mode.equals(Mode.Test)) {
-      log.info("App starts on: " + Application.now)
+      log.info("App starts.")
 
       Application.setPassageCount
 

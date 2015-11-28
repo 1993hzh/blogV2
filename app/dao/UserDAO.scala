@@ -24,7 +24,7 @@ class UserDAO extends AbstractDAO[User] with UserTable {
 
   private lazy val roleDAO = RoleDAO()
 
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
 
   import driver.api._
 

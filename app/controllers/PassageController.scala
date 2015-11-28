@@ -8,6 +8,7 @@ import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 import scala.collection.mutable.{Set => Mset}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -17,11 +18,12 @@ import scala.concurrent.Future
  * Created by Leo.
  * 2015/11/7 20:00
  */
-class PassageController @Inject()(cache: CacheApi) extends Controller {
+class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
+  override def messagesApi: MessagesApi = messages
 
   private lazy val passageDAO = PassageDAO()
   private lazy val tagDAO = TagDAO()
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
 
   def passage(id: Int) = Action { implicit request =>
     val passageDetail = passageDAO.getDetail(id)
@@ -74,32 +76,32 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
         val passage = Passage(data.id.getOrElse(0), authorId, authorName, data.title, data.content, createTime)
         val result = data.id match {
           case Some(id) =>
-            log.info(Application.now + ": " + authorName + " try to update passage: " + data.title + ", id: " + data.id)
+            log.info(authorName + " try to update passage: " + data.title + ", id: " + data.id)
             passageDAO.update(passage, data.keywords, data.tagIds)
           case None =>
-            log.info(Application.now + ": " + authorName + " try to create passage: " + data.title)
+            log.info(authorName + " try to create passage: " + data.title)
             passageDAO.insert(passage, data.keywords, data.tagIds)
         }
         result.map {
           case r: Boolean if (r && !data.id.isEmpty) =>
-            log.info(Application.now + ": " + authorName + " update passage: " + data.title + ", id: " + data.id + " succeed.")
+            log.info(authorName + " update passage: " + data.title + ", id: " + data.id + " succeed.")
             Application.sendJsonResult(true, routes.PassageController.passage(data.id.getOrElse[Int](0)).url)
           case r: Boolean if !r =>
             val error = "update passage: " + data.title + ", id: " + data.id + " failed."
-            log.warn(Application.now + ": " + authorName + " " + error)
+            log.warn(authorName + " " + error)
             Application.sendJsonResult(false, error)
           case r: Int if r > 0 =>
             Application.setPassageCount
-            log.info(Application.now + ": " + authorName + " create passage: " + data.title + " succeed, new id: " + r)
+            log.info(authorName + " create passage: " + data.title + " succeed, new id: " + r)
             Application.sendJsonResult(true, routes.PassageController.passage(r).url)
           case r: Int if r <= 0 =>
             Application.setPassageCount
             val error = "create passage: " + data.title + " failed, return value: " + r
-            log.warn(Application.now + ": " + authorName + " " + error)
+            log.warn(authorName + " " + error)
             Application.sendJsonResult(false, error)
           case _ =>
             val error = "upsert passage: " + data.title + " , id: " + data.id + " failed."
-            log.warn(Application.now + ": " + authorName + " " + error)
+            log.warn(authorName + " " + error)
             Application.sendJsonResult(false, error)
         }
       }
@@ -121,7 +123,7 @@ class PassageController @Inject()(cache: CacheApi) extends Controller {
   def delete(id: Int) = Action { implicit request =>
     val user = Application.getLoginUserName(request.session)
     val userId = Application.getLoginUserId(request.session)
-    log.info(user + " try to delete passage: " + id + " from: " + request.remoteAddress + " at: " + Application.now)
+    log.info(user + " try to delete passage: " + id + " from: " + request.remoteAddress)
 
     passageDAO.delete(userId, id) match {
       case 1 =>

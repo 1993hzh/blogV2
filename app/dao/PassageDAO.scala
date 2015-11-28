@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton()
 class PassageDAO extends AbstractDAO[Passage] with PassageTable {
 
-  private lazy val log = Logger
+  private lazy val log = Logger(this.getClass)
 
   private lazy val passage2TagDAO = Passage2TagDAO()
 
@@ -142,7 +142,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   }
 
   def updateViewCount(id: Int, viewCount: Int): Future[Int] = {
-    log.info(Application.now + ": passage: " + id + " start to sync up view count:" + viewCount)
+    log.info("passage: " + id + " start to sync up view count:" + viewCount)
 
     val action = modelQuery.filter(_.id === id).map(_.viewCount).update(viewCount)
     db.run(action)
