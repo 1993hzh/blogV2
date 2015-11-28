@@ -4,12 +4,19 @@ post.meta=<a href="#">{0}</a>发表于{1}
 login=登录
 login.name=用户名
 login.password=密码
+login.error=错误的用户名或密码！
+login.ajax.redirect=请先进行<a href="{0}"?callback="{1}">登录</a>。
 
 button.login=登录
 button.submit=提交
 button.new=新建
+error.toolong={0}的长度过长，应少于{1}
 
 nav.search.placeholder=搜索博文
+nav.search.alert.empty=关键字搜索不能为空！
+nav.search.alert.toolong=关键字太长！
+nav.messages.clean.popup.title=清空消息
+nav.messages.clean.popup.content=确定将所有未读消息标记为已读吗？
 nav.home=主页
 nav.notification=消息
 nav.manage=管理
@@ -23,6 +30,8 @@ pager.next=下一页
 
 comment.label=评论：
 comment.re=回复@{0}：{1}
+comment.re.placeholder=回复@
+comment.re.placeholder.symbol=：
 
 message=消息
 message.mark.title.read=标为已读

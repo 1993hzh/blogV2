@@ -4,12 +4,19 @@ post.meta=Posted by <a href="#">{0}</a> at {1}
 login=Sign in
 login.name=Name
 login.password=Password
+login.error=Wrong username or password!
+login.ajax.redirect=Please <a href="{0}"?callback="{1}">login</a> first.
 
 button.login=Sign in
 button.submit=Submit
 button.new=New
+error.toolong={0}'s length too long, should less than {1}
 
 nav.search.placeholder=Search for passage
+nav.search.alert.empty=Search shouldn't be empty!
+nav.search.alert.toolong=Search word too long!
+nav.messages.clean.popup.title=Empty notifications
+nav.messages.clean.popup.content=You are going to mark all notifications as read, sure?
 nav.home=Home
 nav.notification=Notification
 nav.manage=Manage
@@ -23,6 +30,8 @@ pager.next=Next
 
 comment.label=Leave a Comment:
 comment.re=Re @{0}: {1}
+comment.re.placeholder=Re @
+comment.re.placeholder.symbol=:
 
 message=Notification
 message.mark.title.read=Mark as read

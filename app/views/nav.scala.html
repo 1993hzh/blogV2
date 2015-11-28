@@ -14,6 +14,72 @@
 <script src="/assets/js/bootstrap.min.js"></script>
 <script src="/assets/js/jquery.bootstrap.min.js"></script>
 <script src="/assets/js/clean-blog.js"></script>
+<script>
+function search() {
+  var query = $("#search").val();
+  if ($.trim(query) == "") {
+    $.messager.alert('@messages("nav.search.alert.empty")')
+    return false;
+  }
+  if ($.trim(query).length > 64) {
+    $.messager.alert('@messages("nav.search.alert.toolong")')
+    return false;
+  }
+  window.location.href = "/index?query=" + query;
+}
+
+$(function () {
+  var isClear = true;
+
+  function markAllAsRead() {
+    $.ajax({
+      url: '/logged/markAll',
+      type: "post",
+      success: function (result) {
+        if (result.isSuccess == true) {
+          $('#unreadDrag').text(0);
+          return;
+        } else {
+          $.messager.popup(result.detail);
+        }
+      },
+      error: function (msg) {
+        $.messager.popup("Internal Error");
+      }
+    });
+  }
+
+  //$('#unreadDrag').parent().attr("draggable", "false");
+  $('#unreadDrag').parent().parent().on({
+    dragover: function (e) {
+      e.preventDefault();
+    },
+    drop: function (e) {
+      e.preventDefault();
+      isClear = false
+    }
+  });
+  $('#unreadDrag').on({
+    dragstart: function (e) {
+      isClear = true;
+      e.originalEvent.dataTransfer.effectAllowed = "move"
+      e.originalEvent.dataTransfer.dropEffect = "none"
+      //prevent chrome from open a new tab, firefox need this, but it sucks
+      //e.originalEvent.dataTransfer.setData('text/plain', 'Any');
+    },
+    dragend: function (e) {
+      var title = "@messages("nav.messages.clean.popup.title")";
+      var content = "@messages("nav.messages.clean.popup.content")";
+      e.preventDefault();
+      if (isClear) {
+        $.messager.confirm(title, content, function () {
+          markAllAsRead();
+        })
+      }
+    }
+  });
+});
+</script>
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
   <div class="container-fluid">

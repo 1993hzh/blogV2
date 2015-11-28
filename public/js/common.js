@@ -1,25 +1,3 @@
-function search() {
-    var query = $("#search").val();
-    if ($.trim(query) == "") {
-        $.messager.alert("Search shouldn't be empty!")
-        return false;
-    }
-    if ($.trim(query).length > 64) {
-        $.messager.alert("Search word too long!")
-        return false;
-    }
-    window.location.href = "/index?query=" + query;
-}
-
-function reply(toId, toName, toCommentId) {
-    $("#comment").attr("placeholder", "Re @" + toName + ": ");
-    $("#comment").empty();
-    $("#toId").attr("value", toId);
-    $("#toName").attr("value", toName);
-    $("#toCommentId").attr("value", toCommentId);
-    $("#comment")[0].focus();
-}
-
 function doComment() {
     hideError();
     var content = $("#comment").val();
@@ -285,24 +263,6 @@ $(function () {
             }
         });
     }
-
-    $('#unreadDrag').on({
-        dragstart: function (e) {
-            isClear = true;
-            e.originalEvent.dataTransfer.effectAllowed = "move"
-            e.originalEvent.dataTransfer.dropEffect = "none"
-            //prevent chrome from open a new tab, firefox need this, but it sucks
-            //e.originalEvent.dataTransfer.setData('text/plain', 'Any');
-        },
-        dragend: function (e) {
-            e.preventDefault();
-            if (isClear) {
-                $.messager.confirm("Empty notifications", "You are going to mark all notifications as read, sure?", function () {
-                    markAllAsRead();
-                })
-            }
-        }
-    });
 
     //$('#unreadDrag').parent().attr("draggable", "false");
     $('#unreadDrag').parent().parent().on({
