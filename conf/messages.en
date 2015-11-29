@@ -1,5 +1,7 @@
 index=index
 post.meta=Posted by <a href="#">{0}</a> at {1}
+language.display=English
+language.notfound=Language not supported '{0}'.
 
 login=Sign in
 login.name=Name
@@ -62,6 +64,7 @@ manage.tag.description.placeholder=Description
 
 manage.user.table.name=name
 manage.user.table.mail=mail
+manage.user.table.password=password
 manage.user.table.role=role
 manage.user.table.website=website
 manage.user.table.lastLoginIp=lastLoginIp

@@ -284,6 +284,21 @@ input[type="search"] {
     color: #0085a1;
 }
 
+.profile-form-control {
+    background-color: #ffffff;
+    background-image: none;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #272b30;
+    display: inline-block;
+    font-size: 14px;
+    height: 38px;
+    line-height: 1.42857;
+    padding: 8px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
 .iconfont-zhihu {
     font-family: "iconfont-zhihu" !important;
     font-style: normal;

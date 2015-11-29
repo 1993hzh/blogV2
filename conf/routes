@@ -13,9 +13,10 @@ GET         /logout                                 controllers.Login.logout
 POST        /doLogin                                controllers.Login.login
 GET         /loginWithSina                          controllers.Sina.login
 GET         /getTokenForSina                        controllers.Sina.getToken
-GET         /switchLang                             controllers.UserController.switchLang
+GET         /switchLang                             controllers.UserController.switchLang(lang:String)
 
 #Need login filter
+GET         /logged/profile                         controllers.UserController.profile
 GET         /logged/message                         controllers.CommentController.getComments(page:Int?=1)
 POST        /logged/comment                         controllers.CommentController.createComment
 GET         /logged/viewComment                     controllers.CommentController.viewComment(passageId:Int, commentId:Int)

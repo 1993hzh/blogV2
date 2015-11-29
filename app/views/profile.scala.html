@@ -1,0 +1,72 @@
+@(user: (User, Role), langs: Seq[String])(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>@user._1.userName</title>
+</head>
+<body>
+@nav()
+<!-- Main Content -->
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 my-font-color">
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary">@messages("language.display")</button>
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          @for(l <- langs) {
+            <li><a href="javascript:switchLang('@l')">@messages.messages("language.display")(Lang(l))</a></li>
+          }
+        </ul>
+      </div>
+      <hr>
+      <div class="form-group">
+        <p><label>@messages("manage.user.table.name")@messages("comment.re.placeholder.symbol")</label>
+            @user._1.userName
+        </p>
+      </div>
+      <div class="form-group">
+        <label>@messages("manage.user.table.password")@messages("comment.re.placeholder.symbol")</label>
+          <input type="text" class="profile-form-control my-font-color" id="password" name="password" value="">
+      </div>
+      <div class="form-group">
+        <label>@messages("manage.user.table.mail")@messages("comment.re.placeholder.symbol")</label>
+          <input type="text" class="profile-form-control my-font-color" id="mail" name="mail" value="@user._1.mail">
+      </div>
+      <div class="form-group">
+          <p><label>@messages("manage.user.table.role")@messages("comment.re.placeholder.symbol")</label>
+              @user._2.roleType
+          </p>
+      </div>
+      <div class="form-group">
+        <p><label>@messages("manage.user.table.website")@messages("comment.re.placeholder.symbol")</label>
+          @user._2.webSite
+        </p>
+      </div>
+      <div class="form-group">
+        <p><label>@messages("manage.user.table.lastLoginIp")@messages("comment.re.placeholder.symbol")</label>
+          @user._1.lastLoginIp
+        </p>
+      </div>
+      <div class="form-group">
+        <p><label>@messages("manage.user.table.lastLoginTime")@messages("comment.re.placeholder.symbol")</label>
+          @user._1.lastLoginTime
+        </p>
+      </div>
+      <div class="form-group">
+        <p><label>@messages("manage.user.table.lastLogoutTime")@messages("comment.re.placeholder.symbol")</label>
+          @user._1.lastLogoutTime
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+@footer()
+</body>
+</html>

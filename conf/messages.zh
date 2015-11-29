@@ -1,5 +1,7 @@
 index=首页
 post.meta=<a href="#">{0}</a>发表于{1}
+language.display=中文
+language.notfound=不支持你选择的语言：{0}。
 
 login=登录
 login.name=用户名
@@ -62,6 +64,7 @@ manage.tag.description.placeholder=标签描述
 
 manage.user.table.name=用户名
 manage.user.table.mail=邮箱
+manage.user.table.password=密码
 manage.user.table.role=角色
 manage.user.table.website=网址
 manage.user.table.lastLoginIp=上次登入IP

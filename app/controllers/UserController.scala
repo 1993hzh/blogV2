@@ -65,8 +65,21 @@ class UserController @Inject()(cache: CacheApi, messages: MessagesApi) extends C
     }
   }
 
-  def switchLang() = Action.async {
-    Future.successful(Redirect(routes.Index.index()).withLang(Lang("en")))
+  def switchLang(lang: String) = Action.async { implicit request =>
+    Lang.get(lang) match {
+      case Some(l) if (Application.getSupportedLangs().contains(lang)) =>
+        Future.successful(Application.sendJsonResult(true, "").withLang(l))
+      case _ => Future.successful(Application.sendJsonResult(false, messages("language.notfound", lang)))
+    }
+  }
+
+  def profile() = Action.async { implicit request =>
+    val user = Application.getLoginUser(request.session)
+    user match {
+      case Some((u, r)) =>
+        Future.successful(Ok(views.html.profile((u, r), Application.getSupportedLangs)))
+      case None => Future.successful(Redirect(routes.Index.index()))
+    }
   }
 
   def userForm(implicit lang: Lang) = Form(

@@ -129,4 +129,8 @@ object Application extends Controller {
     val count = commentDAO.getUnreadInMessagesCountSync(userId)
     count.toString
   }
+
+  def getSupportedLangs(): Seq[String] = {
+    Play.current.configuration.getStringSeq("play.i18n.langs").get
+  }
 }

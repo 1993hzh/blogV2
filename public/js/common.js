@@ -242,6 +242,27 @@ function addKeyword() {
     $("input#keywordAdd").focus();
 }
 
+function switchLang(lang) {
+    $.ajax({
+        url: '/switchLang',
+        type: "get",
+        data: {
+            lang: lang
+        },
+        success: function (result) {
+            if (result.isSuccess == true) {
+                window.location.href = window.location.href;
+                return;
+            } else {
+                $.messager.popup(result.detail);
+            }
+        },
+        error: function (msg) {
+            $.messager.popup("Internal Error");
+        }
+    });
+}
+
 //here is the drag
 $(function () {
     var isClear = true;
