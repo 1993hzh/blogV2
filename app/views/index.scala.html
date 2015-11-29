@@ -1,7 +1,7 @@
 @import models.Passage
 @(passagesWithTags: List[(Passage, List[Tag], Int)],
         currentPage: Int, totalPage: Int,
-        query: Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages)
+        query: Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
 
 <!DOCTYPE html>
 <html lang="en">

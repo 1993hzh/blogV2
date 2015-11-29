@@ -1,5 +1,7 @@
 @import models.CommentStatus
-@(inMessage: List[(Comment, String)], currentPage: Int, totalPage: Int, error:String = "")(implicit session: play.api.mvc.Session, messages: Messages)
+@(inMessage: List[(Comment, String)],
+        currentPage: Int, totalPage: Int,
+        error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
 
 <!DOCTYPE html>
 <html>

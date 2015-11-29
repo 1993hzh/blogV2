@@ -1,4 +1,6 @@
-@(comments: List[Comment], passageId: Int, error: Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages)
+@(comments: List[Comment],
+        passageId: Int,
+        error: Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
 
 
 <div class="override-no-margin-top my-font-color">
