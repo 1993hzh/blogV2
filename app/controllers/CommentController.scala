@@ -155,7 +155,7 @@ class CommentController @Inject()(cache: CacheApi, messages: MessagesApi) extend
     Redirect(routes.PassageController.passage(passageId).url + "#" + commentId)
   }
 
-  val commentForm = Form(
+  def commentForm(implicit lang: play.api.i18n.Lang) = Form(
     mapping(
       "content" -> nonEmptyText,
       "passageId" -> number,

@@ -25,7 +25,7 @@ object LoginFilter extends Filter {
       Application.getLoginUser(rh.session) match {
         case None if (isAjax) =>
           log.info(rh.remoteAddress + " is requesting " + rh.uri + " without login, send ajax.")
-          Future.successful(Application.sendJsonResult(false, Application.loginAjax("")))
+          Future.successful(Application.sendJsonResult(false, Application.loginAjax("")(rh)))
         case None if (!isAjax) =>
           log.info(rh.remoteAddress + " is requesting " + rh.uri + ", redirected.")
           Future.successful(Results.Redirect(routes.Login.index() + "?callback=" + rh.uri))

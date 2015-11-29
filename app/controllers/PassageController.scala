@@ -136,7 +136,7 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
     }
   }
 
-  val passageForm = Form(
+  def passageForm(implicit lang: play.api.i18n.Lang) = Form(
     mapping(
       "id" -> optional(number),
       "title" -> nonEmptyText,

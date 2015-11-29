@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import dao.{UserDAO, CommentDAO, PassageDAO}
 import models.{Role, User}
 import play.api._
-import play.api.i18n.{Messages}
+import play.api.i18n.{MessagesApi, Lang, Messages}
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.cache.{CacheApi, Cache}
@@ -20,13 +20,13 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 object Application extends Controller {
+
   private lazy val log = Logger(this.getClass)
 
   private lazy val passageDAO = PassageDAO()
   private lazy val commentDAO = CommentDAO()
   private lazy val userDAO = UserDAO()
 
-  val ERROR_NAME_OR_PWD = Messages("login.error")
   val KEY_PASSAGE_COUNT = "totalPassage"
   val KEY_PAGE_COUNT = "totalPageOfPassage"
   val PAGE_SIZE = 5
@@ -34,9 +34,13 @@ object Application extends Controller {
   val PASSAGE_VIEW_COUNT_PREFIX = "passage-id-"
   val PASSAGE_BEEN_READ_LIST = "passage_has_been_read"
 
-  def loginAjax(callback: String) = Messages("login.ajax.redirect", routes.Login.index(), callback)
+  def ERROR_NAME_OR_PWD(implicit lang: Lang) = Messages("login.error")
 
-  def tooLong(name: String, length: Int) = Messages("error.toolong", name, length)
+  def loginAjax(callback: String)(implicit requestHeader: RequestHeader) = {
+    Messages("login.ajax.redirect", routes.Login.index(), callback)
+  }
+
+  def tooLong(name: String, length: Int)(implicit lang: Lang) = Messages("error.toolong", name, length)
 
   def getPageNum(num: Any, totalPage: Int) = {
     num match {

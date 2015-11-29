@@ -13,6 +13,7 @@ GET         /logout                                 controllers.Login.logout
 POST        /doLogin                                controllers.Login.login
 GET         /loginWithSina                          controllers.Sina.login
 GET         /getTokenForSina                        controllers.Sina.getToken
+GET         /switchLang                             controllers.UserController.switchLang
 
 #Need login filter
 GET         /logged/message                         controllers.CommentController.getComments(page:Int?=1)

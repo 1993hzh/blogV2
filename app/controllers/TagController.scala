@@ -73,7 +73,7 @@ class TagController @Inject()(cache: CacheApi, messages: MessagesApi) extends Co
     }
   }
 
-  val tagForm = Form(
+  def tagForm(implicit lang: play.api.i18n.Lang) = Form(
     mapping(
       "id" -> optional(number),
       "name" -> nonEmptyText,

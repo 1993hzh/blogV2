@@ -8,7 +8,7 @@ import play.api.Logger
 import play.api.cache._
 import play.api.data._
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{Lang, I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.Future
@@ -67,7 +67,7 @@ class Login @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller
     Redirect(routes.Index.index()).withNewSession
   }
 
-  val loginForm = Form(
+  def loginForm(implicit lang: Lang) = Form(
     mapping(
       "callback" -> optional(text),
       "name" -> nonEmptyText,

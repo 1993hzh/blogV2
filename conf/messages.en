@@ -10,7 +10,7 @@ login.ajax.redirect=Please <a href="{0}"?callback="{1}">login</a> first.
 button.login=Sign in
 button.submit=Submit
 button.new=New
-error.toolong={0}'s length too long, should less than {1}
+error.toolong={0}'s length too long, should less than '{1}'
 
 nav.search.placeholder=Search for passage
 nav.search.alert.empty=Search shouldn't be empty!

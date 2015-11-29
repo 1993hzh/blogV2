@@ -7,10 +7,12 @@ import play.api.Logger
 import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{Lang, I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
 
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+import scala.concurrent.Future
 
 /**
  * Created by Leo.
@@ -63,7 +65,11 @@ class UserController @Inject()(cache: CacheApi, messages: MessagesApi) extends C
     }
   }
 
-  val userForm = Form(
+  def switchLang() = Action.async {
+    Future.successful(Redirect(routes.Index.index()).withLang(Lang("en")))
+  }
+
+  def userForm(implicit lang: Lang) = Form(
     mapping(
       "userName" -> nonEmptyText,
       "password" -> nonEmptyText,
