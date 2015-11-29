@@ -82,6 +82,31 @@ class UserController @Inject()(cache: CacheApi, messages: MessagesApi) extends C
     }
   }
 
+  /*def update = Action { implicit request =>
+    userForm.bindFromRequest.fold(
+      formWithErrors => {
+        Application.sendJsonResult(false, formWithErrors.errors.map(_.message).mkString(", "))
+      },
+      data => {
+        val userName = Application.getLoginUserName(request.session)
+        if (!userName.equals(data.userName)) {
+          log.info("User: " + userName + " try to update User: " + data.userName)
+          Application.sendJsonResult(false, "")
+        }
+        val userId = Application.getLoginUserId(request.session)
+        val result = userDAO.updateUserBySelf(userId, data.password, data.mail)
+        result match {
+          case result: Int if result > 0 =>
+            log.info("User: " + data.userName + " is updated, new id: " + result)
+            Application.sendJsonResult(true, "")
+          case result: Int if result <= 0 =>
+            log.info("User: " + data.userName + " update failed, return value: " + result)
+            Application.sendJsonResult(false, "User: " + data.userName + " update failed, return value: " + result)
+        }
+      }
+    )
+  }*/
+
   def userForm(implicit lang: Lang) = Form(
     mapping(
       "userName" -> nonEmptyText,

@@ -29,10 +29,10 @@ class UserDAO extends AbstractDAO[User] with UserTable {
   import driver.api._
 
   /**
-    * it's a bad idea to query DB again for NewUser
-    * @param user
-    * @return
-    */
+   * it's a bad idea to query DB again for NewUser
+   * @param user
+   * @return
+   */
   def createThirdPartyUser(user: User): Option[User] = {
     val id = Await.result(super.insert(user), waitTime)
     Await.result(super.query(id), waitTime)
@@ -48,6 +48,10 @@ class UserDAO extends AbstractDAO[User] with UserTable {
 
   def createCommonUserSync(userName: String, password: String, mail: String): Int = {
     Await.result(createCommonUser(userName, password, mail), waitTime)
+  }
+
+  def updateUserBySelf(userId: Int, password: String, mail: String): Future[Int] = {
+    db.run(modelQuery.filter(_.id === userId).map(u => (u.password, u.mail)).update((password, mail)))
   }
 
   def getUserCount(): Future[Int] = db.run(modelQuery.length.result)
