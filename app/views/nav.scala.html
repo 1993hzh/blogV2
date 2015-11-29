@@ -3,7 +3,7 @@
 @import models.User
 @import models.Role
 @import models.RoleType
-@()(implicit session: play.api.mvc.Session, messages: Messages)
+@()(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
 <link rel="shortcut icon" type="image/x-icon" href="@routes.Assets.at("img/favicon.ico")">
 <link href="/assets/css/bootstrap-slate.min.css" rel="stylesheet">
 <link href="/assets/css/common.css" rel="stylesheet">
@@ -83,31 +83,12 @@ $(function () {
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
   <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header page-scroll pull-right">
-        @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
-          case Some((u, r)) => {
-            <a class="navbar-brand" title="logout" href="/logout">@u.userName <i class="fa fa-power-off"></i></a>
-          }
-          case None => {
-            <a class="navbar-brand" href="/login">@messages("button.login")</a>
-          }
-        }
-    </div>
-    <!-- Search box -->
-    <div class="input-group pull-right search-box">
-      <span class="input-group-addon pull-right mark-button" onclick="search()">
-        <i class="fa fa-search"></i>
-      </span>
-      <input id="search" type="search" class="form-control pull-right" placeholder="@messages("nav.search.placeholder")">
-    </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav navbar-left">
+      <ul class="nav navbar-nav">
         <li>
           <a href="/index">@messages("nav.home")</a>
         </li>
-
         @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
           case Some((u, r)) => {
             <li>
@@ -136,6 +117,33 @@ $(function () {
         }
         <li>
           <a href="/about">@messages("nav.about")</a>
+        </li>
+        <li class="pull-right">
+          @Cache.getAs[(User, Role)]((session.get("loginUser")).getOrElse("")) match {
+            case Some((u, r)) => {
+              <a class="dropdown-toggle nav-header" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                @u.userName&nbsp;<span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="/switchLang" class="override-no-text-transform">Switch Language</a></li>
+                <li><a href="/manage/tag" class="override-no-text-transform">Profile</a></li>
+                <li><a class="override-no-text-transform" title="logout" href="/logout">
+                  <i class="fa fa-power-off"></i>&nbsp;Logout</a>
+                </li>
+              </ul>
+            }
+            case None => {
+              <a class="nav-header" href="/login">@messages("button.login")</a>
+            }
+          }
+        </li>
+        <li class="pull-right">
+          <div class="input-group pull-right search-box">
+            <span class="input-group-addon pull-right mark-button" onclick="search()">
+              <i class="fa fa-search"></i>
+            </span>
+            <input id="search" type="search" class="form-control pull-right" placeholder="@messages("nav.search.placeholder")">
+          </div>
         </li>
       </ul>
     </div>
