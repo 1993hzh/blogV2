@@ -1,4 +1,7 @@
 @import models.Passage
+@import controllers.Application
+@import play.api.Play.current
+@import play.api.cache._
 @(passagesWithTags: List[(Passage, List[Tag], Int)],
         currentPage: Int, totalPage: Int,
         query: Option[String] = None)(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
@@ -42,7 +45,7 @@
           <p class="post-meta">
             @Html(messages("post.meta", p.authorName, p.createTime.format("yyy-MM-dd HH:mm:ss")))
             <i class="pull-right">
-              <i class="fa fa-eye">&nbsp;@p.viewCount&nbsp;</i>
+              <i class="fa fa-eye">&nbsp;@Cache.getOrElse[Int](Application.PASSAGE_VIEW_COUNT_PREFIX + p.id)(p.viewCount)&nbsp;</i>
               <i class="fa fa-comments-o">&nbsp;@cNum&nbsp;</i>
             </i>
           </p>

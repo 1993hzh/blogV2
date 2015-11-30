@@ -98,6 +98,7 @@ class CommentController @Inject()(cache: CacheApi, messages: MessagesApi) extend
         resetUnreadCountInCache(userName, if (status.equals(CommentStatus.unread)) 1 else -1) //here we update the replier unreadCount
         Application.sendJsonResult(true, "")
       case (true, false) =>
+        resetUnreadCountInCache(userName, if (status.equals(CommentStatus.unread)) 1 else -1) //here we update the replier unreadCount
         Application.sendJsonResult(true, "")
       case _ =>
         Application.sendJsonResult(false, "Sorry that markAs" + markType + " failed, this issue has been logged, will be fixed later")

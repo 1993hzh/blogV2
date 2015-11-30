@@ -42,11 +42,8 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
     set += passageId
     cache.set(Application.PASSAGE_BEEN_READ_LIST, set)
 
-    var currentViewCount = cache.getOrElse[Int](Application.PASSAGE_VIEW_COUNT_PREFIX + passageId)(0)
-    if (currentViewCount == 0) //if the currentViewCount is 0, we should init the value with viewCount stored in db
-      currentViewCount += viewCount
-    currentViewCount += 1
-    cache.set(Application.PASSAGE_VIEW_COUNT_PREFIX + passageId, currentViewCount)
+    var currentViewCount = cache.getOrElse[Int](Application.PASSAGE_VIEW_COUNT_PREFIX + passageId)(viewCount)
+    cache.set(Application.PASSAGE_VIEW_COUNT_PREFIX + passageId, currentViewCount + 1)
   }
 
   def manage(page: Int) = Action { implicit request =>
