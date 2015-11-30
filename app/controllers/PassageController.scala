@@ -15,9 +15,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
- * Created by Leo.
- * 2015/11/7 20:00
- */
+  * Created by Leo.
+  * 2015/11/7 20:00
+  */
 class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
   override def messagesApi: MessagesApi = messages
 
@@ -38,9 +38,9 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
 
   private def setViewCount(passageId: Int, viewCount: Int) = {
     //first set
-    var set = cache.getOrElse[Mset[Int]](Application.PASSAGE_BEEN_READ_LIST)(Mset.empty[Int])
-    set += passageId
-    cache.set(Application.PASSAGE_BEEN_READ_LIST, set)
+    val set = cache.getOrElse[Mset[Int]](Application.PASSAGE_BEEN_READ_LIST)(Mset.empty[Int])
+    if (!set.contains(passageId))
+      cache.set(Application.PASSAGE_BEEN_READ_LIST, set + passageId)
 
     val currentViewCount = cache.getOrElse[Int](Application.PASSAGE_VIEW_COUNT_PREFIX + passageId)(viewCount)
     cache.set(Application.PASSAGE_VIEW_COUNT_PREFIX + passageId, currentViewCount + 1)
@@ -113,10 +113,10 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
   }
 
   /**
-   * I won't provide a function for batch deletion since it's unsafe
-   * @param id
-   * @return
-   */
+    * I won't provide a function for batch deletion since it's unsafe
+    * @param id
+    * @return
+    */
   def delete(id: Int) = Action { implicit request =>
     val user = Application.getLoginUserName(request.session)
     val userId = Application.getLoginUserId(request.session)
