@@ -42,7 +42,7 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
     set += passageId
     cache.set(Application.PASSAGE_BEEN_READ_LIST, set)
 
-    var currentViewCount = cache.getOrElse[Int](Application.PASSAGE_VIEW_COUNT_PREFIX + passageId)(viewCount)
+    val currentViewCount = cache.getOrElse[Int](Application.PASSAGE_VIEW_COUNT_PREFIX + passageId)(viewCount)
     cache.set(Application.PASSAGE_VIEW_COUNT_PREFIX + passageId, currentViewCount + 1)
   }
 
