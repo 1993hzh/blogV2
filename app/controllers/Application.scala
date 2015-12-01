@@ -27,10 +27,14 @@ object Application extends Controller {
   private lazy val commentDAO = CommentDAO()
   private lazy val userDAO = UserDAO()
 
-  lazy val SUPPORTED_LANGUAGES: Seq[String] = Play.current.configuration.getStringSeq("play.i18n.langs").getOrElse(Nil)
-  lazy val SINA_REDIRECT_URI = Play.current.configuration.getString("sina.redirect_uri").getOrElse("")
-  lazy val SINA_CLIENT_ID = Play.current.configuration.getString("sina.app_id").getOrElse("")
-  lazy val SINA_CLIENT_SECRECT = Play.current.configuration.getString("sina.app_secret").getOrElse("")
+  private lazy val CONF = Play.current.configuration
+  lazy val SUPPORTED_LANGUAGES: Seq[String] = CONF.getStringSeq("play.i18n.langs").getOrElse(Nil)
+  lazy val SINA_REDIRECT_URI = CONF.getString("sina.redirect_uri").getOrElse("")
+  lazy val SINA_CLIENT_ID = CONF.getString("sina.app_id").getOrElse("")
+  lazy val SINA_CLIENT_SECRECT = CONF.getString("sina.app_secret").getOrElse("")
+  lazy val QINIU_ACCESS_KEY = CONF.getString("qiniu.access_key").getOrElse("")
+  lazy val QINIU_SECRET_KEY = CONF.getString("qiniu.secret_key").getOrElse("")
+  lazy val QINIU_BUCKET_NAME = CONF.getString("qiniu.bucket_name").getOrElse("")
 
   val KEY_PASSAGE_COUNT = "totalPassage"
   val KEY_PAGE_COUNT = "totalPageOfPassage"

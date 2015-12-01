@@ -79,6 +79,8 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
         }
       }
       <hr>
+      <div id="fileUploadProgress"></div>
+      <hr>
       <button id="passageFormSubmit" type="submit" class="btn btn-default btn-right">@messages("button.submit")</button>
     </form>
   </div>
@@ -93,7 +95,11 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
   <!-- here import language modules -->
   <script src="/assets/js/lang-sql.js"></script>
   <script src="/assets/js/lang-scala.js"></script>
-  <script>
+  <!-- here import image upload modules -->
+  <script src="/assets/js/qiniu.min.js"></script>
+  <script src="/assets/js/plupload.full.min.js"></script>
+  <script src="/assets/js/upload.js"></script>
+<script>
     $(function() {
       $(window).on("beforeunload", function(e) {
         e.preventDefault();
@@ -115,5 +121,38 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
       prettyPrint();
       $("pre").addClass("prettyprint linenums");
     });
+
+    var uploader = Qiniu.uploader({
+      runtimes: 'html5,html4',
+      browse_button: 'pickfiles',
+      uptoken_url: '/manage/getUploadToken',
+      //downtoken_url: '/downtoken',
+      domain: 'http://7xoixh.com1.z0.glb.clouddn.com/',
+      max_file_size: '10mb',
+      max_retries: 3,
+      dragdrop: true,
+      drop_element: 'container',
+      chunk_size: '2mb',
+      auto_start: true,
+      init: {
+        'FilesAdded': function(up, files) {
+          plupload.each(files, function(file) {
+            showUploadProgress(file);
+          });
+        },
+        'UploadProgress': function(up, file) {
+          updateProgress(file.id, file.percent);
+        },
+        'FileUploaded': function(up, file, info) {
+          updateProgress(file.id, file.percent);
+          var res = $.parseJSON(info);
+          var sourceLink = Qiniu.domain + res.name;
+          addImage(sourceLink);
+        },
+        'Error': function(up, err, errTip) {
+          $.messager.popup(up+": "+err+": "+errTip);
+        }
+    }
+});
   </script>
 </html>

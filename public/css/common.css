@@ -311,3 +311,6 @@ input[type="search"] {
     content: "\e6bd";
 }
 
+.white-color-href {
+    color: white;
+}
