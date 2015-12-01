@@ -47,7 +47,7 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
             </span> &nbsp;
           }
         </div>
-        <input type="text" placeholder="@messages("manage.passage.keyword.placeholder")" id="keywordAdd" class="form-control">
+        <input type="text" placeholder='"@messages("manage.passage.keyword.placeholder")' id="keywordAdd" class="form-control">
         <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
         <hr>
         <div class="my-font-color">
@@ -65,7 +65,7 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
         <input type="text" class="form-control" placeholder="@messages("manage.passage.title.placeholder")" id="title" name="title"/>
         <hr>
         <div id="keywordList" style="display : inline-block ;"></div>
-        <input type="text" placeholder="@messages("manage.passage.keyword.placeholder")" id="keywordAdd" class="form-control">
+        <input type="text" placeholder='@messages("manage.passage.keyword.placeholder")' id="keywordAdd" class="form-control">
         <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
         <hr>
         <div class="my-font-color">
@@ -95,6 +95,11 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
   <script src="/assets/js/lang-scala.js"></script>
   <script>
     $(function() {
+      $(window).on("beforeunload", function(e) {
+        e.preventDefault();
+        return "Passage not reserved.";
+      });
+
       $('#content').wysiwyg({
         hotKeys: {
           'ctrl+b meta+b': 'bold',
