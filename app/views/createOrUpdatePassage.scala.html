@@ -128,11 +128,11 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
       uptoken_url: '/manage/getUploadToken',
       //downtoken_url: '/downtoken',
       domain: 'http://7xoixh.com1.z0.glb.clouddn.com/',
-      max_file_size: '10mb',
+      max_file_size: '10MB',
       max_retries: 3,
       dragdrop: true,
       drop_element: 'container',
-      chunk_size: '2mb',
+      chunk_size: '1MB',
       auto_start: true,
       init: {
         'FilesAdded': function(up, files) {
