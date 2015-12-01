@@ -27,6 +27,11 @@ object Application extends Controller {
   private lazy val commentDAO = CommentDAO()
   private lazy val userDAO = UserDAO()
 
+  lazy val SUPPORTED_LANGUAGES: Seq[String] = Play.current.configuration.getStringSeq("play.i18n.langs").getOrElse(Nil)
+  lazy val SINA_REDIRECT_URI = Play.current.configuration.getString("sina.redirect_uri").getOrElse("")
+  lazy val SINA_CLIENT_ID = Play.current.configuration.getString("sina.app_id").getOrElse("")
+  lazy val SINA_CLIENT_SECRECT = Play.current.configuration.getString("sina.app_secret").getOrElse("")
+
   val KEY_PASSAGE_COUNT = "totalPassage"
   val KEY_PAGE_COUNT = "totalPageOfPassage"
   val PAGE_SIZE = 5
@@ -130,7 +135,4 @@ object Application extends Controller {
     count.toString
   }
 
-  def getSupportedLangs(): Seq[String] = {
-    Play.current.configuration.getStringSeq("play.i18n.langs").get
-  }
 }

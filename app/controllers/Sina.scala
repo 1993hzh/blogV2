@@ -31,15 +31,15 @@ class Sina @Inject()(ws: WSClient, cache: CacheApi, messages: MessagesApi) exten
   private val get_uinfo_url = "https://api.weibo.com/2/users/show.json"
 
   /* Need Config */
-  private val redirect_uri = Play.current.configuration.getString("sina.redirect_uri").getOrElse("")
-  private val CLIENT_ID = Play.current.configuration.getString("sina.app_id").getOrElse("")
-  private val CLIENT_SECRECT = Play.current.configuration.getString("sina.app_secret").getOrElse("")
+  private val REDIRECT_URI = Application.SINA_REDIRECT_URI
+  private val CLIENT_ID = Application.SINA_CLIENT_ID
+  private val CLIENT_SECRECT = Application.SINA_CLIENT_SECRECT
 
   private def accessTokenRequest(code: String) = ws.url(access_token_url).post(Map(
     "client_id" -> Seq(CLIENT_ID),
     "client_secret" -> Seq(CLIENT_SECRECT),
     "grant_type" -> Seq("authorization_code"),
-    "redirect_uri" -> Seq(redirect_uri),
+    "redirect_uri" -> Seq(REDIRECT_URI),
     "code" -> Seq(code)
   ))
 
@@ -47,7 +47,7 @@ class Sina @Inject()(ws: WSClient, cache: CacheApi, messages: MessagesApi) exten
     val queryString: Map[String, Seq[String]] = Map(
       "client_id" -> Seq(CLIENT_ID),
       "response_type" -> Seq("code"),
-      "redirect_uri" -> Seq(redirect_uri))
+      "redirect_uri" -> Seq(REDIRECT_URI))
     Future.successful(Redirect(authorize_url, queryString))
   }
 
