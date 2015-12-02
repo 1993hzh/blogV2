@@ -102,7 +102,7 @@ class CommentDAO extends AbstractDAO[Comment] with CommentTable {
         if (doMark)
           Await.result(markAs(commentId, status), waitTime) match {
             //only if mark done successfully and the comment is unread before, we need to do cache update
-            case r: Int if r == 1 => (true, c.status == CommentStatus.unread)
+            case r: Int if r == 1 => (true, c.status == CommentStatus.unread || status == CommentStatus.unread)
             case _ => log.info("Comment: " + commentId + " mark as " + status + " failed"); (false, false)
           }
         else (false, false)
