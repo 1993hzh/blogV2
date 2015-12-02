@@ -309,6 +309,7 @@ $(function () {
             },
             success: function (result) {
                 if (result.isSuccess == true) {
+                    $(window).unbind("beforeunload");
                     window.location.href = result.detail;
                     return;
                 } else {
