@@ -20,9 +20,7 @@ EXPOSE 9000 8888
 RUN mkdir /app
 WORKDIR /app
 
-RUN git clone https://github.com/1993hzh/blogV2.git /app
-  && cd /app
-  && activator run
+RUN git clone https://github.com/1993hzh/blogV2.git /app && cd /app && activator run
 
 CMD ["activator", "run"]
 
