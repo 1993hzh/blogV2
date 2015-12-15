@@ -15,7 +15,7 @@ RUN wget --no-check-certificate https://dl.bintray.com/sbt/native-packages/sbt/0
 RUN tar -zxvf sbt-0.13.8.tgz && rm sbt-0.13.8.tgz && chmod a+x /sbt/bin/sbt
 ENV PATH $PATH:/sbt/bin
 
-EXPOSE 9000 8888
+EXPOSE 80 9000 8888
 RUN mkdir /app
 WORKDIR /app
 
