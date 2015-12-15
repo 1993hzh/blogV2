@@ -10,9 +10,9 @@ RUN rpm -ivh jdk-8*-linux-x64.rpm && rm jdk-8*-linux-x64.rpm
 ENV JAVA_HOME /usr/java/latest
 
 RUN yum install -y unzip
-RUN curl -O https://downloads.typesafe.com/typesafe-activator/1.3.6/typesafe-activator-1.3.6.zip
-RUN unzip typesafe-activator-1.3.6.zip -d / && rm typesafe-activator-1.3.6.zip && chmod a+x /activator-dist-1.3.6/activator
-ENV PATH $PATH:/activator-dist-1.3.6
+RUN curl -O https://dl.bintray.com/sbt/native-packages/sbt/0.13.8/sbt-0.13.8.zip
+RUN unzip sbt-0.13.9.zip -d / && rm sbt-0.13.9.zip && chmod a+x /sbt/bin/sbt
+ENV PATH $PATH:/sbt/bin
 
 RUN yum install -y git
 
@@ -20,7 +20,7 @@ EXPOSE 9000 8888
 RUN mkdir /app
 WORKDIR /app
 
-RUN git clone https://github.com/1993hzh/blogV2.git /app && cd /app && activator run
+RUN git clone https://github.com/1993hzh/blogV2.git /app && cd /app && sbt run
 
-CMD ["activator", "run"]
+CMD ["sbt", "run"]
 
