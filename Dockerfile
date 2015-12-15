@@ -11,7 +11,7 @@ ENV JAVA_HOME /usr/java/latest
 
 RUN yum install -y unzip
 RUN curl -O https://dl.bintray.com/sbt/native-packages/sbt/0.13.8/sbt-0.13.8.zip
-RUN unzip sbt-0.13.9.zip -d / && rm sbt-0.13.9.zip && chmod a+x /sbt/bin/sbt
+RUN unzip sbt-0.13.8.zip -d / && rm sbt-0.13.8.zip && chmod a+x /sbt/bin/sbt
 ENV PATH $PATH:/sbt/bin
 
 RUN yum install -y git
