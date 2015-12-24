@@ -11,6 +11,7 @@ RUN wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=acc
 RUN rpm -ivh jdk-8*-linux-x64.rpm && rm jdk-8*-linux-x64.rpm
 ENV JAVA_HOME /usr/java/latest
 
+RUN yum install -y unzip
 RUN curl -O https://downloads.typesafe.com/typesafe-activator/1.3.6/typesafe-activator-1.3.6.zip
 RUN unzip typesafe-activator-1.3.6.zip -d / && rm typesafe-activator-1.3.6.zip && chmod a+x /activator-dist-1.3.6/activator
 ENV PATH $PATH:/activator-dist-1.3.6
