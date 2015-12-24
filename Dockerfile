@@ -11,15 +11,15 @@ RUN wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=acc
 RUN rpm -ivh jdk-8*-linux-x64.rpm && rm jdk-8*-linux-x64.rpm
 ENV JAVA_HOME /usr/java/latest
 
-RUN wget --no-check-certificate https://dl.bintray.com/sbt/native-packages/sbt/0.13.8/sbt-0.13.8.tgz
-RUN tar -zxvf sbt-0.13.8.tgz && rm sbt-0.13.8.tgz && chmod a+x /sbt/bin/sbt
-ENV PATH $PATH:/sbt/bin
+RUN curl -O https://downloads.typesafe.com/typesafe-activator/1.3.6/typesafe-activator-1.3.6.zip
+RUN unzip typesafe-activator-1.3.6.zip -d / && rm typesafe-activator-1.3.6.zip && chmod a+x /activator-dist-1.3.6/activator
+ENV PATH $PATH:/activator-dist-1.3.6
 
-EXPOSE 80 9000 8888
+EXPOSE 9000 8888
 RUN mkdir /app
 WORKDIR /app
 
 RUN git clone https://github.com/1993hzh/blogV2.git /app
 
-CMD ["sbt", "run"]
+CMD ["activator", "run"]
 
