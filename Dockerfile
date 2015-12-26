@@ -22,5 +22,5 @@ WORKDIR /app
 
 RUN git clone https://github.com/1993hzh/blogV2.git /app
 
-CMD ["activator", "run"]
+CMD ["activator", "compile"]
 
