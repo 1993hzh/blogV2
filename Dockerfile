@@ -20,5 +20,6 @@ RUN mkdir /app
 WORKDIR /app
 
 RUN git clone https://github.com/1993hzh/blogV2.git /app
+VOLUME ["/app", "/root/.ivy2"]
 
 CMD ["sbt", "run"]
