@@ -12,10 +12,8 @@ config the vars in your heroku console.
 ```sh
 insert your admin account with sql
 ```
-##add your own language support
-config application.conf with `play.i18n.langs`, add messages.[yourLang] in `conf` dir
 
-##Deploy in other Caas using docker
+##Deploy in other CaaS using docker
 Dockerfile has been written in this project
 ###First, you should have a db
 I deployed my postgres in www.tenxcloud.com, it's easy
@@ -37,3 +35,5 @@ sbt run -server=y \
 -DIMAGE_DOMAIN={?your_file_system_domain}
 ```
 
+##add your own language support
+config application.conf with `play.i18n.langs`, add messages.[yourLang] in `conf` dir
