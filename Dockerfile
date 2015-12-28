@@ -2,6 +2,8 @@ FROM            centos:latest
 
 MAINTAINER      Leo Hu <mail@huzhonghua.cn>
 
+RUN cp -n /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
 RUN yum update -y
 
 RUN yum install -y wget
