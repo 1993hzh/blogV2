@@ -20,6 +20,9 @@ RUN mkdir /app
 WORKDIR /app
 
 RUN git clone https://github.com/1993hzh/blogV2.git /app
-VOLUME ["/app", "/root/.ivy2"]
+
+VOLUME /app
+# recommend to overwrite the sbtConfig.txt to make sure the ivy path
+VOLUME /root/.ivy2
 
 CMD ["sbt", "run"]
