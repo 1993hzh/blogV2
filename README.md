@@ -2,6 +2,18 @@
 
 ##Deploy in Heroku
 config the vars in your heroku console.
+```sh
+ACCESS_KEY={?your_file_system_key}
+SECRET_KEY={?your_file_system_secret}
+BUCKET_NAME={?your_file_system_bucket}
+IMAGE_DOMAIN={?your_file_system_domain}
+JDBC_DATABASE_USERNAME={?your_db_name}
+JDBC_DATABASE_PASSWORD={?your_db_password}
+JDBC_DATABASE_URL={?your_db_url}
+SINA_APP_ID={?your_sina_app_id}
+SINA_APP_SECRET={?your_sina_app_secrect}
+SINA_REDIRECT_URL={?your_sina_app_redirect_url}
+```
 ###db.conf
 (currently support postgres, you can change the driver class in both db.conf && build.sbt, although this is not tested)
 ###oauth.conf
@@ -31,7 +43,7 @@ sbt run -server=y \
 -DJDBC_DATABASE_URL={?your_db_url} \
 -DACCESS_KEY={?your_file_system_key} \
 -DSECRET_KEY={?your_file_system_secret} \
--DBUCKET_NAME={?your_file_system_bucket}
+-DBUCKET_NAME={?your_file_system_bucket} \
 -DIMAGE_DOMAIN={?your_file_system_domain}
 ```
 
