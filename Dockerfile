@@ -13,7 +13,7 @@ ENV JAVA_HOME /usr/java/latest
 
 RUN wget --no-check-certificate https://dl.bintray.com/sbt/native-packages/sbt/0.13.8/sbt-0.13.8.tgz
 RUN tar -zxvf sbt-0.13.8.tgz && rm sbt-0.13.8.tgz && chmod a+x /sbt/bin/sbt
-ENV SBT_HOME /sbt/bin
+ENV PATH $PATH:/sbt/bin
 
 EXPOSE 9000 8888
 RUN mkdir /app
