@@ -49,3 +49,4 @@ config application.conf with `play.i18n.langs`, add messages.[yourLang] in `conf
 ```sh
 insert your admin account with sql
 ```
+#Currently not support https, will add this in the future
