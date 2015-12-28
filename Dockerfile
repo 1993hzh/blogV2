@@ -20,6 +20,7 @@ RUN mkdir /app
 WORKDIR /app
 
 RUN git clone https://github.com/1993hzh/blogV2.git /app
+RUN cd /app && sbt compile
 
 VOLUME /app
 # recommend to overwrite the sbtConfig.txt to make sure the ivy path
