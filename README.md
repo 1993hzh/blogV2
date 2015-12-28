@@ -14,16 +14,6 @@ SINA_APP_ID={?your_sina_app_id}
 SINA_APP_SECRET={?your_sina_app_secrect}
 SINA_REDIRECT_URL={?your_sina_app_redirect_url}
 ```
-###db.conf
-(currently support postgres, you can change the driver class in both db.conf && build.sbt, although this is not tested)
-###oauth.conf
-(currently support sina)
-###fileSystem.conf
-(currently support qiniu)
-###and then
-```sh
-insert your admin account with sql
-```
 
 ##Deploy in other CaaS using docker
 Dockerfile has been written in this project
@@ -47,5 +37,15 @@ sbt run -server=y \
 -DIMAGE_DOMAIN={?your_file_system_domain}
 ```
 
-##add your own language support
+##DB
+(currently support postgres, you can change the driver class in both db.conf && build.sbt, although this is not tested)
+##OAuth
+(currently support sina)
+##FileSystem
+(currently support qiniu)
+##Add your own language support
 config application.conf with `play.i18n.langs`, add messages.[yourLang] in `conf` dir
+##Remember
+```sh
+insert your admin account with sql
+```
