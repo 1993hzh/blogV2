@@ -26,6 +26,6 @@ RUN git clone https://github.com/1993hzh/blogV2.git /blog
 RUN cd /blog && sbt compile
 # here package the project
 RUN sbt dist
-RUN unzip target/universal/blog-2.0.zip
+RUN unzip /blog/target/universal/root-2.0.zip
 
-CMD ["blog-2.0/bin/blog"]
+CMD ["/blog/blog-2.0/bin/blog"]
