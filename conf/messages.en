@@ -26,6 +26,8 @@ nav.manage.passage=Passage
 nav.manage.tag=Tag
 nav.manage.user=User
 nav.about=About
+nav.logged.profile=Profile
+nav.logged.logout=Logout
 
 pager.prev=Prev
 pager.next=Next

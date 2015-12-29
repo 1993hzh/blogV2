@@ -4,6 +4,7 @@
 @import models.Role
 @import models.RoleType
 @()(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
+@sitecount()
 <link rel="shortcut icon" type="image/x-icon" href="@routes.Assets.at("img/favicon.ico")">
 <link href="/assets/css/bootstrap-slate.min.css" rel="stylesheet">
 <link href="/assets/css/common.css" rel="stylesheet">
@@ -13,7 +14,6 @@
 <script src="/assets/js/common.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
 <script src="/assets/js/jquery.bootstrap.min.js"></script>
-<script src="/assets/js/clean-blog.js"></script>
 <script>
 function search() {
   var query = $("#search").val();
@@ -126,10 +126,10 @@ $(function () {
               </a>
               <ul class="dropdown-menu">
                 <li><a href="/logged/profile" class="override-no-text-transform">
-                  &nbsp;<i class="fa fa-cog">&nbsp;&nbsp;Profile</i></a>
+                  &nbsp;<i class="fa fa-cog">&nbsp;&nbsp;@messages("nav.logged.profile")</i></a>
                 </li>
                 <li><a href="/logout" class="override-no-text-transform">
-                  &nbsp;<i class="fa fa-power-off">&nbsp;&nbsp;Logout</i></a>
+                  &nbsp;<i class="fa fa-power-off">&nbsp;&nbsp;@messages("nav.logged.logout")</i></a>
                 </li>
               </ul>
             }

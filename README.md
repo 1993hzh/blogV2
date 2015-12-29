@@ -1,32 +1,52 @@
-# IBM bluemix+docker+custom image
-Remember that `ng` stands for America Region and `eu-gb` stands for England Region, make sure this prefix is always the same.
+#Blog
 
-Deploy scala env in bluemix using docker.
-
-## Setup bluemix env in local
-
-First, install Docker CLI [2], CloudFoundry CLI [1], ibm-containers cf CLI [1]
-
-### How to install
-[1] bluemix docs: https://www.ng.bluemix.net/docs/containers/container_cli_cfic.html
-
-[2] docker docs: https://docs.docker.com/installation/
-
-### Log in the bluemix
-Then login in shell: 
+##Deploy in Heroku
+config the vars in your heroku console.
 ```sh
-$ cf login -a https://api.ng.bluemix.net
-$ cf ic login
-```
-> Currently the ibm-containers have some bugs with cloudfoundry in linux64, see the issue for details: https://github.com/cloudfoundry/cli/issues/639
-
-> If you meet this bug, I'd like to suggest you to install `ice`, look for installation docs: https://www.eu-gb.bluemix.net/docs/containers/container_cli_ice_ov.html#container_cli_ice_install
-
-### Build your custom images
-You can change the url with you own path, just make sure the path that you provided has `Dockerfile`.
-
-```sh
-$ docker build https://github.com/1993hzh/blogV2.git
+ACCESS_KEY={?your_file_system_key}
+SECRET_KEY={?your_file_system_secret}
+BUCKET_NAME={?your_file_system_bucket}
+IMAGE_DOMAIN={?your_file_system_domain}
+JDBC_DATABASE_USERNAME={?your_db_name}
+JDBC_DATABASE_PASSWORD={?your_db_password}
+JDBC_DATABASE_URL={?your_db_url}
+SINA_APP_ID={?your_sina_app_id}
+SINA_APP_SECRET={?your_sina_app_secrect}
+SINA_REDIRECT_URL={?your_sina_app_redirect_url}
 ```
 
-## TODO
+##Deploy in other CaaS using docker
+Dockerfile has been written in this project
+###First, you should have a db
+I deployed my postgres in www.tenxcloud.com, it's easy
+###Second, create the docker image with the Dockerfile in some Caas
+I am using www.alauda.cn
+###At last, remember to write a shell to start your application
+```sh
+cd /app
+sbt run -server=y \
+-DSINA_REDIRECT_URL={?your_sina_app_redirect_url} \
+-DSINA_APP_ID={?your_sina_app_id} \
+-DSINA_APP_SECRET={?your_sina_app_secrect} \
+-DJDBC_DATABASE_USERNAME={?your_db_name} \
+-DJDBC_DATABASE_PASSWORD={?your_db_password} \
+-DJDBC_DATABASE_URL={?your_db_url} \
+-DACCESS_KEY={?your_file_system_key} \
+-DSECRET_KEY={?your_file_system_secret} \
+-DBUCKET_NAME={?your_file_system_bucket} \
+-DIMAGE_DOMAIN={?your_file_system_domain}
+```
+
+##DB
+(currently support postgres, you can change the driver class in both db.conf && build.sbt, although this is not tested)
+##OAuth
+(currently support sina)
+##FileSystem
+(currently support qiniu)
+##Add your own language support
+config application.conf with `play.i18n.langs`, add messages.[yourLang] in `conf` dir
+##Remember
+```sh
+insert your admin account with sql
+```
+#Currently not support https, will add this in the future

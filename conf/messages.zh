@@ -26,6 +26,8 @@ nav.manage.passage=博文
 nav.manage.tag=标签
 nav.manage.user=用户
 nav.about=关于
+nav.logged.profile=个人信息
+nav.logged.logout=退出
 
 pager.prev=上一页
 pager.next=下一页

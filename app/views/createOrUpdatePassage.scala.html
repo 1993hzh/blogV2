@@ -47,7 +47,7 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
             </span> &nbsp;
           }
         </div>
-        <input type="text" placeholder='"@messages("manage.passage.keyword.placeholder")' id="keywordAdd" class="form-control">
+        <input type="text" placeholder='@messages("manage.passage.keyword.placeholder")' id="keywordAdd" class="form-control">
         <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
         <hr>
         <div class="my-font-color">
@@ -127,12 +127,12 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
       browse_button: 'pickfiles',
       uptoken_url: '/manage/getUploadToken',
       //downtoken_url: '/downtoken',
-      domain: 'http://7xoixh.com1.z0.glb.clouddn.com/',
+      domain: '@Application.QINIU_IMAGE_DOMAIN',
       max_file_size: '10MB',
       max_retries: 3,
       dragdrop: true,
       drop_element: 'container',
-      chunk_size: '1MB',
+      chunk_size: '4MB',
       auto_start: true,
       init: {
         'FilesAdded': function(up, files) {
