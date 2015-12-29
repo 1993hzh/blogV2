@@ -21,22 +21,14 @@ Dockerfile has been written in this project
 I deployed my postgres in www.tenxcloud.com, it's easy
 ###Second, create the docker image with the Dockerfile in some Caas
 I am using www.alauda.cn
-###At last, Config vars in ENV or write a shell
+###At last, Config vars in ENV or customize cmd
 Due to a known issue: https://github.com/playframework/playframework/issues/4675, db config does not work.
 Here is two solutions, one is write a shell like something below or simply hard code the db config in `db.conf`
 ```sh
-cd /app
-sbt run -server=y \
--DSINA_REDIRECT_URL={?your_sina_app_redirect_url} \
--DSINA_APP_ID={?your_sina_app_id} \
--DSINA_APP_SECRET={?your_sina_app_secrect} \
--DJDBC_DATABASE_USERNAME={?your_db_name} \
--DJDBC_DATABASE_PASSWORD={?your_db_password} \
--DJDBC_DATABASE_URL={?your_db_url} \
--DACCESS_KEY={?your_file_system_key} \
--DSECRET_KEY={?your_file_system_secret} \
--DBUCKET_NAME={?your_file_system_bucket} \
--DIMAGE_DOMAIN={?your_file_system_domain}
+/blog/root-2.0/bin/blog \
+-DJDBC_DATABASE_URL={your_db_url} \
+-DJDBC_DATABASE_USERNAME={your_db_name} \
+-DJDBC_DATABASE_PASSWORD={your_db_password}
 ```
 
 ##DB
