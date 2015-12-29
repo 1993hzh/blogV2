@@ -6,10 +6,15 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${application.home}/logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${application.home}/logs/application-%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
         <encoder>
             <pattern>%date [%level] %logger- %message%n%xException</pattern>
+            <immediateFlush>false</immediateFlush>
         </encoder>
     </appender>
 
