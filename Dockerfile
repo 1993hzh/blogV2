@@ -8,6 +8,7 @@ RUN yum update -y
 
 RUN yum install -y wget
 RUN yum install -y git
+RUN yum install -y unzip
 
 RUN wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jdk-8u45-linux-x64.rpm
 RUN rpm -ivh jdk-8*-linux-x64.rpm && rm jdk-8*-linux-x64.rpm
@@ -18,10 +19,13 @@ RUN tar -zxvf sbt-0.13.8.tgz && rm sbt-0.13.8.tgz && chmod a+x /sbt/bin/sbt
 ENV PATH $PATH:/sbt/bin
 
 EXPOSE 9000 8888
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir /blog
+WORKDIR /blog
 
-RUN git clone https://github.com/1993hzh/blogV2.git /app
-RUN cd /app && sbt compile
+RUN git clone https://github.com/1993hzh/blogV2.git /blog
+RUN cd /blog && sbt compile
+# here package the project
+RUN sbt dist
+RUN unzip target/universal/blog-2.0.zip
 
-CMD ["sbt", "run"]
+CMD ["blog-2.0/bin/blog"]
