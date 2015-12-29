@@ -1,3 +1,4 @@
+name := "blog"
 version := "2.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
