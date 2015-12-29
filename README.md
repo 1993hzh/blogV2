@@ -21,7 +21,9 @@ Dockerfile has been written in this project
 I deployed my postgres in www.tenxcloud.com, it's easy
 ###Second, create the docker image with the Dockerfile in some Caas
 I am using www.alauda.cn
-###At last, remember to write a shell to start your application
+###At last, Config vars in ENV or write a shell
+Due to a known issue: https://github.com/playframework/playframework/issues/4675, db config does not work.
+Here is two solutions, one is write a shell like something below or simply hard code the db config in `db.conf`
 ```sh
 cd /app
 sbt run -server=y \
