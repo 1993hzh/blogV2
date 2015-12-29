@@ -1,13 +1,13 @@
-FROM            ubuntu:latest
+FROM            centos:latest
 
 MAINTAINER      Leo Hu <mail@huzhonghua.cn>
 
 RUN cp -n /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-RUN apt-get update
+RUN yum update -y
 
-RUN apt-get install -y wget
-RUN apt-get install -y git
+RUN yum install -y wget
+RUN yum install -y git
 
 RUN wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jdk-8u45-linux-x64.rpm
 RUN rpm -ivh jdk-8*-linux-x64.rpm && rm jdk-8*-linux-x64.rpm
