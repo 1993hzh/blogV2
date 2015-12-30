@@ -1,29 +1,7 @@
-FROM            centos:latest
-
+FROM accident/blog:ubuntu
+# here you can pull both ubuntu(default) or centos(accident/blog:centos)
 MAINTAINER      Leo Hu <mail@huzhonghua.cn>
 
-RUN cp -n /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-
-RUN yum update -y
-
-RUN yum install -y wget
-RUN yum install -y git
-RUN yum install -y unzip
-
-RUN wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jdk-8u45-linux-x64.rpm
-RUN rpm -ivh jdk-8*-linux-x64.rpm && rm jdk-8*-linux-x64.rpm
-ENV JAVA_HOME /usr/java/latest
-
-RUN wget --no-check-certificate https://dl.bintray.com/sbt/native-packages/sbt/0.13.8/sbt-0.13.8.tgz
-RUN tar -zxvf sbt-0.13.8.tgz && rm sbt-0.13.8.tgz && chmod a+x /sbt/bin/sbt
-ENV PATH $PATH:/sbt/bin
-
-EXPOSE 9000 8888
-RUN mkdir /blog
-WORKDIR /blog
-
-RUN git clone https://github.com/1993hzh/blogV2.git /blog
-RUN cd /blog && sbt compile
 # here package the project
 RUN sbt dist
 RUN unzip /blog/target/universal/blog-2.0.zip && chmod 755 /blog/blog-2.0/bin/blog
