@@ -78,7 +78,7 @@ manage.user.mail.placeholder=邮箱
 
 about=关于
 about.title= 关于博客和我
-about.content.blog=这是我个人博客的第二版，使用Scala编写（第一版使用Java），使用的框架为play2.4 + slick， 目前部署在heroku上。\
+about.content.blog=这是我个人博客的第二版，使用Scala编写（第一版使用Java），使用的框架为play2.4 + slick。博客部署在alauda.cn上，数据库（Postgres）部署在tenxcloud.com上，均使用docker。\
   源码可以在<a href="https://github.com/1993hzh/blogV2" target="_blank" class="about-href">github</a>上查看。\
   如果您发现有任何bug或者安全性问题，还请您邮件通知我谢谢。
 about.content.me=我从2015/8开始工作于SAP中国研究院，角色为Java开发工程师。2014年大学毕业，2014-2015工作于IBM。\
