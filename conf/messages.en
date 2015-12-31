@@ -78,7 +78,7 @@ manage.user.mail.placeholder=Mail
 
 about=about
 about.title=About Blog & Me
-about.content.blog=This blog was written in Scala with Play Framework2.4, deployed in Heroku, \
+about.content.blog=This blog was written in Scala with Play Framework2.4, deployed in alauda.cn, db(Postgres) is deployed in tenxcloud.com, both are using docker as container, \
   you can view the source in <a href="https://github.com/1993hzh/blogV2" target="_blank" class="about-href">github</a>. \
   If you find some defect or security issues, please email me thanks.
 about.content.me=I am now working in SAP Labs China as Java Developer since 2015/8, \
