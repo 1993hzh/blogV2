@@ -2,6 +2,8 @@ FROM accident/blog:ubuntu
 # here you can pull both ubuntu(default) or centos(accident/blog:centos)
 MAINTAINER      Leo Hu <mail@huzhonghua.cn>
 
+VOLUME /blog
+
 RUN cd /blog && git pull --no-commit
 # here package the project
 RUN sbt dist
