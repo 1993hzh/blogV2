@@ -53,7 +53,7 @@ class Login @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller
       case Some((u, r)) =>
         val logoutTime = new Timestamp(System.currentTimeMillis())
         userDAO.updateLogoutInfo(u.userName, logoutTime)
-        log.info("User: " + u.userName + " logout at: " + logoutTime)
+        log.info("User: " + u.userName + " logged out.")
 
         loginToken match {
           case Some(lt) =>
@@ -62,7 +62,7 @@ class Login @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller
           case None => log.info("Session has no `loginUser` ")
         }
       case None =>
-        log.info("Didn't find " + loginToken)
+        log.info("Didn't find loginUser, loginToken is: " + loginToken)
     }
     Redirect(routes.Index.index()).withNewSession
   }
