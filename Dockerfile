@@ -7,5 +7,5 @@ RUN cd /blog && git pull --no-commit
 RUN sbt clean dist
 RUN unzip /blog/target/universal/blog-2.0.zip && chmod 755 /blog/blog-2.0/bin/blog
 
-VOLUME /blog
+#VOLUME /blog
 CMD ["/blog/blog-2.0/bin/blog"]
