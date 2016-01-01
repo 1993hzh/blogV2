@@ -1,7 +1,7 @@
 import actors.ViewCountActor
 import akka.actor.Props
 import controllers.Application
-import filters.{LoginFilter, ManageFilter}
+import filters.{HttpsFilter, LoginFilter, ManageFilter}
 import play.api._
 import play.api.libs.concurrent.Akka
 import play.api.mvc._
@@ -9,7 +9,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Global extends WithFilters(LoginFilter, ManageFilter) with GlobalSettings {
+object Global extends WithFilters(HttpsFilter, LoginFilter, ManageFilter) with GlobalSettings {
 
   private val log = Logger(this.getClass)
 
