@@ -352,25 +352,36 @@ jQuery(document).ready(function ($) {
     //primary navigation slide-in effect
     if ($(window).width() > MQL) {
         var headerHeight = $('.navbar-custom').height();
-        $(window).on('scroll', {
-                previousTop: 0
-            },
-            function () {
-                var currentTop = $(window).scrollTop();
-                //check if user is scrolling up
-                if (currentTop < this.previousTop) {
-                    //if scrolling up...
-                    if (currentTop > 0 && $('.navbar-custom').hasClass('is-fixed')) {
-                        $('.navbar-custom').addClass('is-visible');
-                    } else {
-                        $('.navbar-custom').removeClass('is-visible is-fixed');
-                    }
+        $(window).on('scroll', {previousTop: 0}, function () {
+            var currentTop = $(window).scrollTop();
+            //check if user is scrolling up
+            if (currentTop < this.previousTop) {
+                //if scrolling up...
+                if (currentTop > 0 && $('.navbar-custom').hasClass('is-fixed')) {
+                    $('.navbar-custom').addClass('is-visible');
                 } else {
-                    //if scrolling down...
-                    $('.navbar-custom').removeClass('is-visible');
-                    if (currentTop > headerHeight && !$('.navbar-custom').hasClass('is-fixed')) $('.navbar-custom').addClass('is-fixed');
+                    $('.navbar-custom').removeClass('is-visible is-fixed');
                 }
-                this.previousTop = currentTop;
-            });
+            } else {
+                //if scrolling down...
+                $('.navbar-custom').removeClass('is-visible');
+                if (currentTop > headerHeight && !$('.navbar-custom').hasClass('is-fixed')) $('.navbar-custom').addClass('is-fixed');
+            }
+            this.previousTop = currentTop;
+        });
     }
 });
+
+function insertNodeAtCursor(node) {
+    var sel, range, html;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            sel.getRangeAt(0).insertNode(node);
+        }
+    } else if (document.selection && document.selection.createRange) {
+        range = document.selection.createRange();
+        html = (node.nodeType == 3) ? node.data : node.outerHTML;
+        range.pasteHTML(html);
+    }
+}

@@ -16,8 +16,42 @@ var updateProgress = function(id, percent) {
     parent.find("label[class='percent']").html(percent + "%");
 }
 
-var addImage = function(src) {
+var addImage = function(src, id, name) {
     var img = $("<img />");
     img.attr("src", src);
-    $("#content").append($(img));
+    img.attr("id", id);
+    img.attr("name", name);
+    img.addClass("qiniu_image");
+    insertNodeAtCursor($(img)[0]);
 }
+
+function removeImg(name) {
+    $.ajax({
+        url: '/manage/deleteFile',
+        type: "GET",
+        data: "fileName=" + name,
+        success: function (result) {
+            if (result.isSuccess != true) {
+                $.messager.popup(result.detail);
+            }
+        },
+        error: function (msg) {
+            $.messager.popup("Internal Error");
+        }
+    })
+}
+
+$(function () {
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            $(mutation.removedNodes).each(function (value, index) {
+                // here listen the image change
+                if (this.className === "qiniu_image") {
+                    removeImg(this.name)
+                }
+            });
+        });
+    });
+    var config = {attributes: true, childList: true, characterData: true};
+    observer.observe($('#content')[0], config);
+});

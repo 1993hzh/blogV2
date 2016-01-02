@@ -1,6 +1,6 @@
 package tables
 
-import java.sql.Timestamp
+import java.util.Date
 
 import dao.UserDAO
 import models.Passage
@@ -24,7 +24,7 @@ trait PassageTable extends AbstractTable[Passage] {
 
     def content = column[String]("content")
 
-    def createTime = column[Timestamp]("createtime")
+    def createTime = column[Date]("createtime")
 
     def viewCount = column[Int]("viewcount")
 

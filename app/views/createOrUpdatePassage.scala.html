@@ -1,8 +1,9 @@
+@import java.util.Date
 @(passage: Option[Passage] = None,
-tags: List[Int] = Nil,
-allTag: List[Tag],
-keywords: List[String] = Nil,
-error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
+        tags: List[Int] = Nil,
+        allTag: List[Tag],
+        keywords: List[String] = Nil,
+        error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
 
 
 <!DOCTYPE html>
@@ -32,51 +33,32 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
       }
     </div>
     <form id="passageForm" action="/manage/passage/doCreateOrUpdate" method="post">
-      @passage match {
-        case Some(p) => {
+      @defining(passage.getOrElse(Passage(0, 0, "", "", "", new Date()))) { p =>
         <input type="text" class="hidden" id="id" name="id" value="@p.id"/>
         <input type="text" class="form-control" placeholder="@messages("manage.passage.title.placeholder")"
-          id="title" name="title" value="@p.title"/>
+        id="title" name="title" value="@p.title"/>
         <hr>
         <div id="keywordList" style="display : inline-block ;">
-          @for((kw, index) <- keywords.zipWithIndex) {
-            <span class="label label-primary">
-                <input type="text" class="hidden" name="keywords[@index]" value="@kw">
-                @kw
-                <a href="javascript:void(0);"><i class="fa fa-times" onclick="deleteKeyword(this)"></i></a>
-            </span> &nbsp;
-          }
+        @for((kw, index) <- keywords.zipWithIndex) {
+          <span class="label label-primary">
+            <input type="text" class="hidden" name="keywords[@index]" value="@kw">
+            @kw
+            <a href="javascript:void(0);"><i class="fa fa-times" onclick="deleteKeyword(this)"></i></a>
+          </span> &nbsp;
+        }
         </div>
         <input type="text" placeholder='@messages("manage.passage.keyword.placeholder")' id="keywordAdd" class="form-control">
         <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
         <hr>
         <div class="my-font-color">
-          @for((t, index) <- allTag.zipWithIndex) {
+        @for((t, index) <- allTag.zipWithIndex) {
           <input type="checkbox" name="tagIds[@index]" value="@t.id" @if(tags.contains(t.id)) {
-                 checked="checked" }> @t.name
+            checked="checked" }> @t.name
           }
         </div>
         <hr>
-        @toolbar()
+      @toolbar()
         <div id="content" name="content">@Html(p.content)</div>
-        }
-        case None => {
-        <input type="text" class="hidden" id="id" name="id"/>
-        <input type="text" class="form-control" placeholder="@messages("manage.passage.title.placeholder")" id="title" name="title"/>
-        <hr>
-        <div id="keywordList" style="display : inline-block ;"></div>
-        <input type="text" placeholder='@messages("manage.passage.keyword.placeholder")' id="keywordAdd" class="form-control">
-        <a href="javascript:addKeyword()"><i class="fa fa-plus-circle"></i></a>
-        <hr>
-        <div class="my-font-color">
-          @for((t, index) <- allTag.zipWithIndex) {
-          <input type="checkbox" name="tagIds[@index]" value="@t.id"> @t.name
-          }
-        </div>
-        <hr>
-        @toolbar()
-        <div id="content" name="content"></div>
-        }
       }
       <hr>
       <div id="fileUploadProgress"></div>
@@ -99,13 +81,14 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
   <script src="/assets/js/qiniu.min.js"></script>
   <script src="/assets/js/plupload.full.min.js"></script>
   <script src="/assets/js/upload.js"></script>
-<script>
+  <script>
     $(function() {
+      <!-- in case of closing the window uncautiously -->
       $(window).on("beforeunload", function(e) {
         e.preventDefault();
         return "Passage not reserved.";
       });
-
+      <!-- bind editor -->
       $('#content').wysiwyg({
         hotKeys: {
           'ctrl+b meta+b': 'bold',
@@ -113,11 +96,9 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
           'ctrl+u meta+u': 'underline',
           'ctrl+z meta+z': 'undo',
           'ctrl+y meta+y meta+shift+z': 'redo'
-        },
-        fileUploadError: function (reason, detail) {
-          $.messager.alert("File upload error due to: " + reason + ", details: " + detail);
         }
       });
+      <!-- add code highlight -->
       prettyPrint();
       $("pre").addClass("prettyprint linenums");
     });
@@ -126,12 +107,12 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
       runtimes: 'html5,html4',
       browse_button: 'pickfiles',
       uptoken_url: '/manage/getUploadToken',
-      //downtoken_url: '/downtoken',
+      unique_names: true,
       domain: '@Application.QINIU_IMAGE_DOMAIN',
       max_file_size: '10MB',
       max_retries: 3,
       dragdrop: true,
-      drop_element: 'container',
+      drop_element: 'content',
       chunk_size: '4MB',
       auto_start: true,
       init: {
@@ -147,12 +128,12 @@ error: String = "")(implicit session: play.api.mvc.Session, messages: Messages, 
           updateProgress(file.id, file.percent);
           var res = $.parseJSON(info);
           var sourceLink = Qiniu.domain + res.name;
-          addImage(sourceLink);
+          addImage(sourceLink, file.id, res.name);
         },
         'Error': function(up, err, errTip) {
           $.messager.popup(up+": "+err+": "+errTip);
         }
-    }
-});
+      }
+  });
   </script>
 </html>

@@ -25,6 +25,7 @@ POST        /logged/markAll                         controllers.CommentControlle
 
 #below is management, need permission, do not change the url unless you updated the filter as well
 #passage management
+GET         /manage/deleteFile                      controllers.ImageUpload.deleteFile(fileName:String)
 GET         /manage/getUploadToken                  controllers.ImageUpload.getUploadToken(imageName:String="")
 GET         /manage/passage                         controllers.PassageController.manage(page:Int?=1)
 GET         /manage/passage/create                  controllers.PassageController.create

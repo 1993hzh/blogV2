@@ -202,21 +202,12 @@
             },
 			// Add by Leo
 			insertCode = function () {
-				if ($(editor).data("wysiwyg-insert-code-mode") !== true) {
-					var editorCode = $("<pre />");
-					var code = "/*Insert Code Here.*/";
-					$(editorCode).addClass("prettyprint linenums");
-					$(editorCode).append(code);
-					$(editor).data("wysiwyg-insert-code-mode", true);
-					$(editor).append($(editorCode));
-					$(editorCode).focus();
-				}
-				else {
-					var next = $("<br />");
-					$(editor).append($(next));
-					$(editor).data("wysiwyg-insert-code-mode", false);
-					$(next)[0].focus();
-				}
+				var editorCode = $("<pre />");
+				var code = "/*Insert Code Here.*/";
+				$(editorCode).addClass("prettyprint linenums");
+				$(editorCode).html(code);
+				insertNodeAtCursor($(editorCode)[0]);
+				$(editorCode).focus();
 			},
 
 			insertFiles = function (files) {
@@ -322,9 +313,6 @@
 			});
 		}
 
-		if (options.dragAndDropImages) {
-			initFileDrops();
-		}
 		bindToolbar($(options.toolbarSelector), options);
 		editor.attr('contenteditable', true)
 			.on('mouseup keyup mouseout', function () {

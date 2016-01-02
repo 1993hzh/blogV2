@@ -1,8 +1,8 @@
 package controllers
 
-import java.sql.Timestamp
+import java.util.Date
 import javax.inject.Inject
-import dao.{TagDAO, PassageDAO}
+import dao.{FileDAO, TagDAO, PassageDAO}
 import models.{Passage}
 import play.api.Logger
 import play.api.cache.CacheApi
@@ -22,6 +22,7 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
   override def messagesApi: MessagesApi = messages
 
   private lazy val passageDAO = PassageDAO()
+  private lazy val fileDAO = FileDAO()
   private lazy val tagDAO = TagDAO()
   private lazy val log = Logger(this.getClass)
 
@@ -64,18 +65,17 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
   def doCreateOrUpdate = Action.async { implicit request =>
     val authorId = Application.getLoginUserId(request.session)
     val authorName = Application.getLoginUserName(request.session)
-    val createTime = new Timestamp(System.currentTimeMillis)
     passageForm.bindFromRequest.fold(
       formWithErrors => {
         Future.successful(Application.sendJsonResult(false, formWithErrors.errors.map(_.message).mkString(", ")))
       },
       data => {
-        val passage = Passage(data.id.getOrElse(0), authorId, authorName, data.title, data.content, createTime)
+        val passage = Passage(data.id.getOrElse(0), authorId, authorName, data.title, data.content, new Date())
         val result = data.id match {
-          case Some(id) =>
+          case Some(id) if id > 0 =>
             log.info(authorName + " try to update passage: " + data.title + ", id: " + data.id)
             passageDAO.update(passage, data.keywords, data.tagIds)
-          case None =>
+          case _ =>
             log.info(authorName + " try to create passage: " + data.title)
             passageDAO.insert(passage, data.keywords, data.tagIds)
         }

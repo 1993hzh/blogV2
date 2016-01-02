@@ -1,4 +1,5 @@
 import java.sql.Timestamp
+import java.util.Date
 
 import models._
 import org.junit.{Assert, After, Test, Before}
@@ -69,16 +70,13 @@ class PassageTest extends AbstractTest {
     })
   }
 
-//  @After
+  @After
   def destorySelf(): Unit = {
     tagIds.foreach(e => Await.result(tagDAO.delete(e), Duration.Inf))
     passageIds.foreach(p => Await.result(passageDAO.delete(p), Duration.Inf))
 
     Await.result(userDAO.delete(adminId), Duration.Inf)
     Await.result(userDAO.delete(userId), Duration.Inf)
-
-    Await.result(roleDAO.deleteByRoleTypeAndWebsite(RoleType.OWNER, WebSite.MY), Duration.Inf)
-    Await.result(roleDAO.deleteByRoleTypeAndWebsite(RoleType.COMMON, WebSite.SINA), Duration.Inf)
   }
 
   def queryForPagination(num: Int) = {
@@ -101,11 +99,11 @@ class PassageTest extends AbstractTest {
   }
 
   def assertTag(tags: Seq[Tag], p: Int) = {
-    Assert.assertEquals("tag2", tags.head.name)
-    Assert.assertEquals("tag2", tags.head.description)
+    Assert.assertEquals("tag1", tags.head.name)
+    Assert.assertEquals("tag1", tags.head.description)
 
-    Assert.assertEquals("tag1", tags.tail.head.name)
-    Assert.assertEquals("tag1", tags.tail.head.description)
+    Assert.assertEquals("tag2", tags.tail.head.name)
+    Assert.assertEquals("tag2", tags.tail.head.description)
   }
 
   def assertComment(comments: Seq[Comment], p: Int) = {
@@ -137,14 +135,14 @@ class PassageTest extends AbstractTest {
   }
 
   def initAdmin(): Int = {
-    val roleId = roleDAO.getRoleIdSync(RoleType.OWNER)
+    val roleId = roleDAO.getRoleIdSync(RoleType.OWNER).getOrElse(-1)
 
     val admin = User(0, "admin", Encryption.encodeBySHA1("admin_admin"), "admin@test.com", roleId)
     Await.result(userDAO.insert(admin), Duration.Inf)
   }
 
   def initUser(): Int = {
-    val roleId = roleDAO.getRoleIdSync(RoleType.COMMON)
+    val roleId = roleDAO.getRoleIdSync().getOrElse(-1)
 
     val commonUser = User(0, "commonUser", Encryption.encodeBySHA1("commonUser"), "commonUser@test.com", roleId)
     Await.result(userDAO.insert(commonUser), Duration.Inf)
@@ -153,7 +151,7 @@ class PassageTest extends AbstractTest {
   def initPassage(authorId: Int): Array[Int] = {
     val ids = ArrayBuffer[Int]()
     for (i <- 1 to PASSAGE_SIZE) {
-      val passage = Passage(0, authorId, "admin", "title" + i, "content" + i, new Timestamp(System.currentTimeMillis()))
+      val passage = Passage(0, authorId, "admin", "title" + i, "content" + i, new Date())
       ids += Await.result(passageDAO.insert(passage), Duration.Inf)
     }
     ids.toArray

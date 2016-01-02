@@ -1,6 +1,6 @@
 package models
 
-import java.sql.Timestamp
+import java.util.Date
 
 /**
  * Created by Leo.
@@ -11,6 +11,6 @@ case class Passage(id: Int,
                    authorName: String,
                    title: String,
                    content: String,
-                   createTime: Timestamp,
+                   createTime: Date = new Date(),
                    viewCount: Int = 0
                     ) extends AbstractModel

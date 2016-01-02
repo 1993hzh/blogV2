@@ -78,8 +78,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   }
 
   def queryKeywordsByPassageId(passageId: Int): Future[Seq[Keyword]] = {
-    db.run(modelQuery.filter(_.id === passageId)
-      .join(KeywordDAO.keywords).on(_.id === _.passageId).sortBy(_._2.name.desc).map(_._2).result)
+    db.run(KeywordDAO.keywords.filter(_.passageId === passageId).sortBy(_.name.desc).result)
   }
 
   def queryTagsByPassageId(passageId: Int): Future[Seq[MyTag]] = {
@@ -89,8 +88,7 @@ class PassageDAO extends AbstractDAO[Passage] with PassageTable {
   }
 
   def queryCommentsByPassageId(passageId: Int): Future[Seq[Comment]] = {
-    db.run(modelQuery.filter(_.id === passageId).
-      join(CommentDAO.comments).on(_.id === _.passageId).sortBy(_._2.createTime.asc).map(_._2).result)
+    db.run(CommentDAO.comments.filter(_.passageId === passageId).sortBy(_.createTime.asc).result)
   }
 
   private def getAuthorNameWithPassageId(passageId: Int): Future[Option[String]] = {

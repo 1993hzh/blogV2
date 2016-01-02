@@ -39,11 +39,16 @@ class UserDAO extends AbstractDAO[User] with UserTable {
   }
 
   def createCommonUser(userName: String, password: String, mail: String): Future[Int] = {
-    val roleId = roleDAO.getRoleIdSync()
-    val encodePassword = Encryption.encodeBySHA1(password)
-    val user = User(0, userName, encodePassword, mail, roleId)
-    log.info("User: " + user + " is going to be created.")
-    super.insert(user)
+    roleDAO.getRoleIdSync() match {
+      case Some(role) =>
+        val encodePassword = Encryption.encodeBySHA1(password)
+        val user = User(0, userName, encodePassword, mail, role)
+        log.info("User: " + user + " is going to be created.")
+        super.insert(user)
+      case None =>
+        log.error("User: " + userName + " cannot be created since common role cannot be found.")
+        Future.successful(-1)
+    }
   }
 
   def createCommonUserSync(userName: String, password: String, mail: String): Int = {
