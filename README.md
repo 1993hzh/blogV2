@@ -3,10 +3,10 @@
 ##Deploy in Heroku
 config the vars in your heroku console.
 ```sh
-ACCESS_KEY={?your_file_system_key}
-SECRET_KEY={?your_file_system_secret}
-BUCKET_NAME={?your_file_system_bucket}
-IMAGE_DOMAIN={?your_file_system_domain}
+FS_ACCESS_KEY={?your_file_system_key}
+FS_SECRET_KEY={?your_file_system_secret}
+FS_BUCKET_NAME={?your_file_system_bucket}
+FS_IMAGE_DOMAIN={?your_file_system_domain}
 JDBC_DATABASE_USERNAME={?your_db_name}
 JDBC_DATABASE_PASSWORD={?your_db_password}
 JDBC_DATABASE_URL={?your_db_url}
@@ -24,17 +24,17 @@ Thanks for www.alauda.cn.
 The base image of the blog has been uploaded to docker hub, you can view its src in my another repo: blog-image.
 ###At last, Config vars in ENV
 ```sh
-ACCESS_KEY={?your_file_system_key}
-SECRET_KEY={?your_file_system_secret}
-BUCKET_NAME={?your_file_system_bucket}
-IMAGE_DOMAIN={?your_file_system_domain}
+FS_ACCESS_KEY={?your_file_system_key}
+FS_SECRET_KEY={?your_file_system_secret}
+FS_BUCKET_NAME={?your_file_system_bucket}
+FS_IMAGE_DOMAIN={?your_file_system_domain}
 JDBC_DATABASE_USERNAME={?your_db_name}
 JDBC_DATABASE_PASSWORD={?your_db_password}
 JDBC_DATABASE_URL={?your_db_url}
 SINA_APP_ID={?your_sina_app_id}
 SINA_APP_SECRET={?your_sina_app_secrect}
 SINA_REDIRECT_URL={?your_sina_app_redirect_url}
-application.home={?application_home_for_logs}
+APPLICATION_HOME={?application_home_for_logs}
 APPLICATION_SECRET={?your_app_secret}
 ```
 Notice, there is a issue for play-slick 1.1.0, here is the question raised by me: https://groups.google.com/forum/#!topic/play-framework/fjRwu2rymVI
