@@ -1,0 +1,21 @@
+<script src="/assets/js/season/snow-plugin.js"></script>
+<style>
+.snow-canvas {
+  display : block ;
+  width : 100 % ;
+  height : 100 % ;
+  top : 0 ;
+  left : 0 ;
+  position : fixed ;
+  pointer-events : none ;
+}
+</style>
+<script>
+  $(function(){
+    $(".snow-canvas").snow();
+  });
+</script>
+<!-- Thanks to jQueryÖ®¼Ò, link: http://www.htmleaf.com/html5/html5-canvas/201505171849.html -->
+<canvas class="snow-canvas" speed="1" interaction="false" size="2" count="80" opacity="0.00001" start-color="rgba(253,252,251,1)" end-color="rgba(251,252,253,0.3)" wind-power="0" image="false" width="1818" height="623"></canvas>
+<canvas class="snow-canvas" speed="3" interaction="true" size="6" count="30" start-color="rgba(253,252,251,1)" end-color="rgba(251,252,253,0.3)" opacity="0.00001" wind-power="2" image="false" width="1818" height="623"></canvas>
+<canvas class="snow-canvas" speed="2" interaction="true" size="12" count="20" wind-power="-5" image="/assets/img/season/snow.png" width="1818" height="623"></canvas>
