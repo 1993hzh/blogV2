@@ -25,8 +25,8 @@ trait AbstractDAO[M <: AbstractModel] extends HasDatabaseConfig[JdbcProfile] wit
 
   protected val modelQuery: slick.lifted.TableQuery[T]
 
-  // query time should never larger than 2'
-  val waitTime = Duration(2, TimeUnit.SECONDS)
+  // query time should never larger than 5s, if the Xmx is larger than 512M, suggest to set this to 1s or 2s
+  val waitTime = Duration(5, TimeUnit.SECONDS)
 
   def insert(model: M): Future[Int] = db.run(modelQuery returning modelQuery.map(_.id) += model)
 
