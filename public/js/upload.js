@@ -25,14 +25,15 @@ var addImage = function(src, id, name) {
     insertNodeAtCursor($(img)[0]);
 }
 
-function removeImg(name) {
+function removeImg(obj) {
     $.ajax({
         url: '/manage/deleteFile',
         type: "GET",
-        data: "fileName=" + name,
+        data: "fileName=" + obj.name,
         success: function (result) {
             if (result.isSuccess != true) {
                 $.messager.popup(result.detail);
+                insertNodeAtCursor($(obj)[0]);
             }
         },
         error: function (msg) {
@@ -46,12 +47,15 @@ $(function () {
         mutations.forEach(function (mutation) {
             $(mutation.removedNodes).each(function (value, index) {
                 // here listen the image change
-                if (this.className === "qiniu_image") {
-                    removeImg(this.name)
+                if (this.className === "qiniu_image" && !isToggleHtml(this)) {
+                    removeImg(this)
                 }
             });
         });
     });
     var config = {attributes: true, childList: true, characterData: true};
+    var isToggleHtml = function(obj) {
+        return $('#content').html().contains(obj.name);
+    }
     observer.observe($('#content')[0], config);
 });

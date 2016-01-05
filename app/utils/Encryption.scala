@@ -18,7 +18,7 @@ object Encryption {
 
   def encodeByBase64(str: String): String = Base64.encodeBase64String(str.getBytes("utf-8"))
 
-  def encodeByHmacSha1(data: String, key: String) = {
+  def encodeByHmacSha1AndthenBase64(data: String, key: String) = {
     val signingKey = new SecretKeySpec(key.getBytes(), "HmacSHA1")
     val mac = Mac.getInstance("HmacSHA1")
     mac.init(signingKey)

@@ -45,7 +45,7 @@ class ImageUpload @Inject()(ws: WSClient, cache: CacheApi) extends Controller {
 
   private def getPutPolicyEncode(imageName: String = "") = Encryption.urlSafe(Encryption.encodeByBase64(getPutPolicy(imageName)))
 
-  private def sign(putPolicyEncode: String) = Encryption.urlSafe(Encryption.encodeByHmacSha1(putPolicyEncode, SECRET_KEY))
+  private def sign(putPolicyEncode: String) = Encryption.urlSafe(Encryption.encodeByHmacSha1AndthenBase64(putPolicyEncode, SECRET_KEY))
 
   def getUploadToken(imageName: String = "") = Action.async {
     val putPolicyEncode = getPutPolicyEncode(imageName)
@@ -58,14 +58,18 @@ class ImageUpload @Inject()(ws: WSClient, cache: CacheApi) extends Controller {
   def deleteFile(fileName: String) = Action.async {
     val path = MANAGE_DELETE_PATH_PREFIX + getEncodeEntryUrl(fileName)
     val auth = MANAGE_DELETE_REQUEST_PREFIX + getAuth(path)
-    getDeleteWs(path, auth) map {
+    val ws = getDeleteWs(path, auth)
+    ws.post(Results.EmptyContent()) map {
       response =>
-        (response.json \ "error").asOpt[String] match {
-          case Some(error) =>
-            val msg = "File delete failed due to: " + error
-            log.error(msg)
-            Application.sendJsonResult(false, msg)
-          case None => Application.sendJsonResult(true, "")
+        response.status match {
+          case 200 =>
+            log.info("File: " + fileName + " delete succeed.")
+            Application.sendJsonResult(true, "")
+          case 400 | 401 | 599 | 612 =>
+            val msg = (response.json \ "error").asOpt[String].getOrElse("Unknown error.")
+            log.error("File delete failed due to: " + msg +
+              ", details: {file: " + fileName + ", path: " + path + ", headers: " + ws.headers.mkString(",") + "}")
+            Application.sendJsonResult(false, "File delete failed due to: " + msg)
         }
     }
   }
@@ -73,11 +77,11 @@ class ImageUpload @Inject()(ws: WSClient, cache: CacheApi) extends Controller {
   private def getDeleteWs(path: String, authToken: String) = ws.url(MANAGE_HOST + path).withHeaders(
     ("Authorization", authToken),
     ("Content-Type", "application/x-www-form-urlencoded")
-  ).post(Results.EmptyContent())
+  )
 
   private def getEncodeEntryUrl(file: String) = Encryption.urlSafe(Encryption.encodeByBase64(BUCKET_NAME + ":" + file))
 
-  private def getAuth(path: String) = ACCESS_KEY + ":" + Encryption.urlSafe(Encryption.encodeByHmacSha1(path + "\\n", SECRET_KEY))
+  private def getAuth(path: String) = ACCESS_KEY + ":" + Encryption.urlSafe(Encryption.encodeByHmacSha1AndthenBase64(path + "\n", SECRET_KEY))
 
 }
 

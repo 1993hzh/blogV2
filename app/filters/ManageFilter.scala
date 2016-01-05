@@ -17,7 +17,7 @@ object ManageFilter extends Filter {
 
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     if (rh.path.contains("manage")) {
-      log.info(rh.remoteAddress + " is requesting management: '" + rh.uri + "'")
+      //      log.info(rh.remoteAddress + " is requesting management: '" + rh.uri + "'")
 
       Application.getLoginUser(rh.session) match {
         case Some((u, r)) =>
