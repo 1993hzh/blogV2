@@ -28,6 +28,15 @@ object Global extends WithFilters(
     }
   }
 
+  override def onRouteRequest(request: RequestHeader): Option[Handler] = super.onRouteRequest(request)
+
+  override def onRequestReceived(request: RequestHeader): (RequestHeader, Handler) = {
+    if (!request.uri.startsWith("/assets")) {
+      log.info(request.remoteAddress + " is requesting " + request.uri + ".")
+    }
+    super.onRequestReceived(request)
+  }
+
   override def onError(request: RequestHeader, ex: Throwable): Future[Result] = super.onError(request, ex)
 
   override def onBadRequest(request: RequestHeader, error: String): Future[Result] = super.onBadRequest(request, error)

@@ -35,6 +35,7 @@
     <logger name="controllers" level="INFO"/>
     <logger name="dao" level="INFO"/>
     <logger name="filters" level="INFO"/>
+    <logger name="Global" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="ASYNCSTDOUT"/>

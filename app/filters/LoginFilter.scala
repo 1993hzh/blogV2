@@ -27,7 +27,7 @@ object LoginFilter extends Filter {
           log.info(rh.remoteAddress + " is requesting " + rh.uri + " without login, send ajax.")
           Future.successful(Application.sendJsonResult(false, Application.loginAjax("")(rh)))
         case None if (!isAjax) =>
-          log.info(rh.remoteAddress + " is requesting " + rh.uri + ", redirected.")
+          log.info(rh.remoteAddress + " is requesting " + rh.uri + " without login, redirected.")
           Future.successful(Results.Redirect(routes.Login.index() + "?callback=" + rh.uri))
         case Some((u, r)) => f(rh)
       }
