@@ -1,7 +1,7 @@
 import actors.ViewCountActor
 import akka.actor.Props
 import controllers.Application
-import filters.{HttpsFilter, LoginFilter, ManageFilter}
+import filters.{LogFilter, HttpsFilter, LoginFilter, ManageFilter}
 import play.api._
 import play.api.libs.concurrent.Akka
 import play.api.mvc._
@@ -11,6 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Global extends WithFilters(
   //  HttpsFilter,
+  LogFilter,
   LoginFilter,
   ManageFilter) with GlobalSettings {
 
@@ -29,9 +30,6 @@ object Global extends WithFilters(
   }
 
   override def onRouteRequest(request: RequestHeader): Option[Handler] = {
-    if (!request.uri.startsWith("/assets")) {
-      log.info(request.remoteAddress + " is requesting " + request.uri + ".")
-    }
     super.onRouteRequest(request)
   }
 
