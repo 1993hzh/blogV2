@@ -10,7 +10,7 @@ import scala.concurrent.Future
  * Created by Leo.
  * 2015/11/15 13:07
  */
-object LoginFilter extends Filter {
+class LoginFilter extends Filter {
 
   private lazy val log = Logger(this.getClass)
 

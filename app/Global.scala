@@ -1,7 +1,6 @@
 import actors.ViewCountActor
 import akka.actor.Props
 import controllers.Application
-import filters.{LogFilter, HttpsFilter, LoginFilter, ManageFilter}
 import play.api._
 import play.api.libs.concurrent.Akka
 import play.api.mvc._
@@ -9,11 +8,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Global extends WithFilters(
-  //  HttpsFilter,
-  LogFilter,
-  LoginFilter,
-  ManageFilter) with GlobalSettings {
+object Global extends GlobalSettings {
 
   private val log = Logger(this.getClass)
 
@@ -21,8 +16,6 @@ object Global extends WithFilters(
     super.onStart(app)
 
     if (!app.mode.equals(Mode.Test)) {
-      log.info("App starts.")
-
       Application.setPassageCount
 
       syncUpWithPassageViewCount(app)

@@ -11,7 +11,7 @@ import scala.concurrent.Future
  * Created by Leo.
  * 2015/11/14 21:24
  */
-object ManageFilter extends Filter {
+class ManageFilter extends Filter {
 
   private lazy val log = Logger(this.getClass)
 

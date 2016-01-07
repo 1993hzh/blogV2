@@ -9,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * Created by Leo.
  * 2016/1/6 23:34
  */
-object LogFilter extends EssentialFilter {
+class LogFilter extends EssentialFilter {
   private val log = Logger(this.getClass)
 
   def apply(nextFilter: EssentialAction) = new EssentialAction {

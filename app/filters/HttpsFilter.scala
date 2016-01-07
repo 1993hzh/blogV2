@@ -9,7 +9,7 @@ import scala.concurrent.Future
  * Created by Leo.
  * 2016/1/1 14:43
  */
-object HttpsFilter extends Filter {
+class HttpsFilter extends Filter {
   override def apply(f: (RequestHeader) => Future[Result])(request: RequestHeader): Future[Result] = {
     // force http to https in Prod
     if (Play.isProd && !request.secure && !request.uri.startsWith("/assets")) {
