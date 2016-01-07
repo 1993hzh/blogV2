@@ -78,7 +78,7 @@ manage.user.mail.placeholder=Mail
 
 about=about
 about.title=About Blog & Me
-about.content.blog=This blog was written in Scala with Play Framework2.4, deployed in alauda.cn, db(Postgres) is deployed in tenxcloud.com, both are using docker as container, \
+about.content.blog=This blog was written in Scala with Play Framework2.4, deployed in daocloud.io, db(Postgres) is deployed in tenxcloud.com, both are using docker as container, \
   you can view the source in <a href="https://github.com/1993hzh/blogV2" target="_blank" class="about-href">github</a>. \
   If you find some defect or security issues, please email me thanks.
 about.content.me=I am now working in SAP Labs China as Java Developer since 2015/8, \
@@ -86,4 +86,4 @@ about.content.me=I am now working in SAP Labs China as Java Developer since 2015
   I mainly focus on backend development and sometimes work as a full-stack developer. \
   You can follow me at <a href="http://weibo.com/2440019140/profile" target="_blank" class="about-href">sina</a>.
 about.content.last=You can send me your question by comment on target post and contact me by \
-  <a href="mailto:mail@@huzhonghua.cn" class="about-href">email</a>.
+  <a href="mailto:mail@huzhonghua.cn" class="about-href">email</a>.
