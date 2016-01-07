@@ -42,4 +42,5 @@ POST        /manage/user/create                     controllers.UserController.c
 GET         /manage/user/delete                     controllers.UserController.delete(id:Int)
 
 # Map static resources from the /public folder to the /assets URL path
+GET         /favicon.ico                            controllers.Assets.at(path="/public", file="img/favicon.ico")
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
