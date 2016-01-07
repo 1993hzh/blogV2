@@ -22,7 +22,7 @@ class LogFilter extends EssentialFilter {
           val logger = s"${requestHeader.remoteAddress} ${requestHeader.method} ${requestHeader.uri}" +
             s" took ${requestTime}ms and returned ${result.header.status}"
           result.header.status match {
-            case Status.OK => log.info(logger)
+            case r: Int if r < Status.BAD_REQUEST => log.info(logger)
             case _ => log.error(logger)
           }
         }
