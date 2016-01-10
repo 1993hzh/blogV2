@@ -2,6 +2,10 @@ index=index
 post.meta=Posted by <a href="#">{0}</a> at {1}
 language.display=English
 language.notfound=Language not supported '{0}'.
+effects.list=Effects
+effects.snow=Snow
+effects.firework=Firework
+effects.starsky=StarSky
 
 login=Sign in
 login.name=Name

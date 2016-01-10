@@ -73,6 +73,11 @@ class UserController @Inject()(cache: CacheApi, messages: MessagesApi) extends C
     }
   }
 
+  def switchEffect(effect: String) = Action.async { implicit request =>
+    val newEffect = request.session - ("effects") + ("effects" -> effect)
+    Future.successful(Application.sendJsonResult(true, "").withSession(newEffect))
+  }
+
   def profile() = Action.async { implicit request =>
     val user = Application.getLoginUser(request.session)
     user match {

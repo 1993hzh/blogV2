@@ -2,6 +2,10 @@ index=首页
 post.meta=<a href="#">{0}</a>发表于{1}
 language.display=中文
 language.notfound=不支持你选择的语言：{0}。
+effects.list=特效
+effects.snow=雪花
+effects.firework=烟火
+effects.starsky=星空
 
 login=登录
 login.name=用户名

@@ -14,6 +14,7 @@ POST        /doLogin                                controllers.Login.login
 GET         /loginWithSina                          controllers.Sina.login
 GET         /getTokenForSina                        controllers.Sina.getToken
 GET         /switchLang                             controllers.UserController.switchLang(lang:String)
+GET         /switchEffect                           controllers.UserController.switchEffect(effect:String)
 
 #Need login filter
 GET         /logged/profile                         controllers.UserController.profile

@@ -24,6 +24,18 @@
           }
         </ul>
       </div>
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary">@messages("effects.list")</button>
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+        @for(e <- Application.EFFECTS) {
+          <li><a href="javascript:switchEffects('@e')">@messages.messages("effects." + e)</a></li>
+        }
+        </ul>
+      </div>
       <hr>
       <div class="form-group">
         <p><label>@messages("manage.user.table.name")@messages("comment.re.placeholder.symbol")</label>

@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.i18n.Messages.Implicits._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{Random, Failure, Success}
 
 object Application extends Controller {
 
@@ -131,7 +131,7 @@ object Application extends Controller {
       case Some(str) =>
         Future.successful(Redirect(str) withSession (loginUserSession)) //callback exists
       case None =>
-        Future.successful(Redirect(routes.Index.index()) withSession (loginUserSession)) //callback exists
+        Future.successful(Redirect(routes.Index.index()) withSession (loginUserSession)) //callback not exists
     }
   }
 
@@ -140,4 +140,10 @@ object Application extends Controller {
     count.toString
   }
 
+  def getRandomEffect(): String = {
+    val index = Random.nextInt(EFFECTS.length)
+    EFFECTS(index)
+  }
+
+  val EFFECTS = List("snow", "firework", "starsky")
 }

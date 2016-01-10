@@ -1,5 +1,6 @@
 package filters
 
+import controllers.Application
 import play.api.Logger
 import play.api.http.Status
 import play.api.mvc.{RequestHeader, EssentialAction, EssentialFilter}
@@ -26,7 +27,10 @@ class LogFilter extends EssentialFilter {
             case _ => log.error(logger)
           }
         }
-        result
+        requestHeader.session.get("effects") match {
+          case Some(e) => result
+          case None => result.withSession("effects" -> Application.getRandomEffect)
+        }
       }
     }
   }

@@ -79,7 +79,19 @@ $(function () {
   });
 });
 </script>
-@snow()
+@session.get("effects").getOrElse("") match {
+  case "snow" => {
+    @effects.snow()
+  }
+  case "firework" => {
+    @effects.firework()
+  }
+  case "starsky" => {
+    @effects.star()
+  }
+  case _ => {}
+}
+
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
   <div class="container-fluid">

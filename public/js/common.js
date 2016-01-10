@@ -263,6 +263,27 @@ function switchLang(lang) {
     });
 }
 
+function switchEffects(effect) {
+    $.ajax({
+        url: '/switchEffect',
+        type: "get",
+        data: {
+            effect: effect
+        },
+        success: function (result) {
+            if (result.isSuccess == true) {
+                window.location.href = window.location.href;
+                return;
+            } else {
+                $.messager.popup(result.detail);
+            }
+        },
+        error: function (msg) {
+            $.messager.popup("Internal Error");
+        }
+    });
+}
+
 //here is the drag
 $(function () {
     var isClear = true;
