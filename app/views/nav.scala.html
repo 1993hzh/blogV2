@@ -79,7 +79,7 @@ $(function () {
   });
 });
 </script>
-@session.get("effects").getOrElse("") match {
+@session.get("effects").getOrElse("snow") match {
   case "snow" => {
     @effects.snow()
   }
@@ -89,7 +89,6 @@ $(function () {
   case "starsky" => {
     @effects.star()
   }
-  case _ => {}
 }
 
 <!-- Navigation -->
