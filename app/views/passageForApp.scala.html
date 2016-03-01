@@ -1,0 +1,60 @@
+@(p: models.Passage, kws: List[Keyword], c: List[Comment])(implicit session: play.api.mvc.Session, messages: Messages, lang: Lang)
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content='@kws.map(_.name).mkString(", ")'>
+    <meta name="author" content="Leo">
+    <title>@p.title</title>
+    <link href="/assets/css/bootstrap-slate.min.css" rel="stylesheet">
+    <link href="/assets/css/common.css" rel="stylesheet">
+    <link href="/assets/css/clean-blog.min.css" rel="stylesheet">
+    <link href="/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/jquery.bootstrap.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="col-lg-10 col-md-10 col-md-offset-1">
+        <header class="intro-header">
+          <div class="row">
+            <div class="post-heading override-no-padding my-font-color">
+              <h1>@p.title</h1>
+              <span class="meta">@Html(messages("post.meta", p.authorName, p.createTime.format("yyy-MM-dd HH:mm:ss")))</span>
+            </div>
+          </div>
+        </header>
+        <article>
+          <div class="override-no-margin-top">
+            <div class="row">
+              <div class="my-font-color">
+              @Html(p.content)
+              </div>
+            </div>
+          </div>
+        </article>
+        <hr class="row">
+        @comment(c, p.id)
+      </div>
+    </div>
+    <hr>
+  </body>
+  <link href="/assets/css/tomorrow-night.css" rel="stylesheet" type="text/css">
+  <script src="/assets/js/prettify.js"></script>
+    <!-- here import language modules -->
+  <script src="/assets/js/lang-sql.js"></script>
+  <script src="/assets/js/lang-scala.js"></script>
+  <script>
+    $(function() {
+      prettyPrint();
+      $("pre").addClass("prettyprint linenums");
+    });
+  </script>
+</html>

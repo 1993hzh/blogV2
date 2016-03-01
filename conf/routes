@@ -1,7 +1,3 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
 # Home page
 #Do not need login filter
 GET         /                                       controllers.Index.index
@@ -15,6 +11,11 @@ GET         /loginWithSina                          controllers.Sina.login
 GET         /getTokenForSina                        controllers.Sina.getToken
 GET         /switchLang                             controllers.UserController.switchLang(lang:String)
 GET         /switchEffect                           controllers.UserController.switchEffect(effect:String)
+
+# Provide url for app
+GET         /app/index                              controllers.Index.showPassagesToJSON(page:Int?=1, query:Option[String])
+GET         /app/passage                            controllers.PassageController.passageForApp(id:Int?=1)
+POST        /app/login                              controllers.Login.loginFromApp
 
 #Need login filter
 GET         /logged/profile                         controllers.UserController.profile

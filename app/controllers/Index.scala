@@ -6,6 +6,7 @@ import dao.{CommentDAO, PassageDAO}
 import models.{Tag, Passage}
 import play.api.cache.CacheApi
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
 /**
@@ -21,7 +22,25 @@ class Index @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller
     showPassages(1)
   }
 
+  def about() = Action { implicit request =>
+    Ok(views.html.about())
+  }
+
   def showPassages(currentPage: Any, query: Option[String] = None) = Action { implicit request =>
+    val result = getPassagesByConditions(currentPage, query)
+    Ok(views.html.index(result._1._1, result._1._2, result._2, query))
+  }
+
+  def showPassagesToJSON(currentPage: Int, query: Option[String] = None) = Action { implicit request =>
+    val totalPage = cache.getOrElse(Application.KEY_PAGE_COUNT)(0)
+    val pageNo: Int = Application.getPageNum(currentPage, totalPage)
+    val passages = passageDAO.queryPassages(pageNo, pageSize = 5, query = query)
+    Ok(Json.obj("passages" -> Json.toJson(passages), "currentPage" -> currentPage, "totalPage" -> totalPage))
+  }
+
+  implicit val PassageWrites = Json.writes[Passage]
+
+  def getPassagesByConditions(currentPage: Any, query: Option[String] = None): ((List[(Passage, List[Tag], Int)], Int), Int) = {
     var passages: (List[(Passage, List[Tag], Int)], Int) = (Nil, 0)
     var totalPage = 0
     query match {
@@ -33,11 +52,7 @@ class Index @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller
         totalPage = cache.getOrElse(Application.KEY_PAGE_COUNT)(0)
         passages = listPassages(currentPage, totalPage)
     }
-    Ok(views.html.index(passages._1, passages._2, totalPage, query))
-  }
-
-  def about() = Action { implicit request =>
-    Ok(views.html.about())
+    (passages, totalPage)
   }
 
   def listPassages(num: Any, totalPage: Int, query: Option[String] = None): (List[(Passage, List[Tag], Int)], Int) = {

@@ -15,9 +15,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
-  * Created by Leo.
-  * 2015/11/7 20:00
-  */
+ * Created by Leo.
+ * 2015/11/7 20:00
+ */
 class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller with I18nSupport {
   override def messagesApi: MessagesApi = messages
 
@@ -33,6 +33,17 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
         setViewCount(p._1.id, p._1.viewCount) //here set view count in cache, will get a schedule to sync up
 
         Ok(views.html.passage(p._1, p._2, p._3))
+      case None => Redirect(routes.Index.index)
+    }
+  }
+
+  def passageForApp(id: Int) = Action { implicit request =>
+    val passageDetail = passageDAO.getDetail(id)
+    passageDetail match {
+      case Some(p) =>
+        setViewCount(p._1.id, p._1.viewCount) //here set view count in cache, will get a schedule to sync up
+
+        Ok(views.html.passageForApp(p._1, p._2, p._3))
       case None => Redirect(routes.Index.index)
     }
   }
@@ -113,10 +124,10 @@ class PassageController @Inject()(cache: CacheApi, messages: MessagesApi) extend
   }
 
   /**
-    * I won't provide a function for batch deletion since it's unsafe
-    * @param id
-    * @return
-    */
+   * I won't provide a function for batch deletion since it's unsafe
+   * @param id
+   * @return
+   */
   def delete(id: Int) = Action { implicit request =>
     val user = Application.getLoginUserName(request.session)
     val userId = Application.getLoginUserId(request.session)

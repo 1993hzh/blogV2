@@ -9,6 +9,7 @@ import play.api.cache._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.{Lang, I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.Future
@@ -39,6 +40,22 @@ class Login @Inject()(cache: CacheApi, messages: MessagesApi) extends Controller
             Application.doUserLogin(cache, u, r, request, data.callback)
           case None =>
             Future.successful(Ok(views.html.login(error = Some(Application.ERROR_NAME_OR_PWD))))
+        }
+      }
+    )
+  }
+
+  def loginFromApp = Action.async { implicit request =>
+    loginForm.bindFromRequest.fold(
+      formWithErrors => {
+        Future.successful(Ok(Json.obj("error" -> formWithErrors.errors.map(_.message).mkString(", "))))
+      },
+      data => {
+        userDAO.login(data.name, data.password) match {
+          case Some((u, r)) =>
+            Application.doUserLoginFromApp(cache, u, r, request, data.callback)
+          case None =>
+            Future.successful(Ok(Json.obj("error" -> Application.ERROR_NAME_OR_PWD)))
         }
       }
     )

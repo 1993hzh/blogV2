@@ -115,6 +115,25 @@ object Application extends Controller {
   }
 
   def doUserLogin(cache: CacheApi, u: User, r: Role, request: Request[AnyContent], callback: Option[String] = None): Future[Result] = {
+    val loginUserSession = processUserLogin(cache, u, r, request, callback)
+
+    callback match {
+      case Some(str) =>
+        Future.successful(Redirect(str) withSession (loginUserSession)) //callback exists
+      case None =>
+        Future.successful(Redirect(routes.Index.index()) withSession (loginUserSession)) //callback not exists
+    }
+  }
+
+  def doUserLoginFromApp(cache: CacheApi, u: User, r: Role, request: Request[AnyContent], callback: Option[String] = None): Future[Result] = {
+    val loginUserSession = processUserLogin(cache, u, r, request, callback)
+
+    implicit val UserWriter = Json.writes[User]
+
+    Future.successful(Ok(Json.toJson(u)) withSession (loginUserSession)) //callback exists
+  }
+
+  def processUserLogin(cache: CacheApi, u: User, r: Role, request: Request[AnyContent], callback: Option[String] = None): Session = {
     val loginTime = new Timestamp(System.currentTimeMillis())
     val ip = request.remoteAddress
 
@@ -127,12 +146,7 @@ object Application extends Controller {
     cache.set(loginToken, (u, r)) // add loginToken into public cache
     cache.set(u.userName + "-unreadMessage", getUnreadInMessage(u.id)) //add unreadMessage into public cache
 
-    callback match {
-      case Some(str) =>
-        Future.successful(Redirect(str) withSession (loginUserSession)) //callback exists
-      case None =>
-        Future.successful(Redirect(routes.Index.index()) withSession (loginUserSession)) //callback not exists
-    }
+    loginUserSession
   }
 
   private def getUnreadInMessage(userId: Int): String = {
