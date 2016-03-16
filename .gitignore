@@ -17,5 +17,6 @@ dist
 hk-debug
 
 /conf/fileSystem.conf
+/conf/resume.conf
 /conf/db.conf
 /conf/oauth.conf
