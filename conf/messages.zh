@@ -17,6 +17,9 @@ button.login=登录
 button.submit=提交
 button.new=新建
 error.toolong={0}的长度过长，应少于{1}
+error.required=必填字段
+
+resume=简历
 
 nav.search.placeholder=搜索博文
 nav.search.alert.empty=关键字搜索不能为空！

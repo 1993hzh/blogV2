@@ -36,6 +36,8 @@ object Application extends Controller {
   lazy val QINIU_SECRET_KEY = CONF.getString("qiniu.secret_key").getOrElse("")
   lazy val QINIU_BUCKET_NAME = CONF.getString("qiniu.bucket_name").getOrElse("")
   lazy val QINIU_IMAGE_DOMAIN = CONF.getString("qiniu.image_domain").getOrElse("")
+  lazy val RESUME_URL = CONF.getString("resume.url")
+  lazy val RESUME_PASSWORD = CONF.getString("resume.password")
 
   val KEY_PASSAGE_COUNT = "totalPassage"
   val KEY_PAGE_COUNT = "totalPageOfPassage"

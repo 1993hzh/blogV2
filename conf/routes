@@ -11,6 +11,8 @@ GET         /loginWithSina                          controllers.Sina.login
 GET         /getTokenForSina                        controllers.Sina.getToken
 GET         /switchLang                             controllers.UserController.switchLang(lang:String)
 GET         /switchEffect                           controllers.UserController.switchEffect(effect:String)
+GET         /resume                                 controllers.ResumeController.view()
+POST        /resume/check                           controllers.ResumeController.check()
 
 # Provide url for app
 GET         /app/index                              controllers.Index.showPassagesToJSON(page:Int?=1, query:Option[String])

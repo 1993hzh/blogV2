@@ -1,4 +1,4 @@
-index=index
+index=Index
 post.meta=Posted by <a href="#">{0}</a> at {1}
 language.display=English
 language.notfound=Language not supported '{0}'.
@@ -17,6 +17,9 @@ button.login=Sign in
 button.submit=Submit
 button.new=New
 error.toolong={0}'s length too long, should less than '{1}'
+error.required=Required field.
+
+resume=Resume
 
 nav.search.placeholder=Search for passage
 nav.search.alert.empty=Search shouldn't be empty!
