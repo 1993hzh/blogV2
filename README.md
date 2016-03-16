@@ -13,6 +13,8 @@ JDBC_DATABASE_URL={?your_db_url}
 SINA_APP_ID={?your_sina_app_id}
 SINA_APP_SECRET={?your_sina_app_secrect}
 SINA_REDIRECT_URL={?your_sina_app_redirect_url}
+RESUME_URL={?your_resume_redirect_url}
+RESUME_PASSWORD={?your_resume_password}
 ```
 
 ##Deploy in other CaaS using docker
@@ -36,6 +38,8 @@ SINA_APP_SECRET={?your_sina_app_secrect}
 SINA_REDIRECT_URL={?your_sina_app_redirect_url}
 APPLICATION_HOME={?application_home_for_logs}
 APPLICATION_SECRET={?your_app_secret}
+RESUME_URL={?your_resume_redirect_url}
+RESUME_PASSWORD={?your_resume_password}
 ```
 Notice, there is a issue for play-slick 1.1.0, here is the question raised by me: https://groups.google.com/forum/#!topic/play-framework/fjRwu2rymVI
 You need to set the JDBC_DATABASE_URL to something like 'jdbc:postgresql'.
