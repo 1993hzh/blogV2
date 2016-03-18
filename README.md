@@ -41,7 +41,7 @@ APPLICATION_SECRET={?your_app_secret}
 RESUME_URL={?your_resume_redirect_url}
 RESUME_PASSWORD={?your_resume_password}
 ```
-Notice, there is a issue for play-slick 1.1.0, here is the question raised by me: https://groups.google.com/forum/#!topic/play-framework/fjRwu2rymVI
+Notice, there is an issue for play-slick 1.1.0, here is the question raised by me: https://groups.google.com/forum/#!topic/play-framework/fjRwu2rymVI
 You need to set the JDBC_DATABASE_URL to something like 'jdbc:postgresql'.
 
 ##PS
@@ -53,5 +53,3 @@ You need to set the JDBC_DATABASE_URL to something like 'jdbc:postgresql'.
 ```sh
 insert your admin account with sql
 ```
-##TODO
-Currently not support https, will add this in the future
