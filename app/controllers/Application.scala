@@ -3,6 +3,7 @@ package controllers
 
 import java.sql.Timestamp
 import java.time.LocalDateTime
+import java.util.regex.Pattern
 
 import dao.{UserDAO, CommentDAO, PassageDAO}
 import models.{Role, User}
@@ -45,6 +46,7 @@ object Application extends Controller {
   val LOGIN_CALL_BACK: String = "callback"
   val PASSAGE_VIEW_COUNT_PREFIX = "passage-id-"
   val PASSAGE_BEEN_READ_LIST = "passage_has_been_read"
+  val HTML_PATTERN = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE)
 
   def ERROR_NAME_OR_PWD(implicit lang: Lang) = Messages("login.error")
 
@@ -159,6 +161,11 @@ object Application extends Controller {
   def getRandomEffect(): String = {
     val index = Random.nextInt(EFFECTS.length)
     EFFECTS(index)
+  }
+
+  def removeHTML(content: String): String = {
+    val matches = HTML_PATTERN.matcher(content)
+    matches.replaceAll("")
   }
 
   val EFFECTS = List("snow", "firework", "starsky")

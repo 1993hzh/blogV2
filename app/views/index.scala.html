@@ -34,7 +34,7 @@
               @p.title
             </h2>
             <h4 class="post-subtitle">
-              @Application.getContent(p.content, 150)
+              @Application.getContent(Application.removeHTML(p.content), 150)
             </h4>
           </a>
           <p class="tag-margin">
