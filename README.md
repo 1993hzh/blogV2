@@ -1,6 +1,6 @@
-#Blog
+# Blog
 
-##Deploy in Heroku
+## Deploy in Heroku
 config the vars in your heroku console.
 ```sh
 FS_ACCESS_KEY={?your_file_system_key}
@@ -17,14 +17,14 @@ RESUME_URL={?your_resume_redirect_url}
 RESUME_PASSWORD={?your_resume_password}
 ```
 
-##Deploy in other CaaS using docker
+## Deploy in other CaaS using docker
 Dockerfile has been written in this project
-###First, you should have a db
+### First, you should have a db
 I deployed my postgres in www.tenxcloud.com, it's easy, but remember to set the service as stateful to persist your data.
-###Second, create the docker image with the Dockerfile in some Caas
+### Second, create the docker image with the Dockerfile in some Caas
 Thanks for www.alauda.cn. 
 The base image of the blog has been uploaded to docker hub, you can view its src in my another repo: blog-image.
-###At last, Config vars in ENV
+### At last, Config vars in ENV
 ```sh
 FS_ACCESS_KEY={?your_file_system_key}
 FS_SECRET_KEY={?your_file_system_secret}
@@ -44,7 +44,7 @@ RESUME_PASSWORD={?your_resume_password}
 Notice, there is an issue for play-slick 1.1.0, here is the question raised by me: https://groups.google.com/forum/#!topic/play-framework/fjRwu2rymVI
 You need to set the JDBC_DATABASE_URL to something like 'jdbc:postgresql'.
 
-##PS
+## PS
 1. DB: currently support postgres, you can change the driver class in both db.conf && build.sbt, although this is not tested
 2. OAuth: currently support sina
 3. File system: currently support qiniu
